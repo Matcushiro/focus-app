@@ -10,60 +10,30 @@
 
     <VBox styleClass="home-content kids-content" spacing="0">
 
-        <!-- ===== БАННЕР ===== -->
-        <StackPane fx:id="kidsBannerPane" styleClass="banner-pane kids-banner-pane">
-
-            <ImageView fx:id="kidsBannerImage"
-                       styleClass="banner-bg"
-                       preserveRatio="false"
-                       fitHeight="350"/>
-
-            <!-- Затемнение с зелёным оттенком -->
-            <Pane styleClass="banner-overlay kids-banner-overlay"/>
-
-            <HBox styleClass="banner-content" alignment="BOTTOM_LEFT">
-                <VBox styleClass="banner-info" spacing="10" alignment="BOTTOM_LEFT">
-
-                    <!-- Бейдж -->
-                    <Label text="👶 ДЕТСКИЙ РАЗДЕЛ"
-                           styleClass="kids-badge"/>
-
-                    <Label fx:id="kidsBannerTitle"
-                           styleClass="banner-title"
-                           wrapText="true"
-                           maxWidth="350"/>
-
-                    <Label fx:id="kidsBannerDesc"
-                           styleClass="banner-desc"
-                           wrapText="true"
-                           maxWidth="350"/>
-
-                    <Label fx:id="kidsBannerRating"
-                           styleClass="banner-rating"/>
-
-                    <HBox spacing="12" alignment="CENTER_LEFT">
-                        <Button text="▶ СМОТРЕТЬ"
-                                styleClass="watch-btn kids-watch-btn"
-                                onAction="#watchKidsFeatured"/>
-                    </HBox>
-
+        <!-- ===== ПОИСК (красивый детский блок, без баннера) ===== -->
+        <VBox styleClass="search-hero-block kids-search-hero" spacing="14">
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <Label text="👶" styleClass="kids-hero-icon"/>
+                <VBox spacing="4">
+                    <Label text="Детский раздел" styleClass="page-hero-title kids-hero-title"/>
+                    <Label text="Мультфильмы, сказки и познавательные программы" styleClass="page-hero-sub kids-hero-sub"/>
                 </VBox>
             </HBox>
-
-        </StackPane>
-
-        <!-- ===== ПОИСК ===== -->
-        <HBox styleClass="search-bar kids-search-bar" spacing="10" alignment="CENTER_LEFT">
-            <TextField fx:id="kidsSearchField"
-                       promptText="🔍 Поиск детского контента..."
-                       styleClass="search-field kids-search-field"
-                       HBox.hgrow="ALWAYS"/>
-            <Button fx:id="kidsFilterBtn"
-                    text="🎛 Фильтры"
-                    styleClass="filter-btn"
-                    onAction="#openKidsFilterPopup"/>
-            <Label fx:id="kidsResultsLabel" styleClass="results-label"/>
-        </HBox>
+            <HBox spacing="12" alignment="CENTER_LEFT" styleClass="search-bar-hero kids-search-hero-bar">
+                <HBox styleClass="search-input-wrapper kids-search-input-wrapper" HBox.hgrow="ALWAYS">
+                    <Label text="🔍" styleClass="search-icon-label"/>
+                    <TextField fx:id="kidsSearchField"
+                               promptText="Поиск мультфильмов и сказок..."
+                               styleClass="search-input-hero kids-search-input-hero"
+                               HBox.hgrow="ALWAYS"/>
+                </HBox>
+                <Button fx:id="kidsFilterBtn"
+                        text="🎛 Фильтры"
+                        styleClass="filter-btn-hero kids-filter-btn"
+                        onAction="#openKidsFilterPopup"/>
+                <Label fx:id="kidsResultsLabel" styleClass="results-label kids-results-label"/>
+            </HBox>
+        </VBox>
 
         <!-- ===== СЕКЦИИ (скрываются при поиске) ===== -->
         <VBox fx:id="kidsSectionsBox" styleClass="sections-wrapper" spacing="40">
@@ -115,7 +85,7 @@
               styleClass="sections-wrapper" spacing="15">
             <FlowPane fx:id="kidsSearchGrid"
                       hgap="12" vgap="16"
-                      styleClass="movies-grid"/>
+                      styleClass="movies-grid kids-grid"/>
         </VBox>
 
     </VBox>

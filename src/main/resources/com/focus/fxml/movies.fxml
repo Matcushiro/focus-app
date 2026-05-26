@@ -10,57 +10,25 @@
 
     <VBox styleClass="home-content" spacing="0">
 
-        <!-- ===== БАННЕР ===== -->
-        <StackPane fx:id="moviesBannerPane" styleClass="banner-pane">
-
-            <ImageView fx:id="moviesBannerImage"
-                       styleClass="banner-bg"
-                       preserveRatio="false"
-                       fitHeight="350"/>
-
-            <Pane styleClass="banner-overlay"/>
-
-            <HBox styleClass="banner-content" alignment="BOTTOM_LEFT">
-                <VBox styleClass="banner-info" spacing="10" alignment="BOTTOM_LEFT">
-
-                    <Label text="🎬 РЕКОМЕНДУЕМ" styleClass="section-badge"/>
-
-                    <Label fx:id="moviesBannerTitle"
-                           styleClass="banner-title"
-                           wrapText="true"
-                           maxWidth="350"/>
-
-                    <Label fx:id="moviesBannerDesc"
-                           styleClass="banner-desc"
-                           wrapText="true"
-                           maxWidth="350"/>
-
-                    <Label fx:id="moviesBannerRating"
-                           styleClass="banner-rating"/>
-
-                    <HBox spacing="12" alignment="CENTER_LEFT">
-                        <Button text="▶ СМОТРЕТЬ"
-                                styleClass="watch-btn"
-                                onAction="#watchMoviesFeatured"/>
-                    </HBox>
-
-                </VBox>
+        <!-- ===== ПОИСК (красивый, без баннера) ===== -->
+        <VBox styleClass="search-hero-block" spacing="14">
+            <Label text="🎬 Фильмы" styleClass="page-hero-title"/>
+            <Label text="Тысячи фильмов — от новинок до классики" styleClass="page-hero-sub"/>
+            <HBox spacing="12" alignment="CENTER_LEFT" styleClass="search-bar-hero">
+                <HBox styleClass="search-input-wrapper" HBox.hgrow="ALWAYS">
+                    <Label text="🔍" styleClass="search-icon-label"/>
+                    <TextField fx:id="searchField"
+                               promptText="Введите название, жанр или режиссёра..."
+                               styleClass="search-input-hero"
+                               HBox.hgrow="ALWAYS"/>
+                </HBox>
+                <Button fx:id="filterBtn"
+                        text="🎛 Фильтры"
+                        styleClass="filter-btn-hero"
+                        onAction="#openFilterPopup"/>
+                <Label fx:id="resultsLabel" styleClass="results-label"/>
             </HBox>
-
-        </StackPane>
-
-        <!-- ===== ПОИСК ===== -->
-        <HBox styleClass="search-bar" spacing="10" alignment="CENTER_LEFT">
-            <TextField fx:id="searchField"
-                       promptText="🔍 Поиск фильмов..."
-                       styleClass="search-field"
-                       HBox.hgrow="ALWAYS"/>
-            <Button fx:id="filterBtn"
-                    text="🎛 Фильтры"
-                    styleClass="filter-btn"
-                    onAction="#openFilterPopup"/>
-            <Label fx:id="resultsLabel" styleClass="results-label"/>
-        </HBox>
+        </VBox>
 
         <!-- ===== СЕКЦИИ ===== -->
         <VBox fx:id="moviesSectionsBox" styleClass="sections-wrapper" spacing="40">

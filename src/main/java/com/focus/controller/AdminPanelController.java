@@ -5,12 +5,16 @@ import com.focus.model.ActionLog;
 import com.focus.model.User;
 import com.focus.service.LogManager;
 import com.focus.service.SessionManager;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -26,17 +30,17 @@ public class AdminPanelController implements Initializable {
     @FXML private Label adminNameLabel;
 
     // Пользователи
-    @FXML private TableView<User>           usersTable;
+    @FXML private TableView<User> usersTable;
     @FXML private TableColumn<User, String> idCol;
     @FXML private TableColumn<User, String> usernameCol;
-    @FXML private TableColumn<User, String> contactCol;   // email ИЛИ телефон
+    @FXML private TableColumn<User, String> contactCol; // email ИЛИ телефон
     @FXML private TableColumn<User, String> roleCol;
     @FXML private TableColumn<User, String> createdCol;
     @FXML private TableColumn<User, String> statusCol;
     @FXML private Label totalUsersLabel;
 
     // Логи
-    @FXML private TableView<ActionLog>           logsTable;
+    @FXML private TableView<ActionLog> logsTable;
     @FXML private TableColumn<ActionLog, String> logIdCol;
     @FXML private TableColumn<ActionLog, String> logTimeCol;
     @FXML private TableColumn<ActionLog, String> logUserCol;
@@ -60,24 +64,24 @@ public class AdminPanelController implements Initializable {
 
         setupUsersTable();
         setupLogsTable();
-        loadUsers();
-        loadLogs();
-        loadStats();
 
-        db.logAction(
+        // Загружаем данные асинхронно
+        loadUsersAsync();
+        loadLogsAsync();
+        loadStatsAsync();
+
+        db.asyncRun(() -> db.logAction(
                 SessionManager.getInstance().getCurrentUser().getId(),
                 username,
                 "ADMIN_PANEL_OPEN",
                 "Открыта панель администратора"
-        );
+        )).exceptionally(e -> { e.printStackTrace(); return null; });
     }
 
     // ===== Настройка таблицы пользователей =====
-
     private void setupUsersTable() {
         idCol.setCellValueFactory(data ->
                 new SimpleStringProperty(String.valueOf(data.getValue().getId())));
-
         usernameCol.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getUsername()));
 
@@ -93,13 +97,10 @@ public class AdminPanelController implements Initializable {
 
         roleCol.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getRole()));
-
         createdCol.setCellValueFactory(data ->
                 new SimpleStringProperty(
-                        data.getValue().getCreatedAt() != null
-                                ? data.getValue().getCreatedAt() : "—"
+                        data.getValue().getCreatedAt() != null ? data.getValue().getCreatedAt() : "—"
                 ));
-
         statusCol.setCellValueFactory(data ->
                 new SimpleStringProperty(
                         data.getValue().isBanned() ? "🚫 Забанен" : "✅ Активен"
@@ -120,65 +121,75 @@ public class AdminPanelController implements Initializable {
     }
 
     // ===== Настройка таблицы логов =====
-
     private void setupLogsTable() {
         logIdCol.setCellValueFactory(data ->
                 new SimpleStringProperty(String.valueOf(data.getValue().getId())));
-
         logTimeCol.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getCreatedAt()));
-
         logUserCol.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getUsername()));
-
         logActionCol.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getAction()));
-
         logDetailsCol.setCellValueFactory(data ->
                 new SimpleStringProperty(
-                        data.getValue().getDetails() != null
-                                ? data.getValue().getDetails() : "—"
+                        data.getValue().getDetails() != null ? data.getValue().getDetails() : "—"
                 ));
     }
 
-    // ===== Загрузка данных =====
-
-    private void loadUsers() {
-        List<User> users = db.getAllUsers();
-        usersTable.setItems(FXCollections.observableArrayList(users));
-        totalUsersLabel.setText(String.valueOf(users.size()));
+    // ===== Асинхронная загрузка данных =====
+    private void loadUsersAsync() {
+        db.async(db::getAllUsers)
+                .thenAccept(users -> Platform.runLater(() -> {
+                    usersTable.setItems(FXCollections.observableArrayList(users));
+                    if (totalUsersLabel != null)
+                        totalUsersLabel.setText(String.valueOf(users.size()));
+                }))
+                .exceptionally(e -> { e.printStackTrace(); return null; });
     }
 
-    private void loadLogs() {
-        List<ActionLog> logs = db.getAllLogs();
-        logsTable.setItems(FXCollections.observableArrayList(logs));
+    private void loadLogsAsync() {
+        db.async(db::getAllLogs)
+                .thenAccept(logs -> Platform.runLater(() ->
+                        logsTable.setItems(FXCollections.observableArrayList(logs))
+                ))
+                .exceptionally(e -> { e.printStackTrace(); return null; });
     }
 
-    private void loadStats() {
-        int movies = db.getAllMovies().size();
-        int series = db.getAllSeries().size();
-        int users  = db.getAllUsers().size();
-        int logs   = db.getAllLogs().size();
-
-        totalMoviesLabel.setText(String.valueOf(movies));
-        totalSeriesLabel.setText(String.valueOf(series));
-        totalUsersStatLabel.setText(String.valueOf(users));
-        totalLogsLabel.setText(String.valueOf(logs));
+    private void loadStatsAsync() {
+        db.async(() -> {
+            int movies = db.getAllMovies().size();
+            int series = db.getAllSeries().size();
+            int users = db.getAllUsers().size();
+            int logs = db.getAllLogs().size();
+            return new int[]{movies, series, users, logs};
+        }).thenAccept(stats -> Platform.runLater(() -> {
+            if (totalMoviesLabel   != null) totalMoviesLabel.setText(String.valueOf(stats[0]));
+            if (totalSeriesLabel   != null) totalSeriesLabel.setText(String.valueOf(stats[1]));
+            if (totalUsersStatLabel!= null) totalUsersStatLabel.setText(String.valueOf(stats[2]));
+            if (totalLogsLabel     != null) totalLogsLabel.setText(String.valueOf(stats[3]));
+        })).exceptionally(e -> { e.printStackTrace(); return null; });
     }
 
     // ===== Действия с пользователями =====
-
     @FXML
     private void banUser() {
         User selected = usersTable.getSelectionModel().getSelectedItem();
         if (selected == null) { showAlert("Выберите пользователя!"); return; }
         if (selected.isAdmin()) { showAlert("Нельзя забанить администратора!"); return; }
 
-        db.setBanUser(selected.getId(), true);
-        logAction("USER_BANNED", "Забанен: " + selected.getUsername());
-        showAlert("✅ Пользователь забанен: " + selected.getUsername());
-        loadUsers();
-        loadLogs();
+        db.asyncRun(() -> {
+            db.setBanUser(selected.getId(), true);
+            db.logAction(
+                    SessionManager.getInstance().getCurrentUser().getId(),
+                    SessionManager.getInstance().getCurrentUser().getUsername(),
+                    "USER_BANNED",
+                    "Забанен: " + selected.getUsername()
+            );
+        }).thenRun(() -> Platform.runLater(() -> {
+            showAlert("✅ Пользователь забанен: " + selected.getUsername());
+            loadUsersAsync();
+            loadLogsAsync();
+        })).exceptionally(e -> { e.printStackTrace(); return null; });
     }
 
     @FXML
@@ -186,11 +197,19 @@ public class AdminPanelController implements Initializable {
         User selected = usersTable.getSelectionModel().getSelectedItem();
         if (selected == null) { showAlert("Выберите пользователя!"); return; }
 
-        db.setBanUser(selected.getId(), false);
-        logAction("USER_UNBANNED", "Разбанен: " + selected.getUsername());
-        showAlert("✅ Пользователь разбанен: " + selected.getUsername());
-        loadUsers();
-        loadLogs();
+        db.asyncRun(() -> {
+            db.setBanUser(selected.getId(), false);
+            db.logAction(
+                    SessionManager.getInstance().getCurrentUser().getId(),
+                    SessionManager.getInstance().getCurrentUser().getUsername(),
+                    "USER_UNBANNED",
+                    "Разбанен: " + selected.getUsername()
+            );
+        }).thenRun(() -> Platform.runLater(() -> {
+            showAlert("✅ Пользователь разбанен: " + selected.getUsername());
+            loadUsersAsync();
+            loadLogsAsync();
+        })).exceptionally(e -> { e.printStackTrace(); return null; });
     }
 
     @FXML
@@ -198,11 +217,19 @@ public class AdminPanelController implements Initializable {
         User selected = usersTable.getSelectionModel().getSelectedItem();
         if (selected == null) { showAlert("Выберите пользователя!"); return; }
 
-        db.setUserRole(selected.getId(), "ADMIN");
-        logAction("ROLE_CHANGED", selected.getUsername() + " → ADMIN");
-        showAlert("✅ " + selected.getUsername() + " теперь администратор!");
-        loadUsers();
-        loadLogs();
+        db.asyncRun(() -> {
+            db.setUserRole(selected.getId(), "ADMIN");
+            db.logAction(
+                    SessionManager.getInstance().getCurrentUser().getId(),
+                    SessionManager.getInstance().getCurrentUser().getUsername(),
+                    "ROLE_CHANGED",
+                    selected.getUsername() + " → ADMIN"
+            );
+        }).thenRun(() -> Platform.runLater(() -> {
+            showAlert("✅ " + selected.getUsername() + " теперь администратор!");
+            loadUsersAsync();
+            loadLogsAsync();
+        })).exceptionally(e -> { e.printStackTrace(); return null; });
     }
 
     @FXML
@@ -210,11 +237,19 @@ public class AdminPanelController implements Initializable {
         User selected = usersTable.getSelectionModel().getSelectedItem();
         if (selected == null) { showAlert("Выберите пользователя!"); return; }
 
-        db.setUserRole(selected.getId(), "USER");
-        logAction("ROLE_CHANGED", selected.getUsername() + " → USER");
-        showAlert("✅ Роль изменена на USER");
-        loadUsers();
-        loadLogs();
+        db.asyncRun(() -> {
+            db.setUserRole(selected.getId(), "USER");
+            db.logAction(
+                    SessionManager.getInstance().getCurrentUser().getId(),
+                    SessionManager.getInstance().getCurrentUser().getUsername(),
+                    "ROLE_CHANGED",
+                    selected.getUsername() + " → USER"
+            );
+        }).thenRun(() -> Platform.runLater(() -> {
+            showAlert("✅ Роль изменена на USER");
+            loadUsersAsync();
+            loadLogsAsync();
+        })).exceptionally(e -> { e.printStackTrace(); return null; });
     }
 
     @FXML
@@ -228,22 +263,50 @@ public class AdminPanelController implements Initializable {
         confirm.setContentText("Удалить пользователя: " + selected.getUsername() + "?");
         confirm.showAndWait().ifPresent(r -> {
             if (r == ButtonType.OK) {
-                logAction("USER_DELETED", "Удалён: " + selected.getUsername());
-                db.deleteUser(selected.getId());
-                loadUsers();
-                loadLogs();
+                db.asyncRun(() -> {
+                    db.logAction(
+                            SessionManager.getInstance().getCurrentUser().getId(),
+                            SessionManager.getInstance().getCurrentUser().getUsername(),
+                            "USER_DELETED",
+                            "Удалён: " + selected.getUsername()
+                    );
+                    db.deleteUser(selected.getId());
+                }).thenRun(() -> Platform.runLater(() -> {
+                    loadUsersAsync();
+                    loadLogsAsync();
+                })).exceptionally(e -> { e.printStackTrace(); return null; });
             }
         });
     }
 
     @FXML
-    private void refreshUsers() { loadUsers(); }
+    private void refreshUsers() {
+        loadUsersAsync();
+    }
 
     @FXML
-    private void refreshLogs()  { loadLogs();  }
+    private void refreshLogs() {
+        loadLogsAsync();
+    }
+
+    // ===== Кнопка: открыть управление контентом =====
+    @FXML
+    private void openContentManager() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/focus/fxml/admin.fxml")
+            );
+            Node page = loader.load();
+            // Ищем корневой BorderPane через сцену
+            BorderPane root = (BorderPane) adminNameLabel.getScene().getRoot();
+            root.setCenter(page);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("❌ Не удалось открыть управление контентом: " + e.getMessage());
+        }
+    }
 
     // ===== Экспорт логов =====
-
     @FXML
     private void exportLogs() {
         FileChooser chooser = new FileChooser();
@@ -254,33 +317,33 @@ public class AdminPanelController implements Initializable {
         );
         java.io.File file = chooser.showSaveDialog(new Stage());
         if (file != null) {
-            try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
-                writer.println("=== FOCUS — Экспорт логов ===");
-                writer.println();
-                List<ActionLog> logs = db.getAllLogs();
-                for (ActionLog log : logs) {
-                    writer.println(log.toString());
-                }
-                writer.println();
-                writer.println("Всего записей: " + logs.size());
-                showAlert("✅ Логи сохранены в: " + file.getAbsolutePath());
-            } catch (Exception e) {
-                e.printStackTrace();
-                showAlert("❌ Ошибка сохранения файла!");
-            }
+            db.async(db::getAllLogs)
+                    .thenAccept(logs -> {
+                        try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
+                            writer.println("=== FOCUS — Экспорт логов ===");
+                            writer.println();
+                            for (ActionLog log : logs) {
+                                writer.println(log.toString());
+                            }
+                            writer.println();
+                            writer.println("Всего записей: " + logs.size());
+                            Platform.runLater(() ->
+                                    showAlert("✅ Логи сохранены в: " + file.getAbsolutePath())
+                            );
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            Platform.runLater(() -> showAlert("❌ Ошибка сохранения файла!"));
+                        }
+                    })
+                    .exceptionally(e -> {
+                        e.printStackTrace();
+                        Platform.runLater(() -> showAlert("❌ Ошибка загрузки логов!"));
+                        return null;
+                    });
         }
     }
 
     // ===== Вспомогательные =====
-
-    private void logAction(String action, String details) {
-        db.logAction(
-                SessionManager.getInstance().getCurrentUser().getId(),
-                SessionManager.getInstance().getCurrentUser().getUsername(),
-                action, details
-        );
-    }
-
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Focus Admin");

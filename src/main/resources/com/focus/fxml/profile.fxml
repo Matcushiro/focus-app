@@ -12,6 +12,7 @@
             <VBox spacing="30"
                   styleClass="profile-wrapper">
 
+                <!-- ===== ШАПКА ПРОФИЛЯ ===== -->
                 <HBox spacing="25"
                       alignment="CENTER_LEFT"
                       styleClass="profile-header">
@@ -26,7 +27,7 @@
                         <Label fx:id="emailLabel"
                                styleClass="profile-email"/>
                         <HBox spacing="10">
-                            <Button text="✏️ Редактировать"
+                            <Button text="✏️ Редактировать профиль"
                                     styleClass="edit-btn"
                                     onAction="#editProfile"/>
                             <Button text="🚪 Выйти"
@@ -36,6 +37,7 @@
                     </VBox>
                 </HBox>
 
+                <!-- ===== СТАТИСТИКА ===== -->
                 <HBox spacing="20"
                       styleClass="stats-box"
                       alignment="CENTER">
@@ -59,6 +61,55 @@
                     </VBox>
                 </HBox>
 
+                <!-- ===== ФОРМА РЕДАКТИРОВАНИЯ (скрыта по умолчанию) ===== -->
+                <VBox fx:id="editForm"
+                      spacing="15"
+                      styleClass="edit-form"
+                      visible="false"
+                      managed="false">
+
+                    <Label text="✏️ Редактирование профиля"
+                           styleClass="form-title"/>
+
+                    <VBox spacing="5">
+                        <Label text="Имя пользователя"
+                               styleClass="admin-field-label"/>
+                        <TextField fx:id="editUsername"
+                                   styleClass="login-field"
+                                   promptText="Введите новое имя..."/>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Email"
+                               styleClass="admin-field-label"/>
+                        <TextField fx:id="editEmail"
+                                   styleClass="login-field"
+                                   promptText="Введите email..."/>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Новый пароль"
+                               styleClass="admin-field-label"/>
+                        <PasswordField fx:id="editPassword"
+                                       styleClass="login-field"
+                                       promptText="Оставьте пустым, если не меняете"/>
+                    </VBox>
+
+                    <Label fx:id="editError"
+                           styleClass="error-label"
+                           text=""/>
+
+                    <HBox spacing="10">
+                        <Button text="💾 Сохранить"
+                                styleClass="save-btn"
+                                onAction="#saveProfile"/>
+                        <Button text="✖ Отмена"
+                                styleClass="clear-btn"
+                                onAction="#cancelEdit"/>
+                    </HBox>
+                </VBox>
+
+                <!-- ===== ИЗБРАННОЕ ===== -->
                 <VBox spacing="12" styleClass="section">
                     <Label text="❤️ Моё избранное"
                            styleClass="section-title"/>
@@ -70,6 +121,7 @@
                     </ScrollPane>
                 </VBox>
 
+                <!-- ===== ИСТОРИЯ ПРОСМОТРОВ ===== -->
                 <VBox spacing="12" styleClass="section">
                     <Label text="🕐 История просмотров"
                            styleClass="section-title"/>
@@ -79,36 +131,6 @@
                               spacing="12"
                               styleClass="movie-row"/>
                     </ScrollPane>
-                </VBox>
-
-                <VBox fx:id="editForm"
-                      spacing="15"
-                      styleClass="edit-form"
-                      visible="false"
-                      managed="false">
-                    <Label text="Редактирование профиля"
-                           styleClass="form-title"/>
-                    <Label text="Имя пользователя"/>
-                    <TextField fx:id="editUsername"
-                               styleClass="login-field"/>
-                    <Label text="Email"/>
-                    <TextField fx:id="editEmail"
-                               styleClass="login-field"/>
-                    <Label text="Новый пароль"/>
-                    <PasswordField fx:id="editPassword"
-                                   styleClass="login-field"
-                                   promptText="Оставьте пустым если не меняете"/>
-                    <Label fx:id="editError"
-                           styleClass="error-label"
-                           text=""/>
-                    <HBox spacing="10">
-                        <Button text="💾 Сохранить"
-                                styleClass="save-btn"
-                                onAction="#saveProfile"/>
-                        <Button text="Отмена"
-                                styleClass="clear-btn"
-                                onAction="#cancelEdit"/>
-                    </HBox>
                 </VBox>
 
             </VBox>

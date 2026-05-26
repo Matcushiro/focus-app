@@ -17,6 +17,18 @@
         <Label fx:id="adminNameLabel" text="" styleClass="profile-btn"/>
     </HBox>
 
+    <!-- ===== Кнопка управления контентом ===== -->
+    <HBox style="-fx-padding: 12 24; -fx-background-color: #0d0d0d; -fx-border-color: transparent transparent #1e1e1e transparent; -fx-border-width: 0 0 1 0;"
+          spacing="12" alignment="CENTER_LEFT">
+        <Label text="📽 Управление контентом:" style="-fx-text-fill: #aaaaaa; -fx-font-size: 13px;"/>
+        <Button text="➕ Добавить / Редактировать фильм или сериал"
+                styleClass="admin-btn-primary"
+                onAction="#openContentManager"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="Добавляйте, редактируйте и удаляйте фильмы и сериалы в каталоге"
+               style="-fx-text-fill: #555; -fx-font-size: 11px;"/>
+    </HBox>
+
     <!-- ===== Статистика ===== -->
     <HBox spacing="16" style="-fx-padding: 16 24; -fx-background-color: #0a0a0a;">
         <VBox styleClass="stat-card" spacing="4" alignment="CENTER" prefWidth="140">

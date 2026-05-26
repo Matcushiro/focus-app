@@ -7,7 +7,6 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
@@ -22,18 +21,11 @@ import java.util.stream.Collectors;
 
 /**
  * MoviesController — вкладка «Фильмы».
- * Секции: Рекомендации (баннер), Новинки, Популярные, Топ по рейтингу, Вечерние, Топ-10.
+ * Секции: Новинки, Популярные, Топ по рейтингу, Вечерние, Топ-10.
  * Поиск + фильтры по жанру/рейтингу/году.
  * Всё загружается асинхронно.
  */
 public class MoviesController implements Initializable {
-
-    // ===== Баннер =====
-    @FXML private ImageView moviesBannerImage;
-    @FXML private Label moviesBannerTitle;
-    @FXML private Label moviesBannerDesc;
-    @FXML private Label moviesBannerRating;
-    @FXML private StackPane moviesBannerPane;
 
     // ===== Секции =====
     @FXML private HBox moviesLatestRow;
@@ -50,11 +42,10 @@ public class MoviesController implements Initializable {
     @FXML private VBox moviesSectionsBox;
     @FXML private VBox moviesSearchSection;
 
-    private Movie featuredMovie;
     private List<Movie> allMovies = new ArrayList<>();
     private final Set<String> selectedGenres = new HashSet<>();
     private String selectedRating = null;
-    private String selectedYear = null;
+    private String selectedYear   = null;
     private Popup filterPopup;
 
     private final DatabaseManager db = DatabaseManager.getInstance();
@@ -73,21 +64,10 @@ public class MoviesController implements Initializable {
     }
 
     // ===== Асинхронная загрузка =====
-
     private void loadAllAsync() {
         // Все фильмы — для поиска
         db.getAllMoviesAsync()
                 .thenAccept(list -> Platform.runLater(() -> allMovies = list))
-                .exceptionally(e -> { e.printStackTrace(); return null; });
-
-        // Рекомендованный баннер
-        db.getFeaturedMovieAsync()
-                .thenAccept(movie -> Platform.runLater(() -> {
-                    if (movie != null && "FILM".equals(movie.getCategory())) {
-                        featuredMovie = movie;
-                        showBanner(movie);
-                    }
-                }))
                 .exceptionally(e -> { e.printStackTrace(); return null; });
 
         // Новинки фильмов
@@ -132,43 +112,7 @@ public class MoviesController implements Initializable {
                 .collect(Collectors.toList());
     }
 
-    // ===== Баннер =====
-
-    private void showBanner(Movie movie) {
-        if (moviesBannerTitle != null) moviesBannerTitle.setText(movie.getTitle());
-        if (moviesBannerRating != null)
-            moviesBannerRating.setText("⭐ " + String.format("%.1f", movie.getRating()));
-        if (moviesBannerDesc != null && movie.getDescription() != null) {
-            String[] sentences = movie.getDescription().split("\\. ");
-            String shortDesc = sentences.length >= 2
-                    ? sentences[0] + ". " + sentences[1] + "."
-                    : movie.getDescription();
-            moviesBannerDesc.setText(shortDesc);
-        }
-        if (moviesBannerImage != null) {
-            String imagePath = (movie.getBannerPath() != null && !movie.getBannerPath().isEmpty())
-                    ? movie.getBannerPath() : movie.getPosterPath();
-            if (imagePath != null && !imagePath.isEmpty()) {
-                try {
-                    Image image = new Image("file:" + imagePath, true);
-                    moviesBannerImage.setImage(image);
-                    if (moviesBannerPane != null)
-                        moviesBannerImage.fitWidthProperty().bind(moviesBannerPane.widthProperty());
-                    moviesBannerImage.setFitHeight(350);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    @FXML
-    private void watchMoviesFeatured() {
-        if (featuredMovie != null) openDetail(featuredMovie);
-    }
-
     // ===== Поиск =====
-
     private void setupSearch() {
         if (searchField != null) {
             searchField.textProperty().addListener((obs, o, n) -> applyFilters());
@@ -188,9 +132,10 @@ public class MoviesController implements Initializable {
 
     private void applyFilters() {
         String query = searchField != null ? searchField.getText().trim().toLowerCase() : "";
-        boolean searching = !query.isEmpty() || !selectedGenres.isEmpty()
+        boolean searching = !query.isEmpty()
+                || !selectedGenres.isEmpty()
                 || (selectedRating != null && !selectedRating.equals("Любой"))
-                || (selectedYear != null && !selectedYear.equals("Любой"));
+                || (selectedYear   != null && !selectedYear.equals("Любой"));
 
         if (moviesSectionsBox != null) {
             moviesSectionsBox.setVisible(!searching);
@@ -214,15 +159,14 @@ public class MoviesController implements Initializable {
             moviesGrid.getChildren().clear();
             for (Movie m : filtered) moviesGrid.getChildren().add(createCard(m));
         }
-        if (resultsLabel != null)
-            resultsLabel.setText("Найдено: " + filtered.size());
+        if (resultsLabel != null) resultsLabel.setText("Найдено: " + filtered.size());
     }
 
     private boolean matchesSearch(Movie movie, String query) {
         if (query.isEmpty()) return true;
-        return (movie.getTitle() != null && movie.getTitle().toLowerCase().contains(query))
+        return (movie.getTitle()    != null && movie.getTitle().toLowerCase().contains(query))
                 || (movie.getDirector() != null && movie.getDirector().toLowerCase().contains(query))
-                || (movie.getGenres() != null && movie.getGenres().toLowerCase().contains(query));
+                || (movie.getGenres()   != null && movie.getGenres().toLowerCase().contains(query));
     }
 
     private boolean matchesGenre(Movie movie) {
@@ -243,14 +187,13 @@ public class MoviesController implements Initializable {
         if (selectedYear.contains("-")) {
             String[] parts = selectedYear.split("-");
             int from = Integer.parseInt(parts[0]);
-            int to = Integer.parseInt(parts[1]);
+            int to   = Integer.parseInt(parts[1]);
             return movie.getYear() >= from && movie.getYear() <= to;
         }
         return movie.getYear() == Integer.parseInt(selectedYear);
     }
 
     // ===== Попап фильтров =====
-
     private void buildFilterPopup() {
         filterPopup = new Popup();
         filterPopup.setAutoHide(true);
@@ -275,6 +218,7 @@ public class MoviesController implements Initializable {
 
         FlowPane genreFlow = new FlowPane(6, 6);
         genreFlow.setPrefWrapLength(290);
+
         Map<String, ToggleButton> genreButtons = new LinkedHashMap<>();
         for (String genre : GENRES) {
             ToggleButton tb = new ToggleButton(genre);
@@ -283,7 +227,7 @@ public class MoviesController implements Initializable {
             tb.selectedProperty().addListener((obs, old, sel) -> {
                 tb.setStyle(getGenreButtonStyle(sel));
                 if (sel) selectedGenres.add(genre);
-                else selectedGenres.remove(genre);
+                else     selectedGenres.remove(genre);
             });
             genreButtons.put(genre, tb);
             genreFlow.getChildren().add(tb);
@@ -291,6 +235,7 @@ public class MoviesController implements Initializable {
 
         Label ratingLabel = new Label("Минимальный рейтинг:");
         ratingLabel.setStyle("-fx-text-fill: #aaaaaa; -fx-font-size: 12px;");
+
         ComboBox<String> ratingBox = new ComboBox<>();
         ratingBox.setItems(FXCollections.observableArrayList("Любой", "9+", "8+", "7+", "6+"));
         ratingBox.setValue(selectedRating != null ? selectedRating : "Любой");
@@ -298,6 +243,7 @@ public class MoviesController implements Initializable {
 
         Label yearLabel = new Label("Год выпуска:");
         yearLabel.setStyle("-fx-text-fill: #aaaaaa; -fx-font-size: 12px;");
+
         ComboBox<String> yearBox = new ComboBox<>();
         yearBox.setItems(FXCollections.observableArrayList(
                 "Любой", "2025", "2024", "2023", "2022", "2021", "2020", "2010-2019", "2000-2009"
@@ -313,8 +259,11 @@ public class MoviesController implements Initializable {
         resetBtn.setOnAction(e -> {
             selectedGenres.clear();
             selectedRating = null;
-            selectedYear = null;
-            genreButtons.values().forEach(tb -> { tb.setSelected(false); tb.setStyle(getGenreButtonStyle(false)); });
+            selectedYear   = null;
+            genreButtons.values().forEach(tb -> {
+                tb.setSelected(false);
+                tb.setStyle(getGenreButtonStyle(false));
+            });
             ratingBox.setValue("Любой");
             yearBox.setValue("Любой");
             applyFilters();
@@ -325,14 +274,21 @@ public class MoviesController implements Initializable {
         applyBtn.setStyle("-fx-background-color: #E65C00; -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-border-radius: 4; -fx-padding: 6 16; -fx-cursor: hand;");
         applyBtn.setOnAction(e -> {
             selectedRating = ratingBox.getValue();
-            selectedYear = yearBox.getValue();
+            selectedYear   = yearBox.getValue();
             applyFilters();
             updateFilterBtn();
             filterPopup.hide();
         });
 
         btnRow.getChildren().addAll(resetBtn, applyBtn);
-        popupBox.getChildren().addAll(title, new Separator(), genresLabel, genreFlow, ratingLabel, ratingBox, yearLabel, yearBox, new Separator(), btnRow);
+
+        popupBox.getChildren().addAll(
+                title, new Separator(),
+                genresLabel, genreFlow,
+                ratingLabel, ratingBox,
+                yearLabel, yearBox,
+                new Separator(), btnRow
+        );
         filterPopup.getContent().add(popupBox);
     }
 
@@ -346,7 +302,7 @@ public class MoviesController implements Initializable {
         if (filterBtn == null) return;
         boolean hasFilters = !selectedGenres.isEmpty()
                 || (selectedRating != null && !selectedRating.equals("Любой"))
-                || (selectedYear != null && !selectedYear.equals("Любой"));
+                || (selectedYear   != null && !selectedYear.equals("Любой"));
         if (hasFilters) {
             filterBtn.setText("🎛 Фильтры ●");
             filterBtn.setStyle("-fx-background-color: #E65C00; -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-border-radius: 6; -fx-padding: 8 16; -fx-cursor: hand;");
@@ -357,7 +313,6 @@ public class MoviesController implements Initializable {
     }
 
     // ===== Карточки =====
-
     private void fillRow(HBox row, List<Movie> movies) {
         if (row == null) return;
         row.getChildren().clear();
@@ -373,6 +328,7 @@ public class MoviesController implements Initializable {
         poster.setFitWidth(160);
         poster.setFitHeight(240);
         poster.setPreserveRatio(false);
+
         if (movie.getPosterPath() != null && !movie.getPosterPath().isEmpty()) {
             try {
                 poster.setImage(new Image(
@@ -404,9 +360,9 @@ public class MoviesController implements Initializable {
             Parent page = loader.load();
             DetailController ctrl = loader.getController();
             ctrl.setMovie(movie);
-            BorderPane root = (BorderPane) (moviesGrid != null
-                    ? moviesGrid.getScene().getRoot()
-                    : moviesBannerPane.getScene().getRoot());
+            // Ищем корневой BorderPane через любой доступный узел
+            javafx.scene.Node ref = moviesGrid != null ? moviesGrid : moviesLatestRow;
+            BorderPane root = (BorderPane) ref.getScene().getRoot();
             root.setCenter(page);
         } catch (Exception e) {
             e.printStackTrace();
