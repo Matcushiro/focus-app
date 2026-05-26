@@ -1,44 +1,111 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.focus.controller.SeriesController"
-      styleClass="content-page"
-      spacing="0">
+<ScrollPane fitToWidth="true"
+            styleClass="main-scroll"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.focus.controller.SeriesController">
 
-    <!-- ===== Заголовок страницы ===== -->
-    <VBox styleClass="page-header" spacing="4">
-        <Label text="📺 Сериалы" styleClass="page-main-title"/>
-        <Label text="Лучшие сериалы от мировых студий и отечественных авторов" styleClass="page-subtitle"/>
-    </VBox>
+    <VBox styleClass="home-content" spacing="0">
 
-    <!-- ===== Строка поиска + кнопка фильтров ===== -->
-    <HBox styleClass="search-bar-row" spacing="10" alignment="CENTER_LEFT">
-        <HBox styleClass="search-input-box" HBox.hgrow="ALWAYS" spacing="0" alignment="CENTER_LEFT">
-            <Label text="🔍" styleClass="search-icon-label"/>
+        <!-- ===== БАННЕР ===== -->
+        <StackPane fx:id="seriesBannerPane" styleClass="banner-pane">
+
+            <ImageView fx:id="seriesBannerImage"
+                       styleClass="banner-bg"
+                       preserveRatio="false"
+                       fitHeight="350"/>
+
+            <Pane styleClass="banner-overlay"/>
+
+            <HBox styleClass="banner-content" alignment="BOTTOM_LEFT">
+                <VBox styleClass="banner-info" spacing="10" alignment="BOTTOM_LEFT">
+
+                    <Label text="📺 РЕКОМЕНДУЕМ" styleClass="section-badge"/>
+
+                    <Label fx:id="seriesBannerTitle"
+                           styleClass="banner-title"
+                           wrapText="true"
+                           maxWidth="350"/>
+
+                    <Label fx:id="seriesBannerDesc"
+                           styleClass="banner-desc"
+                           wrapText="true"
+                           maxWidth="350"/>
+
+                    <Label fx:id="seriesBannerRating"
+                           styleClass="banner-rating"/>
+
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Button text="▶ СМОТРЕТЬ"
+                                styleClass="watch-btn"
+                                onAction="#watchSeriesFeatured"/>
+                    </HBox>
+
+                </VBox>
+            </HBox>
+
+        </StackPane>
+
+        <!-- ===== ПОИСК ===== -->
+        <HBox styleClass="search-bar" spacing="10" alignment="CENTER_LEFT">
             <TextField fx:id="searchField"
-                       promptText="Поиск сериалов по названию, режиссёру, жанру..."
-                       styleClass="search-input"
+                       promptText="🔍 Поиск сериалов..."
+                       styleClass="search-field"
                        HBox.hgrow="ALWAYS"/>
+            <Button fx:id="filterBtn"
+                    text="🎛 Фильтры"
+                    styleClass="filter-btn"
+                    onAction="#openFilterPopup"/>
+            <Label fx:id="resultsLabel" styleClass="results-label"/>
         </HBox>
-        <Button fx:id="filterBtn"
-                text="🎛 Фильтры"
-                styleClass="filter-btn"
-                onAction="#openFilterPopup"/>
-    </HBox>
 
-    <!-- ===== Счётчик результатов ===== -->
-    <HBox styleClass="results-row" alignment="CENTER_LEFT">
-        <Label fx:id="resultsLabel" text="" styleClass="results-label"/>
-    </HBox>
+        <!-- ===== СЕКЦИИ ===== -->
+        <VBox fx:id="seriesSectionsBox" styleClass="sections-wrapper" spacing="40">
 
-    <!-- ===== Сетка сериалов ===== -->
-    <ScrollPane styleClass="grid-scroll" VBox.vgrow="ALWAYS" fitToWidth="true">
-        <FlowPane fx:id="moviesGrid" styleClass="movies-grid"
-                  hgap="14" vgap="16"/>
-    </ScrollPane>
-</VBox>
+            <!-- Новинки -->
+            <VBox styleClass="section" spacing="15">
+                <Label text="🆕 НОВЫЕ СЕРИАЛЫ" styleClass="section-title"/>
+                <ScrollPane styleClass="h-scroll" fitToHeight="true">
+                    <HBox fx:id="seriesLatestRow" spacing="12" styleClass="movie-row"/>
+                </ScrollPane>
+            </VBox>
+
+            <!-- Популярные -->
+            <VBox styleClass="section" spacing="15">
+                <Label text="🔥 ПОПУЛЯРНЫЕ СЕРИАЛЫ" styleClass="section-title"/>
+                <ScrollPane styleClass="h-scroll" fitToHeight="true">
+                    <HBox fx:id="seriesPopularRow" spacing="12" styleClass="movie-row"/>
+                </ScrollPane>
+            </VBox>
+
+            <!-- Топ по рейтингу -->
+            <VBox styleClass="section" spacing="15">
+                <Label text="⭐ ТОП ПО РЕЙТИНГУ" styleClass="section-title"/>
+                <ScrollPane styleClass="h-scroll" fitToHeight="true">
+                    <HBox fx:id="seriesTopRatedRow" spacing="12" styleClass="movie-row"/>
+                </ScrollPane>
+            </VBox>
+
+            <!-- Турецкие -->
+            <VBox styleClass="section" spacing="15">
+                <Label text="🌙 ТУРЕЦКИЕ СЕРИАЛЫ" styleClass="section-title"/>
+                <ScrollPane styleClass="h-scroll" fitToHeight="true">
+                    <HBox fx:id="seriesTurkishRow" spacing="12" styleClass="movie-row"/>
+                </ScrollPane>
+            </VBox>
+
+        </VBox>
+
+        <!-- ===== ГРИД ДЛЯ ПОИСКА ===== -->
+        <VBox fx:id="seriesSearchSection" visible="false" managed="false"
+              styleClass="sections-wrapper" spacing="15">
+            <FlowPane fx:id="moviesGrid"
+                      hgap="12" vgap="16"
+                      styleClass="movies-grid"/>
+        </VBox>
+
+    </VBox>
+</ScrollPane>

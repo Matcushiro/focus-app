@@ -1,44 +1,119 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.focus.controller.MoviesController"
-      styleClass="content-page"
-      spacing="0">
+<ScrollPane fitToWidth="true"
+            styleClass="main-scroll"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.focus.controller.MoviesController">
 
-    <!-- ===== Заголовок страницы ===== -->
-    <VBox styleClass="page-header" spacing="4">
-        <Label text="🎬 Фильмы" styleClass="page-main-title"/>
-        <Label text="Большой выбор отечественных и зарубежных фильмов" styleClass="page-subtitle"/>
-    </VBox>
+    <VBox styleClass="home-content" spacing="0">
 
-    <!-- ===== Строка поиска + кнопка фильтров ===== -->
-    <HBox styleClass="search-bar-row" spacing="10" alignment="CENTER_LEFT">
-        <HBox styleClass="search-input-box" HBox.hgrow="ALWAYS" spacing="0" alignment="CENTER_LEFT">
-            <Label text="🔍" styleClass="search-icon-label"/>
+        <!-- ===== БАННЕР ===== -->
+        <StackPane fx:id="moviesBannerPane" styleClass="banner-pane">
+
+            <ImageView fx:id="moviesBannerImage"
+                       styleClass="banner-bg"
+                       preserveRatio="false"
+                       fitHeight="350"/>
+
+            <Pane styleClass="banner-overlay"/>
+
+            <HBox styleClass="banner-content" alignment="BOTTOM_LEFT">
+                <VBox styleClass="banner-info" spacing="10" alignment="BOTTOM_LEFT">
+
+                    <Label text="🎬 РЕКОМЕНДУЕМ" styleClass="section-badge"/>
+
+                    <Label fx:id="moviesBannerTitle"
+                           styleClass="banner-title"
+                           wrapText="true"
+                           maxWidth="350"/>
+
+                    <Label fx:id="moviesBannerDesc"
+                           styleClass="banner-desc"
+                           wrapText="true"
+                           maxWidth="350"/>
+
+                    <Label fx:id="moviesBannerRating"
+                           styleClass="banner-rating"/>
+
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Button text="▶ СМОТРЕТЬ"
+                                styleClass="watch-btn"
+                                onAction="#watchMoviesFeatured"/>
+                    </HBox>
+
+                </VBox>
+            </HBox>
+
+        </StackPane>
+
+        <!-- ===== ПОИСК ===== -->
+        <HBox styleClass="search-bar" spacing="10" alignment="CENTER_LEFT">
             <TextField fx:id="searchField"
-                       promptText="Поиск фильмов по названию, режиссёру, жанру..."
-                       styleClass="search-input"
+                       promptText="🔍 Поиск фильмов..."
+                       styleClass="search-field"
                        HBox.hgrow="ALWAYS"/>
+            <Button fx:id="filterBtn"
+                    text="🎛 Фильтры"
+                    styleClass="filter-btn"
+                    onAction="#openFilterPopup"/>
+            <Label fx:id="resultsLabel" styleClass="results-label"/>
         </HBox>
-        <Button fx:id="filterBtn"
-                text="🎛 Фильтры"
-                styleClass="filter-btn"
-                onAction="#openFilterPopup"/>
-    </HBox>
 
-    <!-- ===== Счётчик результатов ===== -->
-    <HBox styleClass="results-row" alignment="CENTER_LEFT">
-        <Label fx:id="resultsLabel" text="" styleClass="results-label"/>
-    </HBox>
+        <!-- ===== СЕКЦИИ ===== -->
+        <VBox fx:id="moviesSectionsBox" styleClass="sections-wrapper" spacing="40">
 
-    <!-- ===== Сетка фильмов ===== -->
-    <ScrollPane styleClass="grid-scroll" VBox.vgrow="ALWAYS" fitToWidth="true">
-        <FlowPane fx:id="moviesGrid" styleClass="movies-grid"
-                  hgap="14" vgap="16"/>
-    </ScrollPane>
-</VBox>
+            <!-- Новинки -->
+            <VBox styleClass="section" spacing="15">
+                <Label text="🆕 НОВИНКИ" styleClass="section-title"/>
+                <ScrollPane styleClass="h-scroll" fitToHeight="true">
+                    <HBox fx:id="moviesLatestRow" spacing="12" styleClass="movie-row"/>
+                </ScrollPane>
+            </VBox>
+
+            <!-- Популярные -->
+            <VBox styleClass="section" spacing="15">
+                <Label text="🔥 ПОПУЛЯРНЫЕ" styleClass="section-title"/>
+                <ScrollPane styleClass="h-scroll" fitToHeight="true">
+                    <HBox fx:id="moviesPopularRow" spacing="12" styleClass="movie-row"/>
+                </ScrollPane>
+            </VBox>
+
+            <!-- Топ по рейтингу -->
+            <VBox styleClass="section" spacing="15">
+                <Label text="⭐ ТОП ПО РЕЙТИНГУ" styleClass="section-title"/>
+                <ScrollPane styleClass="h-scroll" fitToHeight="true">
+                    <HBox fx:id="moviesTopRatedRow" spacing="12" styleClass="movie-row"/>
+                </ScrollPane>
+            </VBox>
+
+            <!-- Фильм на вечер -->
+            <VBox styleClass="section" spacing="15">
+                <Label text="🌙 ФИЛЬМ НА ВЕЧЕР" styleClass="section-title"/>
+                <ScrollPane styleClass="h-scroll" fitToHeight="true">
+                    <HBox fx:id="moviesEveningRow" spacing="12" styleClass="movie-row"/>
+                </ScrollPane>
+            </VBox>
+
+            <!-- Топ 10 -->
+            <VBox styleClass="section" spacing="15">
+                <Label text="🏆 ТОП 10" styleClass="section-title"/>
+                <ScrollPane styleClass="h-scroll" fitToHeight="true">
+                    <HBox fx:id="moviesTop10Row" spacing="12" styleClass="movie-row"/>
+                </ScrollPane>
+            </VBox>
+
+        </VBox>
+
+        <!-- ===== ГРИД ДЛЯ ПОИСКА ===== -->
+        <VBox fx:id="moviesSearchSection" visible="false" managed="false"
+              styleClass="sections-wrapper" spacing="15">
+            <FlowPane fx:id="moviesGrid"
+                      hgap="12" vgap="16"
+                      styleClass="movies-grid"/>
+        </VBox>
+
+    </VBox>
+</ScrollPane>

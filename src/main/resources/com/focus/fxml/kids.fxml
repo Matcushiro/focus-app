@@ -1,25 +1,122 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.focus.controller.KidsController"
-            styleClass="root-pane">
+<ScrollPane fitToWidth="true"
+            styleClass="main-scroll kids-scroll"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.focus.controller.KidsController">
 
-    <top>
-        <VBox styleClass="catalog-top" spacing="15">
-            <Label text="🧸 Детям"
-                   styleClass="catalog-title"/>
+    <VBox styleClass="home-content kids-content" spacing="0">
+
+        <!-- ===== БАННЕР ===== -->
+        <StackPane fx:id="kidsBannerPane" styleClass="banner-pane kids-banner-pane">
+
+            <ImageView fx:id="kidsBannerImage"
+                       styleClass="banner-bg"
+                       preserveRatio="false"
+                       fitHeight="350"/>
+
+            <!-- Затемнение с зелёным оттенком -->
+            <Pane styleClass="banner-overlay kids-banner-overlay"/>
+
+            <HBox styleClass="banner-content" alignment="BOTTOM_LEFT">
+                <VBox styleClass="banner-info" spacing="10" alignment="BOTTOM_LEFT">
+
+                    <!-- Бейдж -->
+                    <Label text="👶 ДЕТСКИЙ РАЗДЕЛ"
+                           styleClass="kids-badge"/>
+
+                    <Label fx:id="kidsBannerTitle"
+                           styleClass="banner-title"
+                           wrapText="true"
+                           maxWidth="350"/>
+
+                    <Label fx:id="kidsBannerDesc"
+                           styleClass="banner-desc"
+                           wrapText="true"
+                           maxWidth="350"/>
+
+                    <Label fx:id="kidsBannerRating"
+                           styleClass="banner-rating"/>
+
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Button text="▶ СМОТРЕТЬ"
+                                styleClass="watch-btn kids-watch-btn"
+                                onAction="#watchKidsFeatured"/>
+                    </HBox>
+
+                </VBox>
+            </HBox>
+
+        </StackPane>
+
+        <!-- ===== ПОИСК ===== -->
+        <HBox styleClass="search-bar kids-search-bar" spacing="10" alignment="CENTER_LEFT">
+            <TextField fx:id="kidsSearchField"
+                       promptText="🔍 Поиск детского контента..."
+                       styleClass="search-field kids-search-field"
+                       HBox.hgrow="ALWAYS"/>
+            <Button fx:id="kidsFilterBtn"
+                    text="🎛 Фильтры"
+                    styleClass="filter-btn"
+                    onAction="#openKidsFilterPopup"/>
+            <Label fx:id="kidsResultsLabel" styleClass="results-label"/>
+        </HBox>
+
+        <!-- ===== СЕКЦИИ (скрываются при поиске) ===== -->
+        <VBox fx:id="kidsSectionsBox" styleClass="sections-wrapper" spacing="40">
+
+            <!-- Все детские -->
+            <VBox styleClass="section" spacing="15">
+                <Label text="🌈 ВСЁ ДЕТСКОЕ" styleClass="section-title kids-section-title"/>
+                <ScrollPane styleClass="h-scroll" fitToHeight="true">
+                    <HBox fx:id="kidsAllRow" spacing="12" styleClass="movie-row"/>
+                </ScrollPane>
+            </VBox>
+
+            <!-- Детские фильмы -->
+            <VBox styleClass="section" spacing="15">
+                <Label text="🎬 МУЛЬТФИЛЬМЫ И ФИЛЬМЫ" styleClass="section-title kids-section-title"/>
+                <ScrollPane styleClass="h-scroll" fitToHeight="true">
+                    <HBox fx:id="kidsFilmsRow" spacing="12" styleClass="movie-row"/>
+                </ScrollPane>
+            </VBox>
+
+            <!-- Детские сериалы -->
+            <VBox styleClass="section" spacing="15">
+                <Label text="📺 МУЛЬТСЕРИАЛЫ И СЕРИАЛЫ" styleClass="section-title kids-section-title"/>
+                <ScrollPane styleClass="h-scroll" fitToHeight="true">
+                    <HBox fx:id="kidsSeriesRow" spacing="12" styleClass="movie-row"/>
+                </ScrollPane>
+            </VBox>
+
+            <!-- Популярные детские -->
+            <VBox styleClass="section" spacing="15">
+                <Label text="🔥 ПОПУЛЯРНОЕ" styleClass="section-title kids-section-title"/>
+                <ScrollPane styleClass="h-scroll" fitToHeight="true">
+                    <HBox fx:id="kidsPopularRow" spacing="12" styleClass="movie-row"/>
+                </ScrollPane>
+            </VBox>
+
+            <!-- Новинки детских -->
+            <VBox styleClass="section" spacing="15">
+                <Label text="🆕 НОВИНКИ" styleClass="section-title kids-section-title"/>
+                <ScrollPane styleClass="h-scroll" fitToHeight="true">
+                    <HBox fx:id="kidsLatestRow" spacing="12" styleClass="movie-row"/>
+                </ScrollPane>
+            </VBox>
+
         </VBox>
-    </top>
 
-    <center>
-        <ScrollPane fitToWidth="true"
-                    styleClass="main-scroll">
-            <FlowPane fx:id="moviesGrid"
-                      styleClass="movies-grid"
-                      hgap="15" vgap="15"/>
-        </ScrollPane>
-    </center>
+        <!-- ===== ГРИД ДЛЯ ПОИСКА (виден только при поиске) ===== -->
+        <VBox fx:id="kidsSearchSection" visible="false" managed="false"
+              styleClass="sections-wrapper" spacing="15">
+            <FlowPane fx:id="kidsSearchGrid"
+                      hgap="12" vgap="16"
+                      styleClass="movies-grid"/>
+        </VBox>
 
-</BorderPane>
+    </VBox>
+</ScrollPane>

@@ -12,22 +12,26 @@
     <!-- ===== ЛЕВАЯ ПАНЕЛЬ: форма добавления ===== -->
     <left>
         <ScrollPane fitToWidth="true" styleClass="admin-scroll"
-                    prefWidth="420" minWidth="380">
+                    prefWidth="440" minWidth="400">
             <VBox styleClass="admin-form-panel" spacing="14">
 
                 <Label text="📽 Управление контентом" styleClass="admin-section-title"/>
+
+                <!-- Статус операции -->
+                <Label fx:id="statusLabel" text="Готово к работе"
+                       styleClass="admin-status-label"/>
 
                 <!-- Тип контента -->
                 <VBox spacing="5">
                     <Label text="Тип контента" styleClass="admin-field-label"/>
                     <HBox spacing="10" alignment="CENTER_LEFT">
                         <ComboBox fx:id="categoryBox" styleClass="admin-combo"
-                                  prefWidth="160"/>
+                                  prefWidth="180"/>
                         <CheckBox fx:id="isKidsContentCheck"
                                   text="👶 Детский контент"
                                   styleClass="admin-check"/>
                     </HBox>
-                    <Label text="Выберите Фильм или Сериал. Отметьте «Детский контент» если нужно."
+                    <Label text="FILM — фильм, SERIES — сериал, KIDS — детский раздел"
                            styleClass="admin-hint"/>
                 </VBox>
 
@@ -113,8 +117,8 @@
 
                 <Separator styleClass="admin-sep"/>
 
-                <!-- Флаги отображения -->
-                <Label text="Флаги отображения" styleClass="admin-field-label"/>
+                <!-- ===== Флаги секций ===== -->
+                <Label text="📌 Флаги — Главная страница" styleClass="admin-field-label"/>
                 <GridPane hgap="12" vgap="8">
                     <CheckBox fx:id="nowPlayingCheck" text="В эфире"
                               styleClass="admin-check"
@@ -128,22 +132,39 @@
                     <CheckBox fx:id="popularCheck" text="Популярное"
                               styleClass="admin-check"
                               GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                    <CheckBox fx:id="kidsCheck" text="Для детей"
-                              styleClass="admin-check"
-                              GridPane.columnIndex="0" GridPane.rowIndex="2"/>
                     <CheckBox fx:id="eveningCheck" text="Вечернее"
                               styleClass="admin-check"
-                              GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                              GridPane.columnIndex="0" GridPane.rowIndex="2"/>
                     <CheckBox fx:id="turkishCheck" text="Турецкое"
                               styleClass="admin-check"
-                              GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                              GridPane.columnIndex="1" GridPane.rowIndex="2"/>
                     <CheckBox fx:id="top10Check" text="Топ 10"
                               styleClass="admin-check"
-                              GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                    <CheckBox fx:id="featuredCheck" text="⭐ Избранное (баннер)"
+                              GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                    <CheckBox fx:id="featuredCheck" text="⭐ Баннер (главная)"
                               styleClass="admin-check"
-                              GridPane.columnIndex="0" GridPane.rowIndex="4"
+                              GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                </GridPane>
+
+                <Separator styleClass="admin-sep"/>
+
+                <!-- ===== Детский контент ===== -->
+                <Label text="👶 Флаги — Детская вкладка" styleClass="admin-field-label"/>
+                <GridPane hgap="12" vgap="8">
+                    <CheckBox fx:id="kidsCheck" text="Пометить как детское"
+                              styleClass="admin-check"
+                              GridPane.columnIndex="0" GridPane.rowIndex="0"
                               GridPane.columnSpan="2"/>
+                    <CheckBox fx:id="kidsFeaturedCheck" text="🌟 Баннер детской вкладки"
+                              styleClass="admin-check"
+                              GridPane.columnIndex="0" GridPane.rowIndex="1"
+                              GridPane.columnSpan="2"/>
+                    <CheckBox fx:id="kidsPopularCheck" text="🔥 Популярное (детское)"
+                              styleClass="admin-check"
+                              GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                    <CheckBox fx:id="kidsLatestCheck" text="🆕 Новинка (детское)"
+                              styleClass="admin-check"
+                              GridPane.columnIndex="1" GridPane.rowIndex="2"/>
                 </GridPane>
 
                 <Separator styleClass="admin-sep"/>
@@ -164,7 +185,11 @@
     <center>
         <VBox styleClass="admin-list-panel" spacing="12">
 
-            <Label text="📋 Список фильмов и сериалов" styleClass="admin-section-title"/>
+            <Label text="📋 Список фильмов, сериалов и детского контента"
+                   styleClass="admin-section-title"/>
+
+            <Label text="🎬 — Фильм   📺 — Сериал   👶 — Детское"
+                   styleClass="admin-hint"/>
 
             <ListView fx:id="moviesList" styleClass="admin-list" VBox.vgrow="ALWAYS"/>
 
