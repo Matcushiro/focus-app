@@ -4,14 +4,19 @@ import com.focus.model.User;
 
 public class SessionManager {
 
-    private static SessionManager instance;
+    // ИСПРАВЛЕНИЕ: thread-safe singleton
+    private static volatile SessionManager instance;
     private User currentUser;
 
     private SessionManager() {}
 
     public static SessionManager getInstance() {
         if (instance == null) {
-            instance = new SessionManager();
+            synchronized (SessionManager.class) {
+                if (instance == null) {
+                    instance = new SessionManager();
+                }
+            }
         }
         return instance;
     }
@@ -34,8 +39,7 @@ public class SessionManager {
     }
 
     public boolean isAdmin() {
-        return currentUser != null
-                && currentUser.isAdmin();
+        return currentUser != null && currentUser.isAdmin();
     }
 
     public void logout() {

@@ -3,6 +3,13 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 
+<!--
+    main.fxml — главная оболочка (navbar + центральный контент)
+
+    ИСПРАВЛЕНИЯ:
+    - Добавлены fx:id для кнопок навигации (homeBtn, moviesBtn, seriesBtn, kidsBtn)
+      чтобы MainController мог подсвечивать активную страницу
+-->
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:id="rootPane"
             fx:controller="com.focus.controller.MainController"
@@ -11,7 +18,7 @@
     <top>
         <HBox styleClass="navbar"
               alignment="CENTER_LEFT"
-              spacing="20">
+              spacing="4">
 
             <!-- Логотип -->
             <ImageView fx:id="logoImage"
@@ -20,16 +27,20 @@
                        preserveRatio="true"/>
 
             <!-- Навигация -->
-            <Button text="Главная"
-                    styleClass="nav-btn"
+            <Button fx:id="homeBtn"
+                    text="Главная"
+                    styleClass="nav-btn-active"
                     onAction="#goHome"/>
-            <Button text="Фильмы"
+            <Button fx:id="moviesBtn"
+                    text="Фильмы"
                     styleClass="nav-btn"
                     onAction="#goMovies"/>
-            <Button text="Сериалы"
+            <Button fx:id="seriesBtn"
+                    text="Сериалы"
                     styleClass="nav-btn"
                     onAction="#goSeries"/>
-            <Button text="Детям"
+            <Button fx:id="kidsBtn"
+                    text="Детям"
                     styleClass="nav-btn"
                     onAction="#goKids"/>
 

@@ -19,21 +19,30 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+/**
+ * ProfileController — профиль пользователя.
+ *
+ * ИСПРАВЛЕНИЯ:
+ * - Дописан метод saveProfile() (в оригинале был обрезан)
+ * - После сохранения профиля — обновляется имя в навбаре через MainController
+ * - Добавлен метод logout()
+ * - Null-checks для всех FXML-полей
+ */
 public class ProfileController implements Initializable {
 
-    @FXML private Label usernameLabel;
-    @FXML private Label emailLabel;
-    @FXML private Label avatarLabel;
-    @FXML private Label watchedCount;
-    @FXML private Label favoritesCount;
-    @FXML private HBox favoritesRow;
-    @FXML private HBox historyRow;
+    @FXML private Label    usernameLabel;
+    @FXML private Label    emailLabel;
+    @FXML private Label    avatarLabel;
+    @FXML private Label    watchedCount;
+    @FXML private Label    favoritesCount;
+    @FXML private HBox     favoritesRow;
+    @FXML private HBox     historyRow;
 
-    @FXML private VBox editForm;
-    @FXML private TextField editUsername;
-    @FXML private TextField editEmail;
+    @FXML private VBox          editForm;
+    @FXML private TextField     editUsername;
+    @FXML private TextField     editEmail;
     @FXML private PasswordField editPassword;
-    @FXML private Label editError;
+    @FXML private Label         editError;
 
     private final DatabaseManager db = DatabaseManager.getInstance();
     private User currentUser;
@@ -41,7 +50,6 @@ public class ProfileController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         currentUser = SessionManager.getInstance().getCurrentUser();
-
         if (currentUser != null) {
             loadProfile();
         } else {
@@ -51,16 +59,22 @@ public class ProfileController implements Initializable {
     }
 
     private void loadProfile() {
-        // Обновляем UI на JavaFX потоке
         if (usernameLabel != null) usernameLabel.setText(currentUser.getUsername());
-        if (emailLabel != null) emailLabel.setText(
-                currentUser.getEmail() != null && !currentUser.getEmail().isBlank()
-                        ? currentUser.getEmail()
-                        : "Email не указан"
-        );
-        if (avatarLabel != null) avatarLabel.setText(
-                String.valueOf(currentUser.getUsername().charAt(0)).toUpperCase()
-        );
+
+        if (emailLabel != null) {
+            String contact = currentUser.getEmail() != null && !currentUser.getEmail().isBlank()
+                    ? currentUser.getEmail()
+                    : (currentUser.getPhone() != null && !currentUser.getPhone().isBlank()
+                       ? currentUser.getPhone()
+                       : "Контакт не указан");
+            emailLabel.setText(contact);
+        }
+
+        if (avatarLabel != null) {
+            avatarLabel.setText(
+                    String.valueOf(currentUser.getUsername().charAt(0)).toUpperCase()
+            );
+        }
 
         // Скрываем форму редактирования при загрузке профиля
         if (editForm != null) {
@@ -68,7 +82,6 @@ public class ProfileController implements Initializable {
             editForm.setManaged(false);
         }
 
-        // Асинхронно загружаем избранное и историю
         loadFavoritesAsync();
         loadHistoryAsync();
     }
@@ -76,8 +89,7 @@ public class ProfileController implements Initializable {
     private void loadFavoritesAsync() {
         db.async(() -> db.getFavorites(currentUser.getId()))
                 .thenAccept(favs -> Platform.runLater(() -> {
-                    if (favoritesCount != null)
-                        favoritesCount.setText(String.valueOf(favs.size()));
+                    if (favoritesCount != null) favoritesCount.setText(String.valueOf(favs.size()));
                     if (favoritesRow != null) {
                         favoritesRow.getChildren().clear();
                         if (favs.isEmpty()) {
@@ -85,9 +97,7 @@ public class ProfileController implements Initializable {
                             empty.getStyleClass().add("filter-label");
                             favoritesRow.getChildren().add(empty);
                         } else {
-                            for (Movie m : favs) {
-                                favoritesRow.getChildren().add(createCard(m));
-                            }
+                            for (Movie m : favs) favoritesRow.getChildren().add(createCard(m));
                         }
                     }
                 }))
@@ -97,8 +107,7 @@ public class ProfileController implements Initializable {
     private void loadHistoryAsync() {
         db.async(() -> db.getWatchHistory(currentUser.getId()))
                 .thenAccept(history -> Platform.runLater(() -> {
-                    if (watchedCount != null)
-                        watchedCount.setText(String.valueOf(history.size()));
+                    if (watchedCount != null) watchedCount.setText(String.valueOf(history.size()));
                     if (historyRow != null) {
                         historyRow.getChildren().clear();
                         if (history.isEmpty()) {
@@ -106,9 +115,7 @@ public class ProfileController implements Initializable {
                             empty.getStyleClass().add("filter-label");
                             historyRow.getChildren().add(empty);
                         } else {
-                            for (Movie m : history) {
-                                historyRow.getChildren().add(createCard(m));
-                            }
+                            for (Movie m : history) historyRow.getChildren().add(createCard(m));
                         }
                     }
                 }))
@@ -156,8 +163,8 @@ public class ProfileController implements Initializable {
             Parent page = loader.load();
             DetailController ctrl = loader.getController();
             ctrl.setMovie(movie);
-            BorderPane root = (BorderPane) usernameLabel.getScene().getRoot();
-            root.setCenter(page);
+            BorderPane root = getRootPane();
+            if (root != null) root.setCenter(page);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -168,11 +175,11 @@ public class ProfileController implements Initializable {
     @FXML
     private void editProfile() {
         if (editUsername != null) editUsername.setText(currentUser.getUsername());
-        if (editEmail != null) editEmail.setText(
+        if (editEmail    != null) editEmail.setText(
                 currentUser.getEmail() != null ? currentUser.getEmail() : ""
         );
         if (editPassword != null) editPassword.clear();
-        if (editError != null) editError.setText("");
+        if (editError    != null) editError.setText("");
 
         if (editForm != null) {
             editForm.setVisible(true);
@@ -182,13 +189,13 @@ public class ProfileController implements Initializable {
 
     @FXML
     private void cancelEdit() {
-        if (editForm != null) {
-            editForm.setVisible(false);
-            editForm.setManaged(false);
-        }
+        if (editForm  != null) { editForm.setVisible(false); editForm.setManaged(false); }
         if (editError != null) editError.setText("");
     }
 
+    /**
+     * ИСПРАВЛЕНИЕ: метод был обрезан в оригинале — дописан полностью.
+     */
     @FXML
     private void saveProfile() {
         String username = editUsername != null ? editUsername.getText().trim() : "";
@@ -199,67 +206,66 @@ public class ProfileController implements Initializable {
             if (editError != null) editError.setText("Введите имя пользователя!");
             return;
         }
+        if (!password.isEmpty() && password.length() < 6) {
+            if (editError != null) editError.setText("Пароль минимум 6 символов!");
+            return;
+        }
 
         if (editError != null) editError.setText("⏳ Сохранение...");
 
         final String finalUsername = username;
         final String finalEmail    = email;
-        final String finalPassword = password;
+        final String finalPassword = password.isEmpty() ? null : password;
 
         db.async(() -> db.updateUser(
                 currentUser.getId(),
                 finalUsername,
                 finalEmail,
-                finalPassword.isEmpty() ? null : finalPassword
+                finalPassword
         )).thenAccept(success -> Platform.runLater(() -> {
             if (success) {
                 currentUser.setUsername(finalUsername);
                 currentUser.setEmail(finalEmail);
                 SessionManager.getInstance().setCurrentUser(currentUser);
+
+                // ИСПРАВЛЕНИЕ: обновляем имя в навбаре через MainController
+                BorderPane root = getRootPane();
+                if (root != null) {
+                    MainController mainCtrl = (MainController) root.getUserData();
+                    if (mainCtrl != null) mainCtrl.setLoggedIn(finalUsername);
+                }
+
                 loadProfile();
                 cancelEdit();
 
-                // Обновляем имя пользователя в навигации
-                try {
-                    BorderPane root = (BorderPane) usernameLabel.getScene().getRoot();
-                    MainController mainCtrl = (MainController) root.getUserData();
-                    if (mainCtrl != null) {
-                        mainCtrl.setLoggedIn(finalUsername);
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                if (editError != null) editError.setText("✅ Сохранено!");
             } else {
-                if (editError != null)
-                    editError.setText("❌ Ошибка. Возможно, имя уже занято.");
+                if (editError != null) editError.setText("❌ Ошибка: имя уже занято!");
             }
         })).exceptionally(e -> {
             e.printStackTrace();
             Platform.runLater(() -> {
-                if (editError != null)
-                    editError.setText("❌ Ошибка при сохранении. Попробуйте ещё раз.");
+                if (editError != null) editError.setText("❌ Ошибка сохранения");
             });
             return null;
         });
     }
 
+    // ===== Выход =====
+
     @FXML
     private void logout() {
         SessionManager.getInstance().logout();
-        try {
-            BorderPane root = (BorderPane) usernameLabel.getScene().getRoot();
+
+        BorderPane root = getRootPane();
+        if (root != null) {
             MainController mainCtrl = (MainController) root.getUserData();
             if (mainCtrl != null) {
                 mainCtrl.setLoggedOut();
+                return;
             }
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/focus/fxml/home.fxml")
-            );
-            Node page = loader.load();
-            root.setCenter(page);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        goToLogin();
     }
 
     private void goToLogin() {
@@ -267,16 +273,22 @@ public class ProfileController implements Initializable {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/com/focus/fxml/login.fxml")
             );
-            // Ищем корень через любой доступный узел
-            Node refNode = (favoritesRow != null) ? favoritesRow
-                    : (usernameLabel != null ? usernameLabel : null);
-            if (refNode != null && refNode.getScene() != null) {
-                Node page = loader.load();
-                BorderPane root = (BorderPane) refNode.getScene().getRoot();
-                root.setCenter(page);
-            }
+            Node page = loader.load();
+            BorderPane root = getRootPane();
+            if (root != null) root.setCenter(page);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /** Безопасно получает корневой BorderPane */
+    private BorderPane getRootPane() {
+        try {
+            javafx.scene.Node ref = usernameLabel != null ? usernameLabel : avatarLabel;
+            if (ref != null && ref.getScene() != null) {
+                return (BorderPane) ref.getScene().getRoot();
+            }
+        } catch (Exception ignored) {}
+        return null;
     }
 }

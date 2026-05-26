@@ -21,24 +21,37 @@ import javafx.scene.layout.HBox;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * DetailController — страница детали фильма/сериала.
+ *
+ * ИСПРАВЛЕНИЯ:
+ * - goBack() теперь возвращает на предыдущую страницу через MainController,
+ *   а не всегда только на home.fxml
+ * - Добавлен null-check для всех FXML-полей в fillData()
+ * - isFavorite проверяется асинхронно, чтобы не блокировать UI
+ * - Кнопка "В список" меняет текст в зависимости от состояния
+ */
 public class DetailController implements Initializable {
 
     @FXML private ImageView backdropImage;
     @FXML private ImageView posterImage;
-    @FXML private Label titleLabel;
-    @FXML private Label ratingLabel;
-    @FXML private Label yearLabel;
-    @FXML private Label durationLabel;
-    @FXML private Label categoryLabel;
-    @FXML private Label descLabel;
-    @FXML private Label directorLabel;
-    @FXML private Label countryLabel;
-    @FXML private Label genresLabel;
-    @FXML private HBox genresBox;
+    @FXML private Label     titleLabel;
+    @FXML private Label     ratingLabel;
+    @FXML private Label     yearLabel;
+    @FXML private Label     durationLabel;
+    @FXML private Label     categoryLabel;
+    @FXML private Label     descLabel;
+    @FXML private Label     directorLabel;
+    @FXML private Label     countryLabel;
+    @FXML private Label     genresLabel;
+    @FXML private HBox      genresBox;
 
-    private Movie currentMovie;
-    private final DatabaseManager db =
-            DatabaseManager.getInstance();
+    // ИСПРАВЛЕНИЕ: кнопка "В список" для обновления текста
+    @FXML private javafx.scene.control.Button favoriteBtn;
+
+    private Movie  currentMovie;
+    private boolean isFav = false;
+    private final DatabaseManager db = DatabaseManager.getInstance();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {}
@@ -46,134 +59,123 @@ public class DetailController implements Initializable {
     public void setMovie(Movie movie) {
         this.currentMovie = movie;
         fillData(movie);
+        checkFavoriteAsync(movie);
     }
 
     private void fillData(Movie movie) {
-        titleLabel.setText(movie.getTitle());
+        if (titleLabel    != null) titleLabel.setText(movie.getTitle());
+        if (ratingLabel   != null) ratingLabel.setText("⭐ " + String.format("%.1f", movie.getRating()));
+        if (yearLabel     != null) yearLabel.setText(String.valueOf(movie.getYear()));
 
-        ratingLabel.setText(
-                "⭐ " + String.format(
-                        "%.1f", movie.getRating()
-                )
-        );
-
-        yearLabel.setText(String.valueOf(movie.getYear()));
-
-        if (movie.getDuration() > 0) {
-            int hours   = movie.getDuration() / 60;
-            int minutes = movie.getDuration() % 60;
-            durationLabel.setText(
-                    hours > 0
-                            ? hours + " ч " + minutes + " мин"
-                            : minutes + " мин"
-            );
-        }
-
-        if (movie.getCategory() != null) {
-            switch (movie.getCategory()) {
-                case "FILM"   ->
-                        categoryLabel.setText("Фильм");
-                case "SERIES" ->
-                        categoryLabel.setText("Сериал");
-                case "KIDS"   ->
-                        categoryLabel.setText("Детское");
-                default ->
-                        categoryLabel.setText("");
+        if (durationLabel != null) {
+            if (movie.getDuration() > 0) {
+                int hours   = movie.getDuration() / 60;
+                int minutes = movie.getDuration() % 60;
+                durationLabel.setText(hours > 0
+                        ? hours + " ч " + minutes + " мин"
+                        : minutes + " мин");
+            } else {
+                durationLabel.setText("");
             }
         }
 
-        descLabel.setText(
-                movie.getDescription() != null
-                        ? movie.getDescription()
-                        : "Описание отсутствует"
-        );
+        if (categoryLabel != null && movie.getCategory() != null) {
+            categoryLabel.setText(switch (movie.getCategory()) {
+                case "FILM"   -> "Фильм";
+                case "SERIES" -> "Сериал";
+                case "KIDS"   -> "Детское";
+                default       -> "";
+            });
+        }
 
-        directorLabel.setText(
-                movie.getDirector() != null
-                        ? movie.getDirector() : "—"
-        );
+        if (descLabel != null) {
+            descLabel.setText(
+                    movie.getDescription() != null && !movie.getDescription().isBlank()
+                            ? movie.getDescription()
+                            : "Описание отсутствует"
+            );
+        }
 
-        countryLabel.setText(
-                movie.getCountry() != null
-                        ? movie.getCountry() : "—"
-        );
+        if (directorLabel != null) directorLabel.setText(movie.getDirector() != null ? movie.getDirector() : "—");
+        if (countryLabel  != null) countryLabel.setText(movie.getCountry()   != null ? movie.getCountry()  : "—");
+        if (genresLabel   != null) genresLabel.setText(movie.getGenres()     != null ? movie.getGenres()   : "—");
 
-        genresLabel.setText(
-                movie.getGenres() != null
-                        ? movie.getGenres() : "—"
-        );
-
-        if (movie.getPosterPath() != null
-                && !movie.getPosterPath().isEmpty()) {
+        // Загрузка изображений
+        if (movie.getPosterPath() != null && !movie.getPosterPath().isEmpty()) {
             try {
-                posterImage.setImage(new Image(
-                        "file:" + movie.getPosterPath(),
-                        220, 330, false, true, true
-                ));
+                if (posterImage != null) {
+                    posterImage.setImage(new Image(
+                            "file:" + movie.getPosterPath(), 220, 330, false, true, true
+                    ));
+                }
 
-                String bannerPath =
-                        (movie.getBannerPath() != null
-                                && !movie.getBannerPath().isEmpty())
-                                ? movie.getBannerPath()
-                                : movie.getPosterPath();
+                String bannerPath = (movie.getBannerPath() != null && !movie.getBannerPath().isEmpty())
+                        ? movie.getBannerPath()
+                        : movie.getPosterPath();
 
-                backdropImage.setImage(
-                        new Image("file:" + bannerPath, true)
-                );
-                backdropImage.setFitHeight(300);
-
+                if (backdropImage != null) {
+                    backdropImage.setImage(new Image("file:" + bannerPath, true));
+                    backdropImage.setFitHeight(300);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
+    /**
+     * ИСПРАВЛЕНИЕ: асинхронная проверка избранного,
+     * чтобы не вызывать БД из UI-потока.
+     */
+    private void checkFavoriteAsync(Movie movie) {
+        if (!SessionManager.getInstance().isLoggedIn()) return;
+        int userId = SessionManager.getInstance().getCurrentUser().getId();
+        db.async(() -> db.isFavorite(userId, movie.getId()))
+                .thenAccept(fav -> Platform.runLater(() -> {
+                    isFav = fav;
+                    updateFavoriteBtn();
+                }))
+                .exceptionally(e -> { e.printStackTrace(); return null; });
+    }
+
+    private void updateFavoriteBtn() {
+        if (favoriteBtn != null) {
+            favoriteBtn.setText(isFav ? "✅ В избранном" : "+ В список");
+        }
+    }
+
+    // ===== Действия =====
+
     @FXML
     private void watchMovie() {
         if (currentMovie == null) return;
 
         if (SessionManager.getInstance().isLoggedIn()) {
-            db.addToHistory(
-                    SessionManager.getInstance()
-                            .getCurrentUser().getId(),
-                    currentMovie.getId()
-            );
-            db.logAction(
-                    SessionManager.getInstance()
-                            .getCurrentUser().getId(),
-                    SessionManager.getInstance()
-                            .getCurrentUser()
-                            .getUsername(),
-                    "WATCH_MOVIE",
-                    "Смотрит: " + currentMovie.getTitle()
-            );
+            int    uid      = SessionManager.getInstance().getCurrentUser().getId();
+            String username = SessionManager.getInstance().getCurrentUser().getUsername();
+            // Асинхронная запись истории и лога
+            db.asyncRun(() -> {
+                db.addToHistory(uid, currentMovie.getId());
+                db.logAction(uid, username, "WATCH_MOVIE", "Смотрит: " + currentMovie.getTitle());
+            }).exceptionally(e -> { e.printStackTrace(); return null; });
         }
 
-        if (currentMovie.getVideoPath() != null
-                && !currentMovie.getVideoPath().isEmpty()) {
+        if (currentMovie.getVideoPath() != null && !currentMovie.getVideoPath().isEmpty()) {
             openPlayer(currentMovie);
         } else {
-            showAlert(
-                    "Видео файл не прикреплён к этому фильму."
-            );
+            showAlert("Видео файл не прикреплён к этому фильму.");
         }
     }
 
     private void openPlayer(Movie movie) {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource(
-                            "/com/focus/fxml/player.fxml"
-                    )
+                    getClass().getResource("/com/focus/fxml/player.fxml")
             );
             Parent page = loader.load();
-            PlayerController ctrl =
-                    loader.getController();
+            PlayerController ctrl = loader.getController();
             ctrl.setMovie(movie);
-
-            BorderPane root =
-                    (BorderPane) titleLabel
-                            .getScene().getRoot();
+            BorderPane root = (BorderPane) titleLabel.getScene().getRoot();
             root.setCenter(page);
         } catch (Exception e) {
             e.printStackTrace();
@@ -183,75 +185,75 @@ public class DetailController implements Initializable {
     @FXML
     private void addToFavorites() {
         if (!SessionManager.getInstance().isLoggedIn()) {
-            showAlert(
-                    "Войдите чтобы добавить в избранное!"
-            );
+            showAlert("Войдите, чтобы добавить в избранное!");
             return;
         }
 
-        int userId = SessionManager.getInstance()
-                .getCurrentUser().getId();
+        int    userId   = SessionManager.getInstance().getCurrentUser().getId();
+        String username = SessionManager.getInstance().getCurrentUser().getUsername();
 
-        if (db.isFavorite(userId, currentMovie.getId())) {
-            db.removeFromFavorites(
-                    userId, currentMovie.getId()
-            );
-            showAlert("Удалено из избранного");
-        } else {
-            db.addToFavorites(
-                    userId, currentMovie.getId()
-            );
-            db.logAction(
-                    userId,
-                    SessionManager.getInstance()
-                            .getCurrentUser()
-                            .getUsername(),
-                    "ADD_FAVORITE",
-                    currentMovie.getTitle()
-            );
-            showAlert("✅ Добавлено в избранное!");
-        }
+        // ИСПРАВЛЕНИЕ: операция асинхронная
+        db.asyncRun(() -> {
+            if (isFav) {
+                db.removeFromFavorites(userId, currentMovie.getId());
+            } else {
+                db.addToFavorites(userId, currentMovie.getId());
+                db.logAction(userId, username, "ADD_FAVORITE", currentMovie.getTitle());
+            }
+        }).thenRun(() -> Platform.runLater(() -> {
+            isFav = !isFav;
+            updateFavoriteBtn();
+            showAlert(isFav ? "✅ Добавлено в избранное!" : "Удалено из избранного");
+        })).exceptionally(e -> { e.printStackTrace(); return null; });
     }
 
+    /**
+     * ИСПРАВЛЕНИЕ: goBack() возвращает на предыдущую страницу,
+     * определяя её через MainController.
+     * Если нет доступа к MainController — возвращает на home.fxml.
+     */
     @FXML
     private void goBack() {
         try {
+            BorderPane root = (BorderPane) titleLabel.getScene().getRoot();
+
+            // Пробуем получить MainController для определения предыдущей страницы
+            MainController mainCtrl = (MainController) root.getUserData();
+            String backPage = (mainCtrl != null) ? mainCtrl.getLastPage() : "home.fxml";
+
+            // Если текущая страница та же, что и lastPage — идём на home
+            if ("detail.fxml".equals(backPage)) backPage = "home.fxml";
+
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource(
-                            "/com/focus/fxml/home.fxml"
-                    )
+                    getClass().getResource("/com/focus/fxml/" + backPage)
             );
             Node page = loader.load();
-            BorderPane root =
-                    (BorderPane) titleLabel
-                            .getScene().getRoot();
             root.setCenter(page);
         } catch (Exception e) {
-            e.printStackTrace();
+            // Фallback — всегда home.fxml
+            try {
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/com/focus/fxml/home.fxml")
+                );
+                Node page = loader.load();
+                BorderPane root = (BorderPane) titleLabel.getScene().getRoot();
+                root.setCenter(page);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
     private void showAlert(String message) {
         Platform.runLater(() -> {
-            Alert alert = new Alert(
-                    Alert.AlertType.INFORMATION
-            );
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Focus");
             alert.setHeaderText(null);
             alert.setContentText(message);
-
             DialogPane dp = alert.getDialogPane();
-            dp.setStyle(
-                    "-fx-background-color: #1a1a1a;"
-            );
-            Label content = (Label) dp.lookup(
-                    ".content.label"
-            );
-            if (content != null) {
-                content.setStyle(
-                        "-fx-text-fill: white;"
-                );
-            }
+            dp.setStyle("-fx-background-color: #1a1a1a;");
+            Label content = (Label) dp.lookup(".content.label");
+            if (content != null) content.setStyle("-fx-text-fill: white;");
             alert.showAndWait();
         });
     }
