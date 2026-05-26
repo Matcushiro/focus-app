@@ -603,13 +603,38 @@
     -fx-background-color: #000000;
 }
 
+/* ===== ФОН СТРАНИЦЫ ВХОДА ===== */
+.login-bg {
+    -fx-background-color: linear-gradient(
+            from 0% 0% to 0% 100%,
+            #000000 0%,
+            #0d0d0d 60%,
+            #141414 100%
+    );
+    -fx-alignment: center;
+    -fx-padding: 40px 20px;
+    -fx-spacing: 0;
+}
+
+/* ===== КАРТОЧКА ФОРМЫ ===== */
 .login-card {
-    -fx-background-color: #1e1e1e;
+    -fx-background-color: #141414;
     -fx-background-radius: 14px;
-    -fx-padding: 48px 40px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 30, 0, 0, 8);
+    -fx-border-color: #2a2a2a;
+    -fx-border-radius: 14px;
+    -fx-border-width: 1px;
+    -fx-padding: 40px 44px 44px 44px;
+    -fx-spacing: 22px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 40, 0, 0, 8);
     -fx-max-width: 420px;
-    -fx-min-width: 360px;
+    -fx-min-width: 380px;
+}
+
+/* ===== ЛОГОТИП В ФОРМЕ ===== */
+.login-logo-section {
+    -fx-alignment: center;
+    -fx-spacing: 6px;
+    -fx-padding: 0 0 8px 0;
 }
 
 .login-logo {
@@ -619,68 +644,216 @@
     -fx-font-family: "Arial Black";
 }
 
-.login-title {
-    -fx-text-fill: #ffffff;
-    -fx-font-size: 22px;
-    -fx-font-weight: bold;
+.login-tagline {
+    -fx-text-fill: #666666;
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
 }
 
-.login-sub {
-    -fx-text-fill: #777777;
-    -fx-font-size: 13px;
-}
-
-.login-label {
-    -fx-text-fill: #aaaaaa;
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-}
-
-.login-field {
+/* ===== РАЗДЕЛИТЕЛЬ В ФОРМЕ ===== */
+.login-separator {
     -fx-background-color: #2a2a2a;
-    -fx-text-fill: #e5e5e5;
-    -fx-prompt-text-fill: #555555;
-    -fx-font-size: 14px;
-    -fx-padding: 12px 14px;
+    -fx-pref-height: 1px;
+    -fx-max-height: 1px;
+    -fx-min-height: 1px;
+}
+
+/* ===== ВКЛАДКИ: ВОЙТИ / РЕГИСТРАЦИЯ ===== */
+.login-tabs {
+    -fx-spacing: 0;
+    -fx-background-color: #0f0f0f;
     -fx-background-radius: 8px;
-    -fx-border-color: #3a3a3a;
+    -fx-border-color: #2a2a2a;
     -fx-border-radius: 8px;
     -fx-border-width: 1px;
-    -fx-pref-height: 44px;
+    -fx-padding: 3px;
 }
 
-.login-field:focused {
+.login-tab {
+    -fx-background-color: transparent;
+    -fx-text-fill: #777777;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 9px 0;
+    -fx-cursor: hand;
+    -fx-background-radius: 6px;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
+.login-tab:hover {
+    -fx-text-fill: #cccccc;
+    -fx-background-color: rgba(255,255,255,0.05);
+}
+
+.login-tab-active {
+    -fx-background-color: #E65C00;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 9px 0;
+    -fx-cursor: hand;
+    -fx-background-radius: 6px;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-effect: dropshadow(gaussian, rgba(230,92,0,0.35), 8, 0, 0, 0);
+}
+
+/* ===== ФОРМА (общий контейнер) ===== */
+.login-form {
+    -fx-spacing: 14px;
+}
+
+/* ===== ЗАГОЛОВКИ ФОРМЫ ===== */
+.login-form-title {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.login-form-subtitle {
+    -fx-text-fill: #666666;
+    -fx-font-size: 13px;
+}
+
+/* ===== МЕТКА ПОЛЯ ===== */
+.login-field-label {
+    -fx-text-fill: #aaaaaa;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+/* ===== ОБЁРТКА ПОЛЯ ВВОДА (иконка + TextField) ===== */
+.login-input-wrap {
+    -fx-background-color: #1e1e1e;
+    -fx-background-radius: 8px;
+    -fx-border-color: #2f2f2f;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-padding: 0 14px;
+    -fx-pref-height: 46px;
+    -fx-min-height: 46px;
+    -fx-alignment: center-left;
+    -fx-spacing: 10px;
+}
+
+.login-input-wrap:hover {
+    -fx-border-color: #444444;
+}
+
+.login-input-wrap:focused-within {
     -fx-border-color: #E65C00;
+    -fx-background-color: #1a1a1a;
     -fx-effect: dropshadow(gaussian, rgba(230,92,0,0.2), 8, 0, 0, 0);
 }
 
-.login-btn {
-    -fx-background-color: #E65C00;
-    -fx-text-fill: white;
+/* ===== ИКОНКА ВНУТРИ ПОЛЯ ===== */
+.login-input-icon {
+    -fx-text-fill: #555555;
     -fx-font-size: 15px;
+    -fx-min-width: 20px;
+}
+
+.login-input-wrap:focused-within .login-input-icon {
+    -fx-text-fill: #E65C00;
+}
+
+/* ===== ПОЛЕ ВВОДА TextField / PasswordField ===== */
+.login-input {
+    -fx-background-color: transparent;
+    -fx-text-fill: #e5e5e5;
+    -fx-prompt-text-fill: #555555;
+    -fx-font-size: 14px;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.login-input:focused {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* ===== ПОДСКАЗКА (hint) ===== */
+.login-hint {
+    -fx-text-fill: #555555;
+    -fx-font-size: 11px;
+    -fx-font-style: italic;
+    -fx-padding: 2px 0 0 0;
+}
+
+/* ===== ОШИБКА ===== */
+.login-error {
+    -fx-text-fill: #e05555;
+    -fx-font-size: 12px;
+    -fx-background-color: rgba(224,85,85,0.08);
+    -fx-background-radius: 6px;
+    -fx-border-color: rgba(224,85,85,0.25);
+    -fx-border-radius: 6px;
+    -fx-border-width: 1px;
+    -fx-padding: 8px 12px;
+    -fx-wrap-text: true;
+}
+
+/* ===== КНОПКА ВОЙТИ / ЗАРЕГИСТРИРОВАТЬСЯ (PRIMARY) ===== */
+.login-btn-primary {
+    -fx-background-color: #E65C00;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-padding: 13px 0;
     -fx-background-radius: 8px;
     -fx-cursor: hand;
-    -fx-pref-width: 340px;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-effect: dropshadow(gaussian, rgba(230,92,0,0.3), 10, 0, 0, 2);
 }
 
-.login-btn:hover {
+.login-btn-primary:hover {
     -fx-background-color: #FF6A00;
-    -fx-effect: dropshadow(gaussian, rgba(230,92,0,0.4), 14, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(230,92,0,0.55), 16, 0, 0, 0);
     -fx-scale-x: 1.01;
     -fx-scale-y: 1.01;
 }
 
-.login-err {
-    -fx-text-fill: #ff4444;
-    -fx-font-size: 12px;
+.login-btn-primary:pressed {
+    -fx-background-color: #cc5200;
+    -fx-scale-x: 0.99;
+    -fx-scale-y: 0.99;
+    -fx-effect: none;
 }
 
+/* ===== КНОПКА ВТОРИЧНАЯ (SECONDARY) ===== */
+.login-btn-secondary {
+    -fx-background-color: transparent;
+    -fx-text-fill: #888888;
+    -fx-font-size: 13px;
+    -fx-padding: 10px 0;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-border-color: #2f2f2f;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+}
+
+.login-btn-secondary:hover {
+    -fx-text-fill: #cccccc;
+    -fx-border-color: #444444;
+    -fx-background-color: rgba(255,255,255,0.04);
+}
+
+/* ===== ССЫЛКА (текстовая кнопка) ===== */
 .login-link {
+    -fx-background-color: transparent;
     -fx-text-fill: #E65C00;
     -fx-font-size: 13px;
+    -fx-font-weight: bold;
     -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-underline: false;
+    -fx-padding: 0;
 }
 
 .login-link:hover {
@@ -688,16 +861,166 @@
     -fx-underline: true;
 }
 
-.login-divider {
-    -fx-background-color: #2a2a2a;
-    -fx-pref-height: 1px;
+/* ===== ПОДВАЛ ФОРМЫ ===== */
+.login-footer {
+    -fx-alignment: center;
+    -fx-spacing: 6px;
+    -fx-padding: 8px 0 0 0;
 }
 
-.login-divider-label {
-    -fx-text-fill: #444444;
+.login-footer-text {
+    -fx-text-fill: #555555;
     -fx-font-size: 12px;
-    -fx-padding: 0 10px;
 }
+
+/* ===== CHECKBOX (запомнить меня) ===== */
+.login-checkbox {
+    -fx-text-fill: #888888;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+
+.login-checkbox .box {
+    -fx-background-color: #1e1e1e;
+    -fx-border-color: #2f2f2f;
+    -fx-border-radius: 4px;
+    -fx-border-width: 1px;
+    -fx-background-radius: 4px;
+}
+
+.login-checkbox:selected .box {
+    -fx-background-color: #E65C00;
+    -fx-border-color: #E65C00;
+}
+
+.login-checkbox:selected .mark {
+    -fx-background-color: #ffffff;
+}
+
+.login-checkbox:hover .box {
+    -fx-border-color: #E65C00;
+}
+
+/* ===== СТРОКА "ЗАПОМНИТЬ + ЗАБЫЛИ ПАРОЛЬ" ===== */
+.login-remember-row {
+    -fx-alignment: center-left;
+    -fx-spacing: 0;
+}
+
+/* ===== DECORATIVE ACCENT LINE (оранжевая полоска) ===== */
+.login-accent-bar {
+    -fx-background-color: linear-gradient(
+            from 0% 0% to 100% 0%,
+            #E65C00 0%,
+            #FF6A00 50%,
+            transparent 100%
+    );
+    -fx-pref-height: 3px;
+    -fx-max-height: 3px;
+    -fx-min-height: 3px;
+    -fx-background-radius: 2px;
+}
+
+/* ===== SPINNER / ИНДИКАТОР ЗАГРУЗКИ ===== */
+.login-progress {
+    -fx-progress-color: #E65C00;
+    -fx-pref-width: 24px;
+    -fx-pref-height: 24px;
+}
+
+/* ===== COMBO BOX (роль/пол при регистрации) ===== */
+.login-combo {
+    -fx-background-color: #1e1e1e;
+    -fx-text-fill: #e5e5e5;
+    -fx-font-size: 14px;
+    -fx-pref-height: 46px;
+    -fx-background-radius: 8px;
+    -fx-border-color: #2f2f2f;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-cursor: hand;
+    -fx-padding: 0 8px;
+}
+
+.login-combo:hover {
+    -fx-border-color: #444444;
+}
+
+.login-combo:focused {
+    -fx-border-color: #E65C00;
+}
+
+.login-combo .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #e5e5e5;
+    -fx-font-size: 14px;
+    -fx-padding: 6px 12px;
+}
+
+.login-combo .list-view {
+    -fx-background-color: #1e1e1e;
+    -fx-border-color: #2f2f2f;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 16, 0, 0, 4);
+}
+
+.login-combo .list-view .list-cell:hover {
+    -fx-background-color: rgba(230,92,0,0.12);
+    -fx-text-fill: #E65C00;
+}
+
+.login-combo .list-view .list-cell:selected {
+    -fx-background-color: rgba(230,92,0,0.2);
+    -fx-text-fill: #E65C00;
+}
+
+.login-combo .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.login-combo .arrow {
+    -fx-background-color: #777777;
+}
+
+/* ===== DATE PICKER (дата рождения при регистрации) ===== */
+.login-date-picker {
+    -fx-background-color: #1e1e1e;
+    -fx-border-color: #2f2f2f;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-background-radius: 8px;
+    -fx-pref-height: 46px;
+}
+
+.login-date-picker:hover {
+    -fx-border-color: #444444;
+}
+
+.login-date-picker:focused {
+    -fx-border-color: #E65C00;
+}
+
+.login-date-picker .text-field {
+    -fx-background-color: transparent;
+    -fx-text-fill: #e5e5e5;
+    -fx-prompt-text-fill: #555555;
+    -fx-font-size: 14px;
+    -fx-padding: 0 12px;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
+.login-date-picker .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 12px;
+}
+
+.login-date-picker .arrow-button .arrow {
+    -fx-background-color: #777777;
+}
+
 
 /* ===== СТРАНИЦА ПРОФИЛЯ ===== */
 .profile-page {
