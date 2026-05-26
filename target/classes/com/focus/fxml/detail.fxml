@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+
+<ScrollPane fitToWidth="true"
+            styleClass="main-scroll"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.focus.controller.DetailController">
+
+    <VBox styleClass="detail-wrapper" spacing="0">
+
+        <StackPane styleClass="detail-banner">
+            <ImageView fx:id="backdropImage"
+                       preserveRatio="false"
+                       styleClass="detail-backdrop"/>
+            <Pane styleClass="detail-overlay"/>
+            <VBox alignment="TOP_LEFT"
+                  styleClass="detail-back-box">
+                <Button text="← Назад"
+                        styleClass="back-btn"
+                        onAction="#goBack"/>
+            </VBox>
+        </StackPane>
+
+        <HBox styleClass="detail-content" spacing="30">
+
+            <VBox spacing="15" alignment="TOP_CENTER">
+                <ImageView fx:id="posterImage"
+                           fitWidth="220"
+                           fitHeight="330"
+                           preserveRatio="false"
+                           styleClass="detail-poster"/>
+                <Button text="▶  Смотреть"
+                        styleClass="watch-btn"
+                        prefWidth="220"
+                        onAction="#watchMovie"/>
+                <Button text="+ В список"
+                        styleClass="list-btn"
+                        prefWidth="220"
+                        onAction="#addToFavorites"/>
+            </VBox>
+
+            <VBox spacing="12" HBox.hgrow="ALWAYS">
+                <Label fx:id="titleLabel"
+                       styleClass="detail-title"
+                       wrapText="true"/>
+                <HBox spacing="20"
+                      alignment="CENTER_LEFT">
+                    <Label fx:id="ratingLabel"
+                           styleClass="detail-rating"/>
+                    <Label fx:id="yearLabel"
+                           styleClass="detail-info-label"/>
+                    <Label fx:id="durationLabel"
+                           styleClass="detail-info-label"/>
+                    <Label fx:id="categoryLabel"
+                           styleClass="detail-category"/>
+                </HBox>
+                <HBox fx:id="genresBox"
+                      spacing="8"
+                      alignment="CENTER_LEFT"/>
+                <Label text="Описание"
+                       styleClass="detail-section-title"/>
+                <Label fx:id="descLabel"
+                       styleClass="detail-desc"
+                       wrapText="true"/>
+                <VBox styleClass="detail-info-box"
+                      spacing="8">
+                    <HBox spacing="10">
+                        <Label text="Режиссёр:"
+                               styleClass="info-key"/>
+                        <Label fx:id="directorLabel"
+                               styleClass="info-value"/>
+                    </HBox>
+                    <HBox spacing="10">
+                        <Label text="Страна:"
+                               styleClass="info-key"/>
+                        <Label fx:id="countryLabel"
+                               styleClass="info-value"/>
+                    </HBox>
+                    <HBox spacing="10">
+                        <Label text="Жанр:"
+                               styleClass="info-key"/>
+                        <Label fx:id="genresLabel"
+                               styleClass="info-value"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+
+        </HBox>
+    </VBox>
+</ScrollPane>

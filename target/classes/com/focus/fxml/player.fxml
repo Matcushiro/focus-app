@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.media.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.focus.controller.PlayerController"
+            styleClass="player-root">
+
+    <center>
+        <StackPane fx:id="playerPane"
+                   styleClass="player-pane">
+            <MediaView fx:id="mediaView"
+                       styleClass="media-view"/>
+        </StackPane>
+    </center>
+
+    <bottom>
+        <VBox styleClass="player-controls" spacing="8">
+            <HBox spacing="10" alignment="CENTER">
+                <Label fx:id="currentTimeLabel"
+                       styleClass="time-label"
+                       text="00:00"/>
+                <Slider fx:id="progressSlider"
+                        HBox.hgrow="ALWAYS"
+                        styleClass="progress-slider"/>
+                <Label fx:id="totalTimeLabel"
+                       styleClass="time-label"
+                       text="00:00"/>
+            </HBox>
+            <HBox spacing="15" alignment="CENTER">
+                <Button text="←"
+                        styleClass="player-btn"
+                        onAction="#goBackToDetail"/>
+                <Button fx:id="playPauseBtn"
+                        text="⏸"
+                        styleClass="player-btn-main"
+                        onAction="#togglePlayPause"/>
+                <Button text="⏹"
+                        styleClass="player-btn"
+                        onAction="#stopVideo"/>
+                <Label text="🔊"
+                       styleClass="time-label"/>
+                <Slider fx:id="volumeSlider"
+                        prefWidth="100"
+                        min="0" max="1" value="1"
+                        styleClass="volume-slider"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="movieTitleLabel"
+                       styleClass="player-title"/>
+            </HBox>
+        </VBox>
+    </bottom>
+
+</BorderPane>

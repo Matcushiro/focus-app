@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.focus.controller.MoviesController"
+            styleClass="root-pane">
+
+    <top>
+        <VBox styleClass="catalog-top" spacing="15">
+            <Label text="🎥 Фильмы"
+                   styleClass="catalog-title"/>
+            <HBox spacing="15"
+                  alignment="CENTER_LEFT"
+                  styleClass="filters-box">
+                <Label text="Жанр:"
+                       styleClass="filter-label"/>
+                <ComboBox fx:id="genreFilter"
+                          promptText="Все жанры"
+                          styleClass="filter-combo"/>
+                <Label text="Рейтинг:"
+                       styleClass="filter-label"/>
+                <ComboBox fx:id="ratingFilter"
+                          promptText="Любой"
+                          styleClass="filter-combo"/>
+                <Label text="Год:"
+                       styleClass="filter-label"/>
+                <ComboBox fx:id="yearFilter"
+                          promptText="Любой"
+                          styleClass="filter-combo"/>
+                <Button text="Применить"
+                        styleClass="filter-btn"
+                        onAction="#applyFilters"/>
+                <Button text="Сбросить"
+                        styleClass="clear-btn"
+                        onAction="#resetFilters"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true"
+                    styleClass="main-scroll">
+            <FlowPane fx:id="moviesGrid"
+                      styleClass="movies-grid"
+                      hgap="15" vgap="15"/>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

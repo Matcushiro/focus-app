@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.focus.controller.SearchController"
+            styleClass="root-pane">
+
+    <center>
+        <VBox styleClass="search-page-wrapper"
+              spacing="30">
+
+            <!-- Поле поиска -->
+            <HBox styleClass="search-field-box"
+                  alignment="CENTER_LEFT"
+                  spacing="0"
+                  maxWidth="500">
+                <TextField fx:id="searchField"
+                           promptText="Поиск..."
+                           styleClass="search-page-input"
+                           HBox.hgrow="ALWAYS"
+                           onAction="#doSearch"/>
+                <Button text="🔍"
+                        styleClass="search-page-btn"
+                        onAction="#doSearch"/>
+            </HBox>
+
+            <!-- Заголовок результатов -->
+            <Label fx:id="resultLabel"
+                   text="Результаты поиска"
+                   styleClass="search-result-title"/>
+
+            <!-- Сетка результатов -->
+            <ScrollPane fitToWidth="true"
+                        styleClass="search-scroll"
+                        VBox.vgrow="ALWAYS">
+                <FlowPane fx:id="resultsGrid"
+                          styleClass="search-grid"
+                          hgap="15"
+                          vgap="15"/>
+            </ScrollPane>
+
+        </VBox>
+    </center>
+
+</BorderPane>
