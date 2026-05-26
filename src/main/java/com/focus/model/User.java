@@ -1,9 +1,10 @@
 package com.focus.model;
 
 public class User {
-    private int id;
+    private int    id;
     private String username;
     private String email;
+    private String phone;
     private String role;
     private String createdAt;
     private boolean isBanned;
@@ -11,42 +12,44 @@ public class User {
     public User() {}
 
     public User(int id, String username, String email) {
-        this.id = id;
+        this.id       = id;
         this.username = username;
-        this.email = email;
-        this.role = "USER";
+        this.email    = email;
+        this.role     = "USER";
         this.isBanned = false;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public int    getId()       { return id; }
+    public void   setId(int id) { this.id = id; }
 
-    public String getUsername() { return username; }
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    public String getUsername()            { return username; }
+    public void   setUsername(String u)    { this.username = u; }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public String getEmail()               { return email; }
+    public void   setEmail(String e)       { this.email = e; }
 
-    public String getRole() { return role; }
-    public void setRole(String role) {
-        this.role = role;
-    }
+    public String getPhone()               { return phone; }
+    public void   setPhone(String p)       { this.phone = p; }
 
-    public String getCreatedAt() { return createdAt; }
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
-    }
+    public String getRole()                { return role; }
+    public void   setRole(String r)        { this.role = r; }
 
-    public boolean isBanned() { return isBanned; }
-    public void setBanned(boolean banned) {
-        this.isBanned = banned;
-    }
+    public String getCreatedAt()           { return createdAt; }
+    public void   setCreatedAt(String ca)  { this.createdAt = ca; }
+
+    public boolean isBanned()              { return isBanned; }
+    public void    setBanned(boolean b)    { this.isBanned = b; }
 
     public boolean isAdmin() {
         return "ADMIN".equals(role);
+    }
+
+    /**
+     * Возвращает отображаемый идентификатор (email или телефон).
+     */
+    public String getContactInfo() {
+        if (email != null && !email.isBlank())  return email;
+        if (phone != null && !phone.isBlank())  return phone;
+        return "—";
     }
 }

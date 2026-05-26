@@ -1,50 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.*?>
+
 <?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.focus.controller.MoviesController"
-            styleClass="root-pane">
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.focus.controller.MoviesController"
+      styleClass="content-page"
+      spacing="0">
 
-    <top>
-        <VBox styleClass="catalog-top" spacing="15">
-            <Label text="🎥 Фильмы"
-                   styleClass="catalog-title"/>
-            <HBox spacing="15"
-                  alignment="CENTER_LEFT"
-                  styleClass="filters-box">
-                <Label text="Жанр:"
-                       styleClass="filter-label"/>
-                <ComboBox fx:id="genreFilter"
-                          promptText="Все жанры"
-                          styleClass="filter-combo"/>
-                <Label text="Рейтинг:"
-                       styleClass="filter-label"/>
-                <ComboBox fx:id="ratingFilter"
-                          promptText="Любой"
-                          styleClass="filter-combo"/>
-                <Label text="Год:"
-                       styleClass="filter-label"/>
-                <ComboBox fx:id="yearFilter"
-                          promptText="Любой"
-                          styleClass="filter-combo"/>
-                <Button text="Применить"
-                        styleClass="filter-btn"
-                        onAction="#applyFilters"/>
-                <Button text="Сбросить"
-                        styleClass="clear-btn"
-                        onAction="#resetFilters"/>
-            </HBox>
-        </VBox>
-    </top>
+    <!-- ===== Заголовок страницы ===== -->
+    <VBox styleClass="page-header" spacing="4">
+        <Label text="🎬 Фильмы" styleClass="page-main-title"/>
+        <Label text="Большой выбор отечественных и зарубежных фильмов" styleClass="page-subtitle"/>
+    </VBox>
 
-    <center>
-        <ScrollPane fitToWidth="true"
-                    styleClass="main-scroll">
-            <FlowPane fx:id="moviesGrid"
-                      styleClass="movies-grid"
-                      hgap="15" vgap="15"/>
-        </ScrollPane>
-    </center>
+    <!-- ===== Строка поиска + кнопка фильтров ===== -->
+    <HBox styleClass="search-bar-row" spacing="10" alignment="CENTER_LEFT">
+        <HBox styleClass="search-input-box" HBox.hgrow="ALWAYS" spacing="0" alignment="CENTER_LEFT">
+            <Label text="🔍" styleClass="search-icon-label"/>
+            <TextField fx:id="searchField"
+                       promptText="Поиск фильмов по названию, режиссёру, жанру..."
+                       styleClass="search-input"
+                       HBox.hgrow="ALWAYS"/>
+        </HBox>
+        <Button fx:id="filterBtn"
+                text="🎛 Фильтры"
+                styleClass="filter-btn"
+                onAction="#openFilterPopup"/>
+    </HBox>
 
-</BorderPane>
+    <!-- ===== Счётчик результатов ===== -->
+    <HBox styleClass="results-row" alignment="CENTER_LEFT">
+        <Label fx:id="resultsLabel" text="" styleClass="results-label"/>
+    </HBox>
+
+    <!-- ===== Сетка фильмов ===== -->
+    <ScrollPane styleClass="grid-scroll" VBox.vgrow="ALWAYS" fitToWidth="true">
+        <FlowPane fx:id="moviesGrid" styleClass="movies-grid"
+                  hgap="14" vgap="16"/>
+    </ScrollPane>
+</VBox>

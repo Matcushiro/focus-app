@@ -1,201 +1,109 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.*?>
+
 <?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.focus.controller.AdminPanelController"
-            styleClass="root-pane">
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.focus.controller.AdminPanelController"
+      styleClass="admin-page"
+      spacing="0">
 
-    <top>
-        <HBox styleClass="admin-panel-header"
-              alignment="CENTER_LEFT"
-              spacing="20">
-            <Label text="⚙️ Панель администратора"
-                   styleClass="admin-panel-title"/>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Label fx:id="adminNameLabel"
-                   styleClass="filter-label"/>
-        </HBox>
-    </top>
+    <!-- ===== Шапка панели ===== -->
+    <HBox styleClass="navbar" alignment="CENTER_LEFT" spacing="20">
+        <Label text="⚙ FOCUS" styleClass="nav-logo"/>
+        <Label text="Панель администратора" styleClass="admin-section-title" HBox.hgrow="ALWAYS"/>
+        <Label fx:id="adminNameLabel" text="" styleClass="profile-btn"/>
+    </HBox>
 
-    <center>
-        <TabPane styleClass="admin-tabs">
+    <!-- ===== Статистика ===== -->
+    <HBox spacing="16" style="-fx-padding: 16 24; -fx-background-color: #0a0a0a;">
+        <VBox styleClass="stat-card" spacing="4" alignment="CENTER" prefWidth="140">
+            <Label text="🎬" style="-fx-font-size: 22px;"/>
+            <Label fx:id="totalMoviesLabel" text="0"
+                   style="-fx-text-fill: #E65C00; -fx-font-size: 22px; -fx-font-weight: bold;"/>
+            <Label text="Фильмов" style="-fx-text-fill: #777; -fx-font-size: 11px;"/>
+        </VBox>
+        <VBox styleClass="stat-card" spacing="4" alignment="CENTER" prefWidth="140">
+            <Label text="📺" style="-fx-font-size: 22px;"/>
+            <Label fx:id="totalSeriesLabel" text="0"
+                   style="-fx-text-fill: #E65C00; -fx-font-size: 22px; -fx-font-weight: bold;"/>
+            <Label text="Сериалов" style="-fx-text-fill: #777; -fx-font-size: 11px;"/>
+        </VBox>
+        <VBox styleClass="stat-card" spacing="4" alignment="CENTER" prefWidth="140">
+            <Label text="👥" style="-fx-font-size: 22px;"/>
+            <Label fx:id="totalUsersStatLabel" text="0"
+                   style="-fx-text-fill: #E65C00; -fx-font-size: 22px; -fx-font-weight: bold;"/>
+            <Label text="Пользователей" style="-fx-text-fill: #777; -fx-font-size: 11px;"/>
+        </VBox>
+        <VBox styleClass="stat-card" spacing="4" alignment="CENTER" prefWidth="140">
+            <Label text="📋" style="-fx-font-size: 22px;"/>
+            <Label fx:id="totalLogsLabel" text="0"
+                   style="-fx-text-fill: #E65C00; -fx-font-size: 22px; -fx-font-weight: bold;"/>
+            <Label text="Логов" style="-fx-text-fill: #777; -fx-font-size: 11px;"/>
+        </VBox>
+    </HBox>
 
-            <!-- Вкладка: Фильмы -->
-            <Tab text="🎬 Фильмы" closable="false">
-                <fx:include source="admin.fxml"/>
-            </Tab>
+    <!-- ===== Основной контент (разделён на 2 блока) ===== -->
+    <SplitPane orientation="VERTICAL" VBox.vgrow="ALWAYS"
+               style="-fx-background-color: #0f0f0f;">
 
-            <!-- Вкладка: Пользователи -->
-            <Tab text="👥 Пользователи" closable="false">
-                <BorderPane styleClass="root-pane">
-                    <top>
-                        <HBox styleClass="catalog-top"
-                              spacing="15"
-                              alignment="CENTER_LEFT">
-                            <Label text="Всего пользователей:"
-                                   styleClass="filter-label"/>
-                            <Label fx:id="totalUsersLabel"
-                                   styleClass="section-title"/>
-                            <Region HBox.hgrow="ALWAYS"/>
-                            <Button text="🔄 Обновить"
-                                    styleClass="filter-btn"
-                                    onAction="#refreshUsers"/>
-                        </HBox>
-                    </top>
-                    <center>
-                        <VBox spacing="0">
-                            <TableView fx:id="usersTable"
-                                       VBox.vgrow="ALWAYS"
-                                       styleClass="users-table">
-                                <columns>
-                                    <TableColumn fx:id="idCol"
-                                                 text="ID"
-                                                 prefWidth="50"/>
-                                    <TableColumn fx:id="usernameCol"
-                                                 text="Имя"
-                                                 prefWidth="150"/>
-                                    <TableColumn fx:id="emailCol"
-                                                 text="Email"
-                                                 prefWidth="200"/>
-                                    <TableColumn fx:id="roleCol"
-                                                 text="Роль"
-                                                 prefWidth="100"/>
-                                    <TableColumn fx:id="createdCol"
-                                                 text="Дата регистрации"
-                                                 prefWidth="160"/>
-                                    <TableColumn fx:id="statusCol"
-                                                 text="Статус"
-                                                 prefWidth="100"/>
-                                </columns>
-                            </TableView>
+        <!-- === Таблица пользователей === -->
+        <VBox spacing="10" style="-fx-padding: 16 20; -fx-background-color: #0f0f0f;">
 
-                            <!-- Кнопки управления -->
-                            <HBox spacing="10"
-                                  styleClass="catalog-top"
-                                  alignment="CENTER_LEFT">
-                                <Button text="🚫 Забанить"
-                                        styleClass="admin-btn-danger"
-                                        onAction="#banUser"/>
-                                <Button text="✅ Разбанить"
-                                        styleClass="admin-btn"
-                                        onAction="#unbanUser"/>
-                                <Button text="👑 Сделать админом"
-                                        styleClass="admin-btn"
-                                        onAction="#makeAdmin"/>
-                                <Button text="👤 Сделать юзером"
-                                        styleClass="admin-btn"
-                                        onAction="#makeUser"/>
-                                <Button text="🗑️ Удалить"
-                                        styleClass="admin-btn-danger"
-                                        onAction="#deleteUser"/>
-                            </HBox>
-                        </VBox>
-                    </center>
-                </BorderPane>
-            </Tab>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="👥 Пользователи" styleClass="admin-section-title" HBox.hgrow="ALWAYS"/>
+                <Label fx:id="totalUsersLabel" text="0"
+                       style="-fx-text-fill: #E65C00; -fx-font-weight: bold;"/>
+                <Button text="🔄 Обновить" styleClass="admin-btn-secondary" onAction="#refreshUsers"/>
+            </HBox>
 
-            <!-- Вкладка: Логи -->
-            <Tab text="📋 Логи действий" closable="false">
-                <BorderPane styleClass="root-pane">
-                    <top>
-                        <HBox styleClass="catalog-top"
-                              spacing="15"
-                              alignment="CENTER_LEFT">
-                            <Label text="📋 История действий"
-                                   styleClass="section-title"/>
-                            <Region HBox.hgrow="ALWAYS"/>
-                            <Button text="🔄 Обновить"
-                                    styleClass="filter-btn"
-                                    onAction="#refreshLogs"/>
-                            <Button text="💾 Экспорт в файл"
-                                    styleClass="admin-btn"
-                                    onAction="#exportLogs"/>
-                        </HBox>
-                    </top>
-                    <center>
-                        <TableView fx:id="logsTable"
-                                   styleClass="users-table">
-                            <columns>
-                                <TableColumn fx:id="logIdCol"
-                                             text="ID"
-                                             prefWidth="50"/>
-                                <TableColumn fx:id="logTimeCol"
-                                             text="Время"
-                                             prefWidth="160"/>
-                                <TableColumn fx:id="logUserCol"
-                                             text="Пользователь"
-                                             prefWidth="150"/>
-                                <TableColumn fx:id="logActionCol"
-                                             text="Действие"
-                                             prefWidth="180"/>
-                                <TableColumn fx:id="logDetailsCol"
-                                             text="Детали"
-                                             prefWidth="350"/>
-                            </columns>
-                        </TableView>
-                    </center>
-                </BorderPane>
-            </Tab>
+            <TableView fx:id="usersTable" styleClass="admin-table" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="idCol"       text="ID"      prefWidth="50"/>
+                    <TableColumn fx:id="usernameCol"  text="Логин"   prefWidth="140"/>
+                    <TableColumn fx:id="contactCol"   text="Email / Телефон" prefWidth="220"/>
+                    <TableColumn fx:id="roleCol"      text="Роль"    prefWidth="90"/>
+                    <TableColumn fx:id="createdCol"   text="Создан"  prefWidth="160"/>
+                    <TableColumn fx:id="statusCol"    text="Статус"  prefWidth="120"/>
+                </columns>
+            </TableView>
 
-            <!-- Вкладка: Статистика -->
-            <Tab text="📊 Статистика" closable="false">
-                <ScrollPane fitToWidth="true"
-                            styleClass="main-scroll">
-                    <VBox spacing="20"
-                          styleClass="profile-wrapper">
+            <HBox spacing="8">
+                <Button text="🚫 Забанить"    styleClass="admin-btn-danger"
+                        onAction="#banUser"/>
+                <Button text="✅ Разбанить"   styleClass="admin-btn-edit"
+                        onAction="#unbanUser"/>
+                <Button text="👑 → ADMIN"     styleClass="admin-btn-edit"
+                        onAction="#makeAdmin"/>
+                <Button text="👤 → USER"      styleClass="admin-btn-secondary"
+                        onAction="#makeUser"/>
+                <Button text="🗑 Удалить"     styleClass="admin-btn-danger"
+                        onAction="#deleteUser"/>
+            </HBox>
+        </VBox>
 
-                        <Label text="📊 Общая статистика"
-                               styleClass="catalog-title"/>
+        <!-- === Таблица логов === -->
+        <VBox spacing="10" style="-fx-padding: 16 20; -fx-background-color: #0f0f0f;">
 
-                        <HBox spacing="20">
-                            <VBox styleClass="stat-card"
-                                  alignment="CENTER"
-                                  spacing="5"
-                                  HBox.hgrow="ALWAYS">
-                                <Label fx:id="totalMoviesLabel"
-                                       styleClass="stat-number"
-                                       text="0"/>
-                                <Label text="Фильмов"
-                                       styleClass="stat-label"/>
-                            </VBox>
-                            <VBox styleClass="stat-card"
-                                  alignment="CENTER"
-                                  spacing="5"
-                                  HBox.hgrow="ALWAYS">
-                                <Label fx:id="totalSeriesLabel"
-                                       styleClass="stat-number"
-                                       text="0"/>
-                                <Label text="Сериалов"
-                                       styleClass="stat-label"/>
-                            </VBox>
-                            <VBox styleClass="stat-card"
-                                  alignment="CENTER"
-                                  spacing="5"
-                                  HBox.hgrow="ALWAYS">
-                                <Label fx:id="totalUsersStatLabel"
-                                       styleClass="stat-number"
-                                       text="0"/>
-                                <Label text="Пользователей"
-                                       styleClass="stat-label"/>
-                            </VBox>
-                            <VBox styleClass="stat-card"
-                                  alignment="CENTER"
-                                  spacing="5"
-                                  HBox.hgrow="ALWAYS">
-                                <Label fx:id="totalLogsLabel"
-                                       styleClass="stat-number"
-                                       text="0"/>
-                                <Label text="Действий"
-                                       styleClass="stat-label"/>
-                            </VBox>
-                        </HBox>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="📋 Логи действий" styleClass="admin-section-title" HBox.hgrow="ALWAYS"/>
+                <Button text="🔄 Обновить"  styleClass="admin-btn-secondary" onAction="#refreshLogs"/>
+                <Button text="💾 Экспорт"   styleClass="admin-btn-primary"   onAction="#exportLogs"/>
+            </HBox>
 
-                    </VBox>
-                </ScrollPane>
-            </Tab>
+            <TableView fx:id="logsTable" styleClass="admin-table" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="logIdCol"      text="ID"        prefWidth="55"/>
+                    <TableColumn fx:id="logTimeCol"    text="Время"     prefWidth="160"/>
+                    <TableColumn fx:id="logUserCol"    text="Пользователь" prefWidth="140"/>
+                    <TableColumn fx:id="logActionCol"  text="Действие"  prefWidth="180"/>
+                    <TableColumn fx:id="logDetailsCol" text="Детали"    prefWidth="300"/>
+                </columns>
+            </TableView>
 
-        </TabPane>
-    </center>
+        </VBox>
 
-</BorderPane>
+    </SplitPane>
+</VBox>

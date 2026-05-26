@@ -1,183 +1,181 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.*?>
+
 <?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml"
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.focus.controller.AdminController"
-            styleClass="root-pane">
+            styleClass="admin-page">
 
-    <top>
-        <Label text="⚙️ Управление контентом"
-               styleClass="admin-title"
-               BorderPane.alignment="CENTER"/>
-    </top>
+    <!-- ===== ЛЕВАЯ ПАНЕЛЬ: форма добавления ===== -->
+    <left>
+        <ScrollPane fitToWidth="true" styleClass="admin-scroll"
+                    prefWidth="420" minWidth="380">
+            <VBox styleClass="admin-form-panel" spacing="14">
 
-    <center>
-        <HBox spacing="20" styleClass="admin-content">
+                <Label text="📽 Управление контентом" styleClass="admin-section-title"/>
 
-            <VBox spacing="10" HBox.hgrow="ALWAYS">
-                <Label text="Все фильмы"
-                       styleClass="section-title"/>
-                <ListView fx:id="moviesList"
-                          VBox.vgrow="ALWAYS"
-                          styleClass="admin-list"/>
-                <HBox spacing="10">
-                    <Button text="✏️ Редактировать"
-                            styleClass="admin-btn"
-                            onAction="#editMovie"/>
-                    <Button text="🗑️ Удалить"
-                            styleClass="admin-btn-danger"
-                            onAction="#deleteMovie"/>
-                </HBox>
-            </VBox>
-
-            <ScrollPane fitToWidth="true"
-                        prefWidth="450">
-                <VBox spacing="12"
-                      styleClass="admin-form">
-
-                    <Label text="Добавить / Редактировать"
-                           styleClass="form-title"/>
-
-                    <Label text="Название *"/>
-                    <TextField fx:id="titleField"
-                               promptText="Название"/>
-
-                    <Label text="Описание"/>
-                    <TextArea fx:id="descField"
-                              promptText="Описание"
-                              prefRowCount="3"
-                              wrapText="true"/>
-
-                    <Label text="Постер"/>
-                    <HBox spacing="10"
-                          alignment="CENTER_LEFT">
-                        <TextField fx:id="posterField"
-                                   promptText="Путь к постеру"
-                                   HBox.hgrow="ALWAYS"/>
-                        <Button text="📁"
-                                onAction="#selectPoster"/>
+                <!-- Тип контента -->
+                <VBox spacing="5">
+                    <Label text="Тип контента" styleClass="admin-field-label"/>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <ComboBox fx:id="categoryBox" styleClass="admin-combo"
+                                  prefWidth="160"/>
+                        <CheckBox fx:id="isKidsContentCheck"
+                                  text="👶 Детский контент"
+                                  styleClass="admin-check"/>
                     </HBox>
-
-                    <Label text="Баннер"/>
-                    <HBox spacing="10"
-                          alignment="CENTER_LEFT">
-                        <TextField fx:id="bannerField"
-                                   promptText="Путь к баннеру"
-                                   HBox.hgrow="ALWAYS"/>
-                        <Button text="📁"
-                                onAction="#selectBanner"/>
-                    </HBox>
-
-                    <Label text="Видео файл"/>
-                    <HBox spacing="10"
-                          alignment="CENTER_LEFT">
-                        <TextField fx:id="videoField"
-                                   promptText="Путь к видео"
-                                   HBox.hgrow="ALWAYS"/>
-                        <Button text="📁"
-                                onAction="#selectVideo"/>
-                    </HBox>
-
-                    <HBox spacing="10">
-                        <VBox spacing="5"
-                              HBox.hgrow="ALWAYS">
-                            <Label text="Рейтинг"/>
-                            <TextField fx:id="ratingField"
-                                       promptText="8.5"/>
-                        </VBox>
-                        <VBox spacing="5"
-                              HBox.hgrow="ALWAYS">
-                            <Label text="Год"/>
-                            <TextField fx:id="yearField"
-                                       promptText="2024"/>
-                        </VBox>
-                        <VBox spacing="5"
-                              HBox.hgrow="ALWAYS">
-                            <Label text="Мин"/>
-                            <TextField fx:id="durationField"
-                                       promptText="120"/>
-                        </VBox>
-                    </HBox>
-
-                    <Label text="Режиссёр"/>
-                    <TextField fx:id="directorField"
-                               promptText="Режиссёр"/>
-
-                    <HBox spacing="10">
-                        <VBox spacing="5"
-                              HBox.hgrow="ALWAYS">
-                            <Label text="Страна"/>
-                            <TextField fx:id="countryField"
-                                       promptText="Страна"/>
-                        </VBox>
-                        <VBox spacing="5"
-                              HBox.hgrow="ALWAYS">
-                            <Label text="Категория"/>
-                            <ComboBox fx:id="categoryBox"
-                                      prefWidth="150"/>
-                        </VBox>
-                    </HBox>
-
-                    <Label text="Жанры"/>
-                    <TextField fx:id="genresField"
-                               promptText="Драма, Комедия"/>
-
-                    <Label text="Разделы на главной"
-                           styleClass="form-subtitle"/>
-
-                    <GridPane hgap="20" vgap="8">
-                        <CheckBox fx:id="nowPlayingCheck"
-                                  text="Смотрите сейчас"
-                                  GridPane.columnIndex="0"
-                                  GridPane.rowIndex="0"/>
-                        <CheckBox fx:id="latestCheck"
-                                  text="Новинки"
-                                  GridPane.columnIndex="1"
-                                  GridPane.rowIndex="0"/>
-                        <CheckBox fx:id="topRatedCheck"
-                                  text="Высокий рейтинг"
-                                  GridPane.columnIndex="0"
-                                  GridPane.rowIndex="1"/>
-                        <CheckBox fx:id="popularCheck"
-                                  text="Невозможно оторваться"
-                                  GridPane.columnIndex="1"
-                                  GridPane.rowIndex="1"/>
-                        <CheckBox fx:id="kidsCheck"
-                                  text="Детский топ"
-                                  GridPane.columnIndex="0"
-                                  GridPane.rowIndex="2"/>
-                        <CheckBox fx:id="eveningCheck"
-                                  text="Фильм на вечер"
-                                  GridPane.columnIndex="1"
-                                  GridPane.rowIndex="2"/>
-                        <CheckBox fx:id="turkishCheck"
-                                  text="Турецкий топ"
-                                  GridPane.columnIndex="0"
-                                  GridPane.rowIndex="3"/>
-                        <CheckBox fx:id="top10Check"
-                                  text="Топ 10 для вас"
-                                  GridPane.columnIndex="1"
-                                  GridPane.rowIndex="3"/>
-                        <CheckBox fx:id="featuredCheck"
-                                  text="⭐ Баннер"
-                                  GridPane.columnIndex="0"
-                                  GridPane.rowIndex="4"/>
-                    </GridPane>
-
-                    <HBox spacing="10" alignment="CENTER">
-                        <Button text="💾 Сохранить"
-                                styleClass="save-btn"
-                                onAction="#saveMovie"/>
-                        <Button text="🔄 Очистить"
-                                styleClass="clear-btn"
-                                onAction="#clearForm"/>
-                    </HBox>
-
+                    <Label text="Выберите Фильм или Сериал. Отметьте «Детский контент» если нужно."
+                           styleClass="admin-hint"/>
                 </VBox>
-            </ScrollPane>
 
-        </HBox>
+                <Separator styleClass="admin-sep"/>
+
+                <!-- Название -->
+                <VBox spacing="5">
+                    <Label text="Название *" styleClass="admin-field-label"/>
+                    <TextField fx:id="titleField" promptText="Введите название"
+                               styleClass="admin-field"/>
+                </VBox>
+
+                <!-- Описание -->
+                <VBox spacing="5">
+                    <Label text="Описание" styleClass="admin-field-label"/>
+                    <TextArea fx:id="descField" promptText="Краткое описание..."
+                              styleClass="admin-textarea" prefRowCount="3" wrapText="true"/>
+                </VBox>
+
+                <!-- Жанры — мультивыбор тегами -->
+                <VBox spacing="8">
+                    <Label text="Жанры * (можно выбрать несколько)" styleClass="admin-field-label"/>
+                    <FlowPane fx:id="genresPane" hgap="6" vgap="6"
+                              styleClass="admin-genres-pane"/>
+                    <Label text="Нажмите на жанр чтобы выбрать/снять выбор"
+                           styleClass="admin-hint"/>
+                </VBox>
+
+                <Separator styleClass="admin-sep"/>
+
+                <!-- Числовые поля -->
+                <GridPane hgap="10" vgap="8">
+                    <VBox GridPane.columnIndex="0" GridPane.rowIndex="0" spacing="5">
+                        <Label text="Рейтинг (0-10)" styleClass="admin-field-label"/>
+                        <TextField fx:id="ratingField" promptText="8.5"
+                                   styleClass="admin-field-sm"/>
+                    </VBox>
+                    <VBox GridPane.columnIndex="1" GridPane.rowIndex="0" spacing="5">
+                        <Label text="Год" styleClass="admin-field-label"/>
+                        <TextField fx:id="yearField" promptText="2024"
+                                   styleClass="admin-field-sm"/>
+                    </VBox>
+                    <VBox GridPane.columnIndex="2" GridPane.rowIndex="0" spacing="5">
+                        <Label text="Длит. (мин)" styleClass="admin-field-label"/>
+                        <TextField fx:id="durationField" promptText="120"
+                                   styleClass="admin-field-sm"/>
+                    </VBox>
+                </GridPane>
+
+                <GridPane hgap="10" vgap="8">
+                    <VBox GridPane.columnIndex="0" GridPane.rowIndex="0" spacing="5">
+                        <Label text="Режиссёр" styleClass="admin-field-label"/>
+                        <TextField fx:id="directorField" promptText="Имя режиссёра"
+                                   styleClass="admin-field"/>
+                    </VBox>
+                    <VBox GridPane.columnIndex="1" GridPane.rowIndex="0" spacing="5">
+                        <Label text="Страна" styleClass="admin-field-label"/>
+                        <TextField fx:id="countryField" promptText="Россия"
+                                   styleClass="admin-field"/>
+                    </VBox>
+                </GridPane>
+
+                <Separator styleClass="admin-sep"/>
+
+                <!-- Медиафайлы -->
+                <Label text="Медиафайлы" styleClass="admin-field-label"/>
+
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <TextField fx:id="posterField" promptText="Путь к постеру"
+                               styleClass="admin-field" HBox.hgrow="ALWAYS"/>
+                    <Button text="📁" styleClass="admin-file-btn" onAction="#selectPoster"/>
+                </HBox>
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <TextField fx:id="bannerField" promptText="Путь к баннеру"
+                               styleClass="admin-field" HBox.hgrow="ALWAYS"/>
+                    <Button text="📁" styleClass="admin-file-btn" onAction="#selectBanner"/>
+                </HBox>
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <TextField fx:id="videoField" promptText="Путь к видео"
+                               styleClass="admin-field" HBox.hgrow="ALWAYS"/>
+                    <Button text="📁" styleClass="admin-file-btn" onAction="#selectVideo"/>
+                </HBox>
+
+                <Separator styleClass="admin-sep"/>
+
+                <!-- Флаги отображения -->
+                <Label text="Флаги отображения" styleClass="admin-field-label"/>
+                <GridPane hgap="12" vgap="8">
+                    <CheckBox fx:id="nowPlayingCheck" text="В эфире"
+                              styleClass="admin-check"
+                              GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <CheckBox fx:id="latestCheck" text="Новинка"
+                              styleClass="admin-check"
+                              GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                    <CheckBox fx:id="topRatedCheck" text="Топ оценок"
+                              styleClass="admin-check"
+                              GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <CheckBox fx:id="popularCheck" text="Популярное"
+                              styleClass="admin-check"
+                              GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                    <CheckBox fx:id="kidsCheck" text="Для детей"
+                              styleClass="admin-check"
+                              GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                    <CheckBox fx:id="eveningCheck" text="Вечернее"
+                              styleClass="admin-check"
+                              GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                    <CheckBox fx:id="turkishCheck" text="Турецкое"
+                              styleClass="admin-check"
+                              GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                    <CheckBox fx:id="top10Check" text="Топ 10"
+                              styleClass="admin-check"
+                              GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                    <CheckBox fx:id="featuredCheck" text="⭐ Избранное (баннер)"
+                              styleClass="admin-check"
+                              GridPane.columnIndex="0" GridPane.rowIndex="4"
+                              GridPane.columnSpan="2"/>
+                </GridPane>
+
+                <Separator styleClass="admin-sep"/>
+
+                <!-- Кнопки действий -->
+                <HBox spacing="8">
+                    <Button text="💾 Сохранить" styleClass="admin-btn-primary"
+                            onAction="#saveMovie" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    <Button text="✖ Очистить" styleClass="admin-btn-secondary"
+                            onAction="#clearForm"/>
+                </HBox>
+
+            </VBox>
+        </ScrollPane>
+    </left>
+
+    <!-- ===== ПРАВАЯ ПАНЕЛЬ: список контента ===== -->
+    <center>
+        <VBox styleClass="admin-list-panel" spacing="12">
+
+            <Label text="📋 Список фильмов и сериалов" styleClass="admin-section-title"/>
+
+            <ListView fx:id="moviesList" styleClass="admin-list" VBox.vgrow="ALWAYS"/>
+
+            <HBox spacing="8">
+                <Button text="✏ Редактировать" styleClass="admin-btn-edit"
+                        onAction="#editMovie" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                <Button text="🗑 Удалить" styleClass="admin-btn-danger"
+                        onAction="#deleteMovie" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            </HBox>
+
+        </VBox>
     </center>
 
 </BorderPane>
