@@ -2,6 +2,7 @@ package com.focus.controller;
 
 import com.focus.database.DatabaseManager;
 import com.focus.model.Movie;
+
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -22,13 +23,8 @@ import java.util.stream.Collectors;
 
 /**
  * KidsController — детская вкладка.
- * Секции: все, фильмы, сериалы, популярные, новинки.
+ * Секции: все, фильмы, сериалы, рекомендации, популярные, новинки.
  * Все данные загружаются асинхронно. Поиск + фильтры.
- *
- * ИСПРАВЛЕНИЯ:
- * - Устранён двойной запрос getKidsMoviesAsync() (был и для allKids, и для kidsAllRow)
- * - Поиск теперь корректно обрабатывает пустой список при незагруженных данных
- * - Навигация назад через общий навигатор
  */
 public class KidsController implements Initializable {
 
@@ -36,6 +32,7 @@ public class KidsController implements Initializable {
     @FXML private HBox kidsAllRow;
     @FXML private HBox kidsFilmsRow;
     @FXML private HBox kidsSeriesRow;
+    @FXML private HBox kidsRecommendedRow;  // НОВАЯ секция
     @FXML private HBox kidsPopularRow;
     @FXML private HBox kidsLatestRow;
 
@@ -49,12 +46,10 @@ public class KidsController implements Initializable {
     @FXML private VBox     kidsSearchSection;
     @FXML private VBox     kidsSectionsBox;
 
-    // ИСПРАВЛЕНИЕ: один общий список, заполняемый одним запросом
-    private List<Movie> allKids = new ArrayList<>();
-
-    private final Set<String>  selectedGenres = new HashSet<>();
+    private List<Movie>  allKids        = new ArrayList<>();
+    private final Set<String> selectedGenres = new HashSet<>();
     private String selectedRating = null;
-    private Popup  filterPopup;
+    private Popup filterPopup;
 
     private final DatabaseManager db = DatabaseManager.getInstance();
 
@@ -71,9 +66,8 @@ public class KidsController implements Initializable {
     }
 
     // ===== Асинхронная загрузка =====
-
     private void loadAllAsync() {
-        // ИСПРАВЛЕНИЕ: один запрос для allKids — результат используется и для поиска, и для первой секции
+        // Все детские — для поиска + первая секция
         db.getKidsMoviesAsync()
                 .thenAccept(list -> Platform.runLater(() -> {
                     allKids = list;
@@ -91,6 +85,11 @@ public class KidsController implements Initializable {
                 .thenAccept(list -> Platform.runLater(() -> fillRow(kidsSeriesRow, list)))
                 .exceptionally(e -> { e.printStackTrace(); return null; });
 
+        // НОВОЕ — Рекомендации
+        db.getKidsRecommendedAsync()
+                .thenAccept(list -> Platform.runLater(() -> fillRow(kidsRecommendedRow, list)))
+                .exceptionally(e -> { e.printStackTrace(); return null; });
+
         // Популярные детские
         db.getKidsPopularAsync()
                 .thenAccept(list -> Platform.runLater(() -> fillRow(kidsPopularRow, list)))
@@ -103,7 +102,6 @@ public class KidsController implements Initializable {
     }
 
     // ===== Поиск =====
-
     private void setupSearch() {
         if (kidsSearchField != null) {
             kidsSearchField.textProperty().addListener(
@@ -125,10 +123,8 @@ public class KidsController implements Initializable {
             kidsSearchSection.setVisible(searching);
             kidsSearchSection.setManaged(searching);
         }
-
         if (!searching) return;
 
-        // ИСПРАВЛЕНИЕ: если данные ещё не загружены — показываем пустой список без краша
         if (allKids.isEmpty()) {
             if (kidsResultsLabel != null) kidsResultsLabel.setText("Загрузка данных...");
             return;
@@ -171,7 +167,6 @@ public class KidsController implements Initializable {
     }
 
     // ===== Фильтр =====
-
     private void buildFilterPopup() {
         filterPopup = new Popup();
         filterPopup.setAutoHide(true);
@@ -205,7 +200,7 @@ public class KidsController implements Initializable {
             tb.selectedProperty().addListener((obs, old, sel) -> {
                 tb.setStyle(genreStyle(sel));
                 if (sel) selectedGenres.add(genre);
-                else selectedGenres.remove(genre);
+                else     selectedGenres.remove(genre);
             });
             genreButtons.put(genre, tb);
             genreFlow.getChildren().add(tb);
@@ -252,20 +247,20 @@ public class KidsController implements Initializable {
         applyBtn.setOnAction(e -> {
             selectedRating = ratingBox.getValue();
             applySearch(kidsSearchField != null ? kidsSearchField.getText().trim() : "");
-            updateFilterBtnStyle(!selectedGenres.isEmpty()
-                    || (selectedRating != null && !selectedRating.equals("Любой")));
+            updateFilterBtnStyle(
+                    !selectedGenres.isEmpty() ||
+                            (selectedRating != null && !selectedRating.equals("Любой"))
+            );
             filterPopup.hide();
         });
 
         btnRow.getChildren().addAll(resetBtn, applyBtn);
-
         box.getChildren().addAll(
                 title, new Separator(),
                 genresLbl, genreFlow,
                 ratingLbl, ratingBox,
                 new Separator(), btnRow
         );
-
         filterPopup.getContent().add(box);
     }
 
@@ -280,9 +275,6 @@ public class KidsController implements Initializable {
         }
     }
 
-    /**
-     * Обновляет визуальный стиль кнопки фильтра (активен/не активен).
-     */
     private void updateFilterBtnStyle(boolean hasFilters) {
         if (kidsFilterBtn == null) return;
         if (hasFilters) {
@@ -293,7 +285,7 @@ public class KidsController implements Initializable {
             );
         } else {
             kidsFilterBtn.setText("🎛 Фильтры");
-            kidsFilterBtn.setStyle("");  // сбрасываем к CSS-классу
+            kidsFilterBtn.setStyle("");
         }
     }
 
@@ -308,7 +300,6 @@ public class KidsController implements Initializable {
     }
 
     // ===== Карточки =====
-
     private void fillRow(HBox row, List<Movie> movies) {
         if (row == null) return;
         row.getChildren().clear();
@@ -322,27 +313,22 @@ public class KidsController implements Initializable {
         card.getStyleClass().addAll("movie-card", "kids-card");
         card.setPrefWidth(150);
 
-        // Постер
         ImageView poster = new ImageView();
         poster.setFitWidth(150);
         poster.setFitHeight(210);
         poster.setPreserveRatio(false);
-
         if (movie.getPosterPath() != null && !movie.getPosterPath().isEmpty()) {
             try {
                 poster.setImage(new Image(
-                        "file:" + movie.getPosterPath(),
-                        150, 210, false, true, true
+                        "file:" + movie.getPosterPath(), 150, 210, false, true, true
                 ));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        // Иконка детского контента в углу постера
         StackPane posterBox = new StackPane(poster);
         posterBox.getStyleClass().add("kids-poster-box");
-
         if (movie.isKids() || "KIDS".equals(movie.getCategory())) {
             Label kidsIcon = new Label("👶");
             kidsIcon.getStyleClass().add("kids-corner-icon");
@@ -351,7 +337,6 @@ public class KidsController implements Initializable {
             posterBox.getChildren().add(kidsIcon);
         }
 
-        // Тип контента
         String typeText = "SERIES".equals(movie.getCategory()) ? "📺 Сериал" : "🎬 Фильм";
         Label typeLbl = new Label(typeText);
         typeLbl.getStyleClass().add("kids-type-label");
@@ -370,7 +355,6 @@ public class KidsController implements Initializable {
     }
 
     // ===== Навигация =====
-
     private void openDetail(Movie movie) {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -380,7 +364,6 @@ public class KidsController implements Initializable {
             DetailController ctrl = loader.getController();
             ctrl.setMovie(movie);
 
-            // ИСПРАВЛЕНИЕ: безопасный поиск корня — берём первый доступный узел
             javafx.scene.Node ref = getAnyNode();
             if (ref == null) return;
             BorderPane root = (BorderPane) ref.getScene().getRoot();
@@ -390,11 +373,10 @@ public class KidsController implements Initializable {
         }
     }
 
-    /** Возвращает первый не-null FXML-узел для доступа к сцене */
     private javafx.scene.Node getAnyNode() {
-        if (kidsAllRow      != null) return kidsAllRow;
-        if (kidsSearchGrid  != null) return kidsSearchGrid;
-        if (kidsSectionsBox != null) return kidsSectionsBox;
+        if (kidsAllRow       != null) return kidsAllRow;
+        if (kidsSearchGrid   != null) return kidsSearchGrid;
+        if (kidsSectionsBox  != null) return kidsSectionsBox;
         return null;
     }
 }

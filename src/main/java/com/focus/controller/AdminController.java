@@ -3,6 +3,7 @@ package com.focus.controller;
 import com.focus.database.DatabaseManager;
 import com.focus.model.Movie;
 import com.focus.service.SessionManager;
+
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,34 +21,24 @@ import java.util.*;
 /**
  * AdminController — управление контентом (добавление/редактирование/удаление фильмов и сериалов).
  * Все операции с БД выполняются асинхронно.
- *
- * ИСПРАВЛЕНИЯ:
- * - Исправлена логика проверки индекса в editMovie() и deleteMovie()
- *   (было: idx = allMovies.size() — некорректное присвоение вместо сравнения >= )
- * - Добавлена явная проверка idx < 0 для обоих методов
- * - Кнопка "Сохранить" валидирует рейтинг (0.0–10.0)
- * - Добавлен метод clearEditingState() для сброса режима редактирования
  */
 public class AdminController implements Initializable {
 
-    // ===== Основные поля =====
-    @FXML private TextField titleField;
-    @FXML private TextArea  descField;
-    @FXML private TextField posterField;
-    @FXML private TextField bannerField;
-    @FXML private TextField videoField;
-    @FXML private TextField ratingField;
-    @FXML private TextField yearField;
-    @FXML private TextField durationField;
-    @FXML private TextField directorField;
-    @FXML private TextField countryField;
-
-    // Категория — FILM / SERIES / KIDS
+    // ===== Поля формы =====
+    @FXML private TextField   titleField;
+    @FXML private TextArea    descField;
+    @FXML private TextField   posterField;
+    @FXML private TextField   bannerField;
+    @FXML private TextField   videoField;
+    @FXML private TextField   ratingField;
+    @FXML private TextField   yearField;
+    @FXML private TextField   durationField;
+    @FXML private TextField   directorField;
+    @FXML private TextField   countryField;
     @FXML private ComboBox<String> categoryBox;
 
-    // Жанры — мультивыбор через FlowPane с ToggleButton
     @FXML private FlowPane genresPane;
-    private final Set<String>            selectedGenres  = new LinkedHashSet<>();
+    private final Set<String>           selectedGenres  = new LinkedHashSet<>();
     private final Map<String, ToggleButton> genreToggleMap = new LinkedHashMap<>();
 
     // ===== Флаги секций (главные) =====
@@ -66,21 +57,22 @@ public class AdminController implements Initializable {
     @FXML private CheckBox kidsFeaturedCheck;
     @FXML private CheckBox kidsPopularCheck;
     @FXML private CheckBox kidsLatestCheck;
+    @FXML private CheckBox kidsRecommendedCheck; // НОВЫЙ
 
-    // ===== Список фильмов/сериалов =====
+    // ===== Список =====
     @FXML private ListView<String> moviesList;
     @FXML private Label            statusLabel;
 
     private static final List<String> ALL_GENRES = Arrays.asList(
             "Драма", "Комедия", "Триллер", "Боевик", "Фантастика",
-            "Ужасы", "Мелодрама", "Анимация", "Документальный", "Криминал",
-            "Приключения", "Биография", "Исторический", "Мюзикл",
-            "Вестерн", "Семейный", "Романтика", "Сказка"
+            "Ужасы", "Мелодрама", "Анимация", "Документальный",
+            "Криминал", "Приключения", "Биография",
+            "Исторический", "Мюзикл", "Вестерн", "Семейный", "Романтика", "Сказка"
     );
 
-    private final DatabaseManager db       = DatabaseManager.getInstance();
-    private       List<Movie>     allMovies  = new ArrayList<>();
-    private       Movie           editingMovie = null;
+    private final DatabaseManager db = DatabaseManager.getInstance();
+    private List<Movie> allMovies    = new ArrayList<>();
+    private Movie editingMovie       = null;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -96,7 +88,6 @@ public class AdminController implements Initializable {
     }
 
     // ===== Панель жанров =====
-
     private void buildGenresPanel() {
         if (genresPane == null) return;
         genresPane.getChildren().clear();
@@ -128,37 +119,29 @@ public class AdminController implements Initializable {
         boolean isKids = "KIDS".equals(category);
         if (isKidsContentCheck != null) {
             isKidsContentCheck.setSelected(isKids);
-            isKidsContentCheck.setDisable(isKids); // при KIDS — всегда включён
+            isKidsContentCheck.setDisable(isKids);
         }
-        // Показываем/скрываем детские флаги
-        if (kidsFeaturedCheck != null) kidsFeaturedCheck.setVisible(isKids || isChecked(kidsCheck));
-        if (kidsPopularCheck  != null) kidsPopularCheck.setVisible(isKids  || isChecked(kidsCheck));
-        if (kidsLatestCheck   != null) kidsLatestCheck.setVisible(isKids   || isChecked(kidsCheck));
+        if (kidsFeaturedCheck    != null) kidsFeaturedCheck.setVisible(isKids || isChecked(kidsCheck));
+        if (kidsPopularCheck     != null) kidsPopularCheck.setVisible(isKids || isChecked(kidsCheck));
+        if (kidsLatestCheck      != null) kidsLatestCheck.setVisible(isKids || isChecked(kidsCheck));
+        if (kidsRecommendedCheck != null) kidsRecommendedCheck.setVisible(isKids || isChecked(kidsCheck));
     }
 
     // ===== Загрузка списка =====
-
     private void loadMoviesListAsync() {
         db.async(() -> {
             List<Movie> films  = db.getAllMovies();
             List<Movie> series = db.getAllSeries();
             List<Movie> kids   = db.getKidsMovies();
-
-            List<Movie> all = new ArrayList<>();
-            Set<Integer> ids = new HashSet<>();
-
-            films.forEach(m -> { all.add(m); ids.add(m.getId()); });
+            List<Movie> all    = new ArrayList<>();
+            Set<Integer> ids   = new HashSet<>();
+            films.forEach(m  -> { all.add(m); ids.add(m.getId()); });
             series.forEach(m -> { if (ids.add(m.getId())) all.add(m); });
-            // Добавляем только уникальные детские (не вошедшие через FILM/SERIES)
-            kids.forEach(m -> { if (ids.add(m.getId())) all.add(m); });
-
-            // Сортируем: сначала по категории, затем по названию
+            kids.forEach(m   -> { if (ids.add(m.getId())) all.add(m); });
             all.sort(Comparator
                     .comparing((Movie m) -> m.getCategory() != null ? m.getCategory() : "")
-                    .thenComparing(m -> m.getTitle() != null ? m.getTitle() : "")
-            );
+                    .thenComparing(m -> m.getTitle() != null ? m.getTitle() : ""));
             return all;
-
         }).thenAccept(list -> Platform.runLater(() -> {
             allMovies = list;
             ObservableList<String> items = FXCollections.observableArrayList();
@@ -174,30 +157,23 @@ public class AdminController implements Initializable {
                         + " (" + m.getYear() + ")" + kidsIcon);
             }
             if (moviesList != null) moviesList.setItems(items);
-        })).exceptionally(e -> {
-            e.printStackTrace();
-            return null;
-        });
+        })).exceptionally(e -> { e.printStackTrace(); return null; });
     }
 
     // ===== Выбор файлов =====
-
-    @FXML
-    private void selectPoster() {
+    @FXML private void selectPoster() {
         File f = openFileChooser("Выберите постер",
                 new FileChooser.ExtensionFilter("Изображения", "*.jpg", "*.png", "*.jpeg", "*.webp"));
         if (f != null && posterField != null) posterField.setText(f.getAbsolutePath());
     }
 
-    @FXML
-    private void selectBanner() {
+    @FXML private void selectBanner() {
         File f = openFileChooser("Выберите баннер",
                 new FileChooser.ExtensionFilter("Изображения", "*.jpg", "*.png", "*.jpeg", "*.webp"));
         if (f != null && bannerField != null) bannerField.setText(f.getAbsolutePath());
     }
 
-    @FXML
-    private void selectVideo() {
+    @FXML private void selectVideo() {
         File f = openFileChooser("Выберите видео",
                 new FileChooser.ExtensionFilter("Видео", "*.mp4", "*.mkv", "*.avi"));
         if (f != null && videoField != null) videoField.setText(f.getAbsolutePath());
@@ -207,7 +183,6 @@ public class AdminController implements Initializable {
         FileChooser chooser = new FileChooser();
         chooser.setTitle(title);
         chooser.getExtensionFilters().add(filter);
-        // ИСПРАВЛЕНИЕ: используем Stage из текущей сцены, не новый пустой Stage
         Stage stage = (titleField != null && titleField.getScene() != null)
                 ? (Stage) titleField.getScene().getWindow()
                 : new Stage();
@@ -215,28 +190,21 @@ public class AdminController implements Initializable {
     }
 
     // ===== Сохранение =====
-
-    @FXML
-    private void saveMovie() {
+    @FXML private void saveMovie() {
         if (titleField == null || titleField.getText().isBlank()) {
-            showAlert("Введите название!");
-            return;
+            showAlert("Введите название!"); return;
         }
         if (selectedGenres.isEmpty()) {
-            showAlert("Выберите хотя бы один жанр!");
-            return;
+            showAlert("Выберите хотя бы один жанр!"); return;
         }
-        // ИСПРАВЛЕНИЕ: валидация рейтинга
+
         double rating = 0.0;
         try {
             rating = Double.parseDouble(ratingField.getText().trim().replace(",", "."));
-            if (rating < 0.0 || rating > 10.0) {
-                showAlert("Рейтинг должен быть от 0.0 до 10.0!");
-                return;
+            if (rating < 0 || rating > 10.0) {
+                showAlert("Рейтинг должен быть от 0.0 до 10.0!"); return;
             }
-        } catch (NumberFormatException ignored) {
-            // Оставляем 0.0 если поле пустое или некорректное
-        }
+        } catch (NumberFormatException ignored) {}
 
         Movie movie = buildMovieFromForm();
         setStatus("⏳ Сохранение...");
@@ -252,10 +220,7 @@ public class AdminController implements Initializable {
                     }))
                     .exceptionally(e -> {
                         e.printStackTrace();
-                        Platform.runLater(() -> {
-                            showAlert("❌ Ошибка: " + e.getMessage());
-                            setStatus("❌ Ошибка");
-                        });
+                        Platform.runLater(() -> { showAlert("❌ Ошибка: " + e.getMessage()); setStatus("❌ Ошибка"); });
                         return null;
                     });
         } else {
@@ -271,10 +236,7 @@ public class AdminController implements Initializable {
                     }))
                     .exceptionally(e -> {
                         e.printStackTrace();
-                        Platform.runLater(() -> {
-                            showAlert("❌ Ошибка: " + e.getMessage());
-                            setStatus("❌ Ошибка");
-                        });
+                        Platform.runLater(() -> { showAlert("❌ Ошибка: " + e.getMessage()); setStatus("❌ Ошибка"); });
                         return null;
                     });
         }
@@ -282,37 +244,28 @@ public class AdminController implements Initializable {
 
     private Movie buildMovieFromForm() {
         Movie movie = new Movie();
-        movie.setTitle(titleField != null ? titleField.getText().trim() : "");
-        movie.setDescription(descField != null ? descField.getText() : "");
-        movie.setPosterPath(posterField  != null ? posterField.getText()  : "");
-        movie.setBannerPath(bannerField  != null ? bannerField.getText()  : "");
-        movie.setVideoPath(videoField    != null ? videoField.getText()   : "");
-        movie.setDirector(directorField  != null ? directorField.getText(): "");
-        movie.setCountry(countryField    != null ? countryField.getText() : "");
+        movie.setTitle(titleField    != null ? titleField.getText().trim()    : "");
+        movie.setDescription(descField != null ? descField.getText()          : "");
+        movie.setPosterPath(posterField!= null ? posterField.getText()        : "");
+        movie.setBannerPath(bannerField!= null ? bannerField.getText()        : "");
+        movie.setVideoPath(videoField  != null ? videoField.getText()         : "");
+        movie.setDirector(directorField!= null ? directorField.getText()      : "");
+        movie.setCountry(countryField  != null ? countryField.getText()       : "");
         movie.setGenres(String.join(", ", selectedGenres));
 
-        // Категория
         String cat = categoryBox != null ? categoryBox.getValue() : "FILM";
-        if (isKidsContentCheck != null && isKidsContentCheck.isSelected()
-                && !"KIDS".equals(cat)) {
-            // Если помечено как детский контент, но категория FILM/SERIES — устанавливаем флаг is_kids
+        if (isKidsContentCheck != null && isKidsContentCheck.isSelected() && !"KIDS".equals(cat)) {
             movie.setKids(true);
         }
         movie.setCategory(cat);
 
-        // Числовые поля
-        try {
-            movie.setRating(Double.parseDouble(
-                    ratingField.getText().trim().replace(",", ".")));
-        } catch (Exception ignored) { movie.setRating(0.0); }
-        try {
-            movie.setYear(Integer.parseInt(yearField.getText().trim()));
-        } catch (Exception ignored) { movie.setYear(2024); }
-        try {
-            movie.setDuration(Integer.parseInt(durationField.getText().trim()));
-        } catch (Exception ignored) { movie.setDuration(0); }
+        try { movie.setRating(Double.parseDouble(ratingField.getText().trim().replace(",","."))); }
+        catch (Exception ignored) { movie.setRating(0.0); }
+        try { movie.setYear(Integer.parseInt(yearField.getText().trim())); }
+        catch (Exception ignored) { movie.setYear(2024); }
+        try { movie.setDuration(Integer.parseInt(durationField.getText().trim())); }
+        catch (Exception ignored) { movie.setDuration(0); }
 
-        // Флаги
         movie.setNowPlaying(isChecked(nowPlayingCheck));
         movie.setLatest(isChecked(latestCheck));
         movie.setTopRated(isChecked(topRatedCheck));
@@ -325,45 +278,31 @@ public class AdminController implements Initializable {
         movie.setKidsFeatured(isChecked(kidsFeaturedCheck));
         movie.setKidsPopular(isChecked(kidsPopularCheck));
         movie.setKidsLatest(isChecked(kidsLatestCheck));
-
+        movie.setKidsRecommended(isChecked(kidsRecommendedCheck)); // НОВЫЙ
         return movie;
     }
 
-    private boolean isChecked(CheckBox cb) {
-        return cb != null && cb.isSelected();
-    }
+    private boolean isChecked(CheckBox cb) { return cb != null && cb.isSelected(); }
 
     // ===== Редактирование =====
-
-    @FXML
-    private void editMovie() {
+    @FXML private void editMovie() {
         if (moviesList == null) return;
         int idx = moviesList.getSelectionModel().getSelectedIndex();
-
-        // ИСПРАВЛЕНИЕ: корректная проверка границ индекса
         if (idx < 0 || idx >= allMovies.size()) {
-            showAlert("Выберите запись из списка!");
-            return;
+            showAlert("Выберите запись из списка!"); return;
         }
-
         editingMovie = allMovies.get(idx);
         fillForm(editingMovie);
         setStatus("✏️ Редактирование: " + editingMovie.getTitle());
     }
 
     // ===== Удаление =====
-
-    @FXML
-    private void deleteMovie() {
+    @FXML private void deleteMovie() {
         if (moviesList == null) return;
         int idx = moviesList.getSelectionModel().getSelectedIndex();
-
-        // ИСПРАВЛЕНИЕ: корректная проверка границ индекса
         if (idx < 0 || idx >= allMovies.size()) {
-            showAlert("Выберите запись для удаления!");
-            return;
+            showAlert("Выберите запись для удаления!"); return;
         }
-
         Movie movie = allMovies.get(idx);
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Удаление");
@@ -377,7 +316,6 @@ public class AdminController implements Initializable {
                             logAction("DELETE_MOVIE", "Удалено: " + movie.getTitle());
                             loadMoviesListAsync();
                             setStatus("🗑️ Удалено: " + movie.getTitle());
-                            // Если удаляли редактируемый элемент — сбрасываем
                             if (editingMovie != null && editingMovie.getId() == movie.getId()) {
                                 clearEditingState();
                                 clearForm();
@@ -393,52 +331,41 @@ public class AdminController implements Initializable {
     }
 
     // ===== Очистка формы =====
-
-    @FXML
-    private void clearForm() {
+    @FXML private void clearForm() {
         clearEditingState();
         safeSet(titleField, "");
         if (descField != null) descField.clear();
-        safeSet(posterField,   "");
-        safeSet(bannerField,   "");
-        safeSet(videoField,    "");
-        safeSet(ratingField,   "");
-        safeSet(yearField,     "");
+        safeSet(posterField, "");
+        safeSet(bannerField, "");
+        safeSet(videoField, "");
+        safeSet(ratingField, "");
+        safeSet(yearField, "");
         safeSet(durationField, "");
         safeSet(directorField, "");
-        safeSet(countryField,  "");
+        safeSet(countryField, "");
         if (categoryBox != null) categoryBox.setValue("FILM");
-
         selectedGenres.clear();
-        genreToggleMap.values().forEach(tb -> {
-            tb.setSelected(false);
-            tb.setStyle(genreStyle(false));
-        });
-
-        setChecked(nowPlayingCheck,   false);
-        setChecked(latestCheck,       false);
-        setChecked(topRatedCheck,     false);
-        setChecked(popularCheck,      false);
-        setChecked(kidsCheck,         false);
-        setChecked(eveningCheck,      false);
-        setChecked(turkishCheck,      false);
-        setChecked(top10Check,        false);
-        setChecked(featuredCheck,     false);
-        setChecked(isKidsContentCheck,false);
-        setChecked(kidsFeaturedCheck, false);
-        setChecked(kidsPopularCheck,  false);
-        setChecked(kidsLatestCheck,   false);
-
+        genreToggleMap.values().forEach(tb -> { tb.setSelected(false); tb.setStyle(genreStyle(false)); });
+        setChecked(nowPlayingCheck,    false);
+        setChecked(latestCheck,        false);
+        setChecked(topRatedCheck,      false);
+        setChecked(popularCheck,       false);
+        setChecked(kidsCheck,          false);
+        setChecked(eveningCheck,       false);
+        setChecked(turkishCheck,       false);
+        setChecked(top10Check,         false);
+        setChecked(featuredCheck,      false);
+        setChecked(isKidsContentCheck, false);
+        setChecked(kidsFeaturedCheck,  false);
+        setChecked(kidsPopularCheck,   false);
+        setChecked(kidsLatestCheck,    false);
+        setChecked(kidsRecommendedCheck, false); // НОВЫЙ
         setStatus("Форма очищена");
     }
 
-    /** Сбрасывает режим редактирования без очистки полей */
-    private void clearEditingState() {
-        editingMovie = null;
-    }
+    private void clearEditingState() { editingMovie = null; }
 
     // ===== Заполнение формы при редактировании =====
-
     private void fillForm(Movie m) {
         safeSet(titleField,    m.getTitle());
         if (descField != null) descField.setText(m.getDescription());
@@ -453,51 +380,41 @@ public class AdminController implements Initializable {
 
         String cat = m.getCategory();
         if (categoryBox != null) categoryBox.setValue(cat != null ? cat : "FILM");
-
         boolean isKids = "KIDS".equals(cat) || m.isKids();
         setChecked(isKidsContentCheck, isKids);
 
-        // Жанры
         selectedGenres.clear();
-        genreToggleMap.values().forEach(tb -> {
-            tb.setSelected(false);
-            tb.setStyle(genreStyle(false));
-        });
+        genreToggleMap.values().forEach(tb -> { tb.setSelected(false); tb.setStyle(genreStyle(false)); });
         if (m.getGenres() != null) {
             for (String g : m.getGenres().split(",")) {
                 String genre = g.trim();
                 selectedGenres.add(genre);
                 ToggleButton tb = genreToggleMap.get(genre);
-                if (tb != null) {
-                    tb.setSelected(true);
-                    tb.setStyle(genreStyle(true));
-                }
+                if (tb != null) { tb.setSelected(true); tb.setStyle(genreStyle(true)); }
             }
         }
 
-        setChecked(nowPlayingCheck,   m.isNowPlaying());
-        setChecked(latestCheck,       m.isLatest());
-        setChecked(topRatedCheck,     m.isTopRated());
-        setChecked(popularCheck,      m.isPopular());
-        setChecked(kidsCheck,         m.isKids());
-        setChecked(eveningCheck,      m.isEvening());
-        setChecked(turkishCheck,      m.isTurkish());
-        setChecked(top10Check,        m.isTop10());
-        setChecked(featuredCheck,     m.isFeatured());
-        setChecked(kidsFeaturedCheck, m.isKidsFeatured());
-        setChecked(kidsPopularCheck,  m.isKidsPopular());
-        setChecked(kidsLatestCheck,   m.isKidsLatest());
+        setChecked(nowPlayingCheck,      m.isNowPlaying());
+        setChecked(latestCheck,          m.isLatest());
+        setChecked(topRatedCheck,        m.isTopRated());
+        setChecked(popularCheck,         m.isPopular());
+        setChecked(kidsCheck,            m.isKids());
+        setChecked(eveningCheck,         m.isEvening());
+        setChecked(turkishCheck,         m.isTurkish());
+        setChecked(top10Check,           m.isTop10());
+        setChecked(featuredCheck,        m.isFeatured());
+        setChecked(kidsFeaturedCheck,    m.isKidsFeatured());
+        setChecked(kidsPopularCheck,     m.isKidsPopular());
+        setChecked(kidsLatestCheck,      m.isKidsLatest());
+        setChecked(kidsRecommendedCheck, m.isKidsRecommended()); // НОВЫЙ
     }
 
     // ===== Вспомогательные =====
-
     private void safeSet(TextField field, String value) {
         if (field != null) field.setText(value != null ? value : "");
     }
 
-    private void setChecked(CheckBox cb, boolean val) {
-        if (cb != null) cb.setSelected(val);
-    }
+    private void setChecked(CheckBox cb, boolean val) { if (cb != null) cb.setSelected(val); }
 
     private void setStatus(String msg) {
         if (statusLabel != null) Platform.runLater(() -> statusLabel.setText(msg));
@@ -508,8 +425,7 @@ public class AdminController implements Initializable {
             db.asyncRun(() -> db.logAction(
                     SessionManager.getInstance().getCurrentUser().getId(),
                     SessionManager.getInstance().getCurrentUser().getUsername(),
-                    action,
-                    details
+                    action, details
             )).exceptionally(e -> { e.printStackTrace(); return null; });
         }
     }

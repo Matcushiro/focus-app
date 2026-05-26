@@ -1,205 +1,122 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
 
-<!--
-  kids.fxml — Детская вкладка.
-  ИСПРАВЛЕНИЕ: все контейнеры получают явный тёмный фон,
-  чтобы убрать белый прямоугольник в шапке.
--->
-<VBox
-        xmlns:fx="http://javafx.com/fxml"
-        fx:controller="com.focus.controller.KidsController"
-        styleClass="content-page"
-        style="-fx-background-color: #141414;">    <!-- ← главное исправление -->
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.focus.controller.KidsController"
+      styleClass="content-page">
 
-    <!-- ═══ ШАПКА: поиск + фильтры ════════════════════════════════
-         ИСПРАВЛЕНИЕ: -fx-background-color: #0a0a0a — убирает белый блок
-    ════════════════════════════════════════════════════════════════ -->
-    <VBox
-            styleClass="kids-search-hero"
-            style="-fx-background-color: #0a0a0a;
-             -fx-padding: 28 32 20 32;
-             -fx-border-color: transparent transparent #1e1e1e transparent;
-             -fx-border-width: 0 0 1 0;">
-
-        <Label
-                text="👶 Детское"
-                style="-fx-text-fill: #ffffff;
-               -fx-font-size: 26px;
-               -fx-font-weight: bold;" />
-
-        <Label
-                text="Мультфильмы, сказки и детские сериалы"
-                style="-fx-text-fill: #666666; -fx-font-size: 13px;" />
-
-        <Region prefHeight="14" />
-
-        <!-- Строка поиска + кнопка фильтра -->
-        <HBox spacing="10" alignment="CENTER_LEFT">
-
-            <TextField
-                    fx:id="kidsSearchField"
-                    promptText="🔍  Поиск мультфильмов..."
-                    styleClass="search-field"
-                    HBox.hgrow="ALWAYS"
-                    style="-fx-background-color: #1a1a1a;
-                 -fx-text-fill: #e5e5e5;
-                 -fx-prompt-text-fill: #555555;
-                 -fx-border-color: #2a2a2a;
-                 -fx-border-radius: 7;
-                 -fx-background-radius: 7;
-                 -fx-padding: 10 16;
-                 -fx-font-size: 13px;" />
-
-            <Button
-                    fx:id="kidsFilterBtn"
-                    text="🎛 Фильтры"
-                    styleClass="kids-filter-btn"
-                    onAction="#openKidsFilterPopup"
-                    style="-fx-background-color: #1a1a1a;
-                 -fx-text-fill: #aaaaaa;
-                 -fx-border-color: #2a2a2a;
-                 -fx-border-radius: 7;
-                 -fx-background-radius: 7;
-                 -fx-padding: 10 18;
-                 -fx-font-size: 13px;
-                 -fx-cursor: hand;" />
-
+    <!-- ШАПКА страницы -->
+    <VBox styleClass="kids-page-header">
+        <HBox alignment="CENTER_LEFT" spacing="16" styleClass="kids-header-row">
+            <VBox spacing="2" HBox.hgrow="ALWAYS">
+                <Label text="👶 Детям" styleClass="kids-page-title"/>
+                <Label text="Безопасный контент для маленьких зрителей" styleClass="kids-page-subtitle"/>
+            </VBox>
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <TextField fx:id="kidsSearchField"
+                           promptText="🔍  Поиск в детском..."
+                           styleClass="kids-search-field"
+                           prefWidth="260"/>
+                <Button fx:id="kidsFilterBtn"
+                        text="🎛 Фильтры"
+                        onAction="#openKidsFilterPopup"
+                        styleClass="kids-filter-btn"/>
+            </HBox>
         </HBox>
-
-        <Label
-                fx:id="kidsResultsLabel"
-                text=""
-                style="-fx-text-fill: #666666; -fx-font-size: 12px; -fx-padding: 6 0 0 2;" />
-
     </VBox>
 
-    <!-- ═══ Основной ScrollPane ═══════════════════════════════════ -->
-    <ScrollPane
-            fitToWidth="true"
-            hbarPolicy="NEVER"
-            VBox.vgrow="ALWAYS"
-            style="-fx-background-color: #141414;
-             -fx-background: #141414;">    <!-- ← убираем белый фон ScrollPane -->
+    <!-- РЕЗУЛЬТАТЫ ПОИСКА (скрыты по умолчанию) -->
+    <VBox fx:id="kidsSearchSection" styleClass="kids-search-section"
+          visible="false" managed="false">
+        <HBox alignment="CENTER_LEFT" spacing="12" styleClass="search-results-header">
+            <Label fx:id="kidsResultsLabel" text="Найдено: 0" styleClass="kids-results-label"/>
+        </HBox>
+        <FlowPane fx:id="kidsSearchGrid" hgap="12" vgap="16"
+                  styleClass="kids-search-grid"/>
+    </VBox>
 
-        <!-- Контейнер секций (виден когда нет поиска) -->
-        <VBox
-                fx:id="kidsSectionsBox"
-                style="-fx-background-color: #141414; -fx-padding: 20 0 60 0;"
-                spacing="32">
+    <!-- СЕКЦИИ (видны при отсутствии поиска) -->
+    <ScrollPane fx:id="kidsMainScroll" styleClass="kids-scroll"
+                fitToWidth="true" hbarPolicy="NEVER">
+        <VBox fx:id="kidsSectionsBox" styleClass="kids-sections-box" spacing="0">
 
-            <!-- ── Секция «Все детское» ─────────────────────── -->
-            <VBox styleClass="section" spacing="10" style="-fx-padding: 0 32;">
-                <Label
-                        text="🎬 Всё детское"
-                        styleClass="section-title" />
-                <ScrollPane
-                        fitToHeight="true"
-                        hbarPolicy="AS_NEEDED"
-                        vbarPolicy="NEVER"
-                        styleClass="h-scroll"
-                        style="-fx-background-color: transparent; -fx-background: transparent;">
-                    <HBox
-                            fx:id="kidsAllRow"
-                            styleClass="movie-row"
-                            style="-fx-background-color: transparent;" />
+            <!-- ====== ВСЕ ДЕТСКОЕ ====== -->
+            <VBox styleClass="kids-section">
+                <HBox alignment="CENTER_LEFT" spacing="8" styleClass="section-header-row">
+                    <Label text="🎪" styleClass="section-icon"/>
+                    <Label text="Всё детское" styleClass="kids-section-title"/>
+                </HBox>
+                <ScrollPane styleClass="kids-h-scroll" hbarPolicy="AS_NEEDED" vbarPolicy="NEVER"
+                            fitToHeight="true" prefHeight="235">
+                    <HBox fx:id="kidsAllRow" styleClass="kids-movie-row" spacing="12"/>
                 </ScrollPane>
             </VBox>
 
-            <!-- ── Секция «Мультфильмы» ─────────────────────── -->
-            <VBox styleClass="section" spacing="10" style="-fx-padding: 0 32;">
-                <Label
-                        text="🎞️ Мультфильмы"
-                        styleClass="section-title" />
-                <ScrollPane
-                        fitToHeight="true"
-                        hbarPolicy="AS_NEEDED"
-                        vbarPolicy="NEVER"
-                        styleClass="h-scroll"
-                        style="-fx-background-color: transparent; -fx-background: transparent;">
-                    <HBox
-                            fx:id="kidsFilmsRow"
-                            styleClass="movie-row"
-                            style="-fx-background-color: transparent;" />
+            <!-- ====== РЕКОМЕНДУЕМ (НОВАЯ СЕКЦИЯ) ====== -->
+            <VBox styleClass="kids-section kids-section-accent">
+                <HBox alignment="CENTER_LEFT" spacing="8" styleClass="section-header-row">
+                    <Label text="⭐" styleClass="section-icon"/>
+                    <Label text="Рекомендуем" styleClass="kids-section-title-green"/>
+                </HBox>
+                <ScrollPane styleClass="kids-h-scroll" hbarPolicy="AS_NEEDED" vbarPolicy="NEVER"
+                            fitToHeight="true" prefHeight="235">
+                    <HBox fx:id="kidsRecommendedRow" styleClass="kids-movie-row" spacing="12"/>
                 </ScrollPane>
             </VBox>
 
-            <!-- ── Секция «Детские сериалы» ─────────────────── -->
-            <VBox styleClass="section" spacing="10" style="-fx-padding: 0 32;">
-                <Label
-                        text="📺 Детские сериалы"
-                        styleClass="section-title" />
-                <ScrollPane
-                        fitToHeight="true"
-                        hbarPolicy="AS_NEEDED"
-                        vbarPolicy="NEVER"
-                        styleClass="h-scroll"
-                        style="-fx-background-color: transparent; -fx-background: transparent;">
-                    <HBox
-                            fx:id="kidsSeriesRow"
-                            styleClass="movie-row"
-                            style="-fx-background-color: transparent;" />
+            <!-- ====== ФИЛЬМЫ ====== -->
+            <VBox styleClass="kids-section">
+                <HBox alignment="CENTER_LEFT" spacing="8" styleClass="section-header-row">
+                    <Label text="🎬" styleClass="section-icon"/>
+                    <Label text="Фильмы" styleClass="kids-section-title"/>
+                </HBox>
+                <ScrollPane styleClass="kids-h-scroll" hbarPolicy="AS_NEEDED" vbarPolicy="NEVER"
+                            fitToHeight="true" prefHeight="235">
+                    <HBox fx:id="kidsFilmsRow" styleClass="kids-movie-row" spacing="12"/>
                 </ScrollPane>
             </VBox>
 
-            <!-- ── Секция «Популярные» ──────────────────────── -->
-            <VBox styleClass="section" spacing="10" style="-fx-padding: 0 32;">
-                <Label
-                        text="🔥 Популярное"
-                        styleClass="section-title-orange" />
-                <ScrollPane
-                        fitToHeight="true"
-                        hbarPolicy="AS_NEEDED"
-                        vbarPolicy="NEVER"
-                        styleClass="h-scroll"
-                        style="-fx-background-color: transparent; -fx-background: transparent;">
-                    <HBox
-                            fx:id="kidsPopularRow"
-                            styleClass="movie-row"
-                            style="-fx-background-color: transparent;" />
+            <!-- ====== СЕРИАЛЫ ====== -->
+            <VBox styleClass="kids-section">
+                <HBox alignment="CENTER_LEFT" spacing="8" styleClass="section-header-row">
+                    <Label text="📺" styleClass="section-icon"/>
+                    <Label text="Сериалы" styleClass="kids-section-title"/>
+                </HBox>
+                <ScrollPane styleClass="kids-h-scroll" hbarPolicy="AS_NEEDED" vbarPolicy="NEVER"
+                            fitToHeight="true" prefHeight="235">
+                    <HBox fx:id="kidsSeriesRow" styleClass="kids-movie-row" spacing="12"/>
                 </ScrollPane>
             </VBox>
 
-            <!-- ── Секция «Новинки» ─────────────────────────── -->
-            <VBox styleClass="section" spacing="10" style="-fx-padding: 0 32;">
-                <Label
-                        text="🆕 Новинки"
-                        styleClass="section-title" />
-                <ScrollPane
-                        fitToHeight="true"
-                        hbarPolicy="AS_NEEDED"
-                        vbarPolicy="NEVER"
-                        styleClass="h-scroll"
-                        style="-fx-background-color: transparent; -fx-background: transparent;">
-                    <HBox
-                            fx:id="kidsLatestRow"
-                            styleClass="movie-row"
-                            style="-fx-background-color: transparent;" />
+            <!-- ====== ПОПУЛЯРНОЕ ====== -->
+            <VBox styleClass="kids-section">
+                <HBox alignment="CENTER_LEFT" spacing="8" styleClass="section-header-row">
+                    <Label text="🔥" styleClass="section-icon"/>
+                    <Label text="Популярное" styleClass="kids-section-title"/>
+                </HBox>
+                <ScrollPane styleClass="kids-h-scroll" hbarPolicy="AS_NEEDED" vbarPolicy="NEVER"
+                            fitToHeight="true" prefHeight="235">
+                    <HBox fx:id="kidsPopularRow" styleClass="kids-movie-row" spacing="12"/>
+                </ScrollPane>
+            </VBox>
+
+            <!-- ====== НОВИНКИ ====== -->
+            <VBox styleClass="kids-section">
+                <HBox alignment="CENTER_LEFT" spacing="8" styleClass="section-header-row">
+                    <Label text="🆕" styleClass="section-icon"/>
+                    <Label text="Новинки" styleClass="kids-section-title"/>
+                </HBox>
+                <ScrollPane styleClass="kids-h-scroll" hbarPolicy="AS_NEEDED" vbarPolicy="NEVER"
+                            fitToHeight="true" prefHeight="235">
+                    <HBox fx:id="kidsLatestRow" styleClass="kids-movie-row" spacing="12"/>
                 </ScrollPane>
             </VBox>
 
         </VBox>
-
-        <!-- Секция результатов поиска (видна при активном поиске) -->
-        <VBox
-                fx:id="kidsSearchSection"
-                visible="false"
-                managed="false"
-                style="-fx-background-color: #141414; -fx-padding: 24 32 60 32;"
-                spacing="16">
-
-            <FlowPane
-                    fx:id="kidsSearchGrid"
-                    hgap="12"
-                    vgap="16"
-                    style="-fx-background-color: transparent;" />
-
-        </VBox>
-
     </ScrollPane>
 
 </VBox>

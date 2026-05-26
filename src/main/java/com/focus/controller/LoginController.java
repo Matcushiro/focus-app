@@ -11,6 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
@@ -20,17 +21,19 @@ import java.util.regex.Pattern;
 public class LoginController implements Initializable {
 
     // Форма входа
-    @FXML private TextField    loginIdentifier;   // email или телефон или логин
-    @FXML private PasswordField loginPassword;
-    @FXML private Label        loginError;
+    @FXML private TextField      loginIdentifier;   // email или телефон или логин
+    @FXML private PasswordField  loginPassword;
+    @FXML private Label          loginError;
+    @FXML private HBox           loginErrorBox;     // контейнер ошибки (скрыт по умолчанию)
 
     // Форма регистрации
-    @FXML private TextField     regUsername;
-    @FXML private TextField     regEmailOrPhone;  // email ИЛИ телефон
-    @FXML private PasswordField regPassword;
-    @FXML private PasswordField regPasswordConfirm;
-    @FXML private Label         regError;
-    @FXML private Label         regHint;          // подсказка под полем
+    @FXML private TextField      regUsername;
+    @FXML private TextField      regEmailOrPhone;   // email ИЛИ телефон
+    @FXML private PasswordField  regPassword;
+    @FXML private PasswordField  regPasswordConfirm;
+    @FXML private Label          regError;
+    @FXML private HBox           regErrorBox;       // контейнер ошибки (скрыт по умолчанию)
+    @FXML private Label          regHint;           // подсказка под полем
 
     // Переключатели форм
     @FXML private VBox   loginForm;
@@ -51,9 +54,22 @@ public class LoginController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // Подсказка при вводе email/телефона в регистрации
         if (regEmailOrPhone != null) {
-            regEmailOrPhone.textProperty().addListener((obs, oldVal, newVal) -> {
-                updateRegHint(newVal);
-            });
+            regEmailOrPhone.textProperty().addListener((obs, oldVal, newVal) ->
+                    updateRegHint(newVal)
+            );
+        }
+        // Очищаем ошибку при вводе
+        if (loginIdentifier != null) {
+            loginIdentifier.textProperty().addListener((obs, o, n) -> hideLoginError());
+        }
+        if (loginPassword != null) {
+            loginPassword.textProperty().addListener((obs, o, n) -> hideLoginError());
+        }
+        if (regUsername != null) {
+            regUsername.textProperty().addListener((obs, o, n) -> hideRegError());
+        }
+        if (regPassword != null) {
+            regPassword.textProperty().addListener((obs, o, n) -> hideRegError());
         }
     }
 
@@ -61,18 +77,20 @@ public class LoginController implements Initializable {
         if (regHint == null) return;
         if (value == null || value.isBlank()) {
             regHint.setText("Введите e-mail (user@mail.ru) или номер телефона (+79001234567)");
-            regHint.setStyle("-fx-text-fill: #777777; -fx-font-size: 11px;");
+            regHint.setStyle("-fx-text-fill: #444444; -fx-font-size: 11px; -fx-padding: 0 0 0 4;");
         } else if (EMAIL_PATTERN.matcher(value.trim()).matches()) {
             regHint.setText("✅ Корректный e-mail");
-            regHint.setStyle("-fx-text-fill: #4caf50; -fx-font-size: 11px;");
+            regHint.setStyle("-fx-text-fill: #4caf50; -fx-font-size: 11px; -fx-padding: 0 0 0 4;");
         } else if (PHONE_PATTERN.matcher(value.trim().replaceAll("[\\s\\-()]", "")).matches()) {
             regHint.setText("✅ Корректный номер телефона");
-            regHint.setStyle("-fx-text-fill: #4caf50; -fx-font-size: 11px;");
+            regHint.setStyle("-fx-text-fill: #4caf50; -fx-font-size: 11px; -fx-padding: 0 0 0 4;");
         } else {
             regHint.setText("⚠ Введите корректный e-mail или телефон");
-            regHint.setStyle("-fx-text-fill: #E65C00; -fx-font-size: 11px;");
+            regHint.setStyle("-fx-text-fill: #E65C00; -fx-font-size: 11px; -fx-padding: 0 0 0 4;");
         }
     }
+
+    // ===== Переключение вкладок =====
 
     @FXML
     private void showLogin() {
@@ -80,8 +98,28 @@ public class LoginController implements Initializable {
         loginForm.setManaged(true);
         registerForm.setVisible(false);
         registerForm.setManaged(false);
-        loginTabBtn.getStyleClass().setAll("tab-btn-active");
-        regTabBtn.getStyleClass().setAll("tab-btn");
+
+        // Активная вкладка — оранжевая кнопка
+        loginTabBtn.setStyle(
+                "-fx-background-color: #E65C00;" +
+                        "-fx-text-fill: #ffffff;" +
+                        "-fx-font-size: 13px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-background-radius: 9;" +
+                        "-fx-cursor: hand;" +
+                        "-fx-padding: 10 0;" +
+                        "-fx-effect: dropshadow(gaussian, rgba(230,92,0,0.5), 12, 0, 0, 2);"
+        );
+        regTabBtn.setStyle(
+                "-fx-background-color: transparent;" +
+                        "-fx-text-fill: #888888;" +
+                        "-fx-font-size: 13px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-background-radius: 9;" +
+                        "-fx-cursor: hand;" +
+                        "-fx-padding: 10 0;"
+        );
+        hideLoginError();
     }
 
     @FXML
@@ -90,9 +128,31 @@ public class LoginController implements Initializable {
         loginForm.setManaged(false);
         registerForm.setVisible(true);
         registerForm.setManaged(true);
-        loginTabBtn.getStyleClass().setAll("tab-btn");
-        regTabBtn.getStyleClass().setAll("tab-btn-active");
+
+        // Активная вкладка — Регистрация
+        regTabBtn.setStyle(
+                "-fx-background-color: #E65C00;" +
+                        "-fx-text-fill: #ffffff;" +
+                        "-fx-font-size: 13px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-background-radius: 9;" +
+                        "-fx-cursor: hand;" +
+                        "-fx-padding: 10 0;" +
+                        "-fx-effect: dropshadow(gaussian, rgba(230,92,0,0.5), 12, 0, 0, 2);"
+        );
+        loginTabBtn.setStyle(
+                "-fx-background-color: transparent;" +
+                        "-fx-text-fill: #888888;" +
+                        "-fx-font-size: 13px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-background-radius: 9;" +
+                        "-fx-cursor: hand;" +
+                        "-fx-padding: 10 0;"
+        );
+        hideRegError();
     }
+
+    // ===== Вход =====
 
     @FXML
     private void login() {
@@ -100,13 +160,12 @@ public class LoginController implements Initializable {
         String password   = loginPassword.getText().trim();
 
         if (identifier.isEmpty() || password.isEmpty()) {
-            loginError.setText("Заполните все поля!");
+            showLoginError("Заполните все поля!");
             return;
         }
 
-        // Пробуем найти пользователя по логину, email или телефону
         if (db.isUserBannedByIdentifier(identifier)) {
-            loginError.setText("❌ Ваш аккаунт заблокирован!");
+            showLoginError("❌ Ваш аккаунт заблокирован!");
             LogManager.getInstance().log(
                     "LOGIN_BLOCKED", identifier,
                     "Попытка входа заблокированным пользователем"
@@ -119,13 +178,15 @@ public class LoginController implements Initializable {
         if (user != null) {
             goToHome(user);
         } else {
-            loginError.setText("Неверный логин/email/телефон или пароль!");
+            showLoginError("Неверный логин / e-mail / телефон или пароль");
             LogManager.getInstance().log(
                     "LOGIN_FAILED", identifier,
                     "Неудачная попытка входа"
             );
         }
     }
+
+    // ===== Регистрация =====
 
     @FXML
     private void register() {
@@ -135,7 +196,7 @@ public class LoginController implements Initializable {
         String confirm    = regPasswordConfirm.getText().trim();
 
         if (username.isEmpty() || emailPhone.isEmpty() || password.isEmpty()) {
-            regError.setText("Заполните все поля!");
+            showRegError("Заполните все обязательные поля!");
             return;
         }
 
@@ -145,21 +206,20 @@ public class LoginController implements Initializable {
         boolean isPhone   = PHONE_PATTERN.matcher(cleanPhone).matches();
 
         if (!isEmail && !isPhone) {
-            regError.setText("Введите корректный e-mail или номер телефона!");
+            showRegError("Введите корректный e-mail или номер телефона!");
             return;
         }
 
         if (!password.equals(confirm)) {
-            regError.setText("Пароли не совпадают!");
+            showRegError("Пароли не совпадают!");
             return;
         }
 
         if (password.length() < 6) {
-            regError.setText("Пароль минимум 6 символов!");
+            showRegError("Пароль должен содержать минимум 6 символов!");
             return;
         }
 
-        // email = emailPhone если это email, иначе null; phone = cleanPhone если телефон
         String email = isEmail ? emailPhone : null;
         String phone = isPhone ? cleanPhone : null;
 
@@ -172,13 +232,50 @@ public class LoginController implements Initializable {
                             (isEmail ? "email: " + email : "телефон: " + phone) + ")"
             );
             User user = db.loginUserByIdentifier(username, password);
-            if (user != null) goToHome(user);
-            else {
-                regError.setText("Ошибка входа после регистрации. Войдите вручную.");
+            if (user != null) {
+                goToHome(user);
+            } else {
+                showRegError("Ошибка входа после регистрации. Войдите вручную.");
                 showLogin();
             }
         } else {
-            regError.setText("Пользователь уже существует!");
+            showRegError("Пользователь с таким именем уже существует!");
+        }
+    }
+
+    // ===== Вспомогательные =====
+
+    /** Показывает ошибку в блоке входа */
+    private void showLoginError(String message) {
+        if (loginError != null) loginError.setText(message);
+        if (loginErrorBox != null) {
+            loginErrorBox.setVisible(true);
+            loginErrorBox.setManaged(true);
+        }
+    }
+
+    /** Скрывает блок ошибки входа */
+    private void hideLoginError() {
+        if (loginErrorBox != null) {
+            loginErrorBox.setVisible(false);
+            loginErrorBox.setManaged(false);
+        }
+    }
+
+    /** Показывает ошибку в блоке регистрации */
+    private void showRegError(String message) {
+        if (regError != null) regError.setText(message);
+        if (regErrorBox != null) {
+            regErrorBox.setVisible(true);
+            regErrorBox.setManaged(true);
+        }
+    }
+
+    /** Скрывает блок ошибки регистрации */
+    private void hideRegError() {
+        if (regErrorBox != null) {
+            regErrorBox.setVisible(false);
+            regErrorBox.setManaged(false);
         }
     }
 

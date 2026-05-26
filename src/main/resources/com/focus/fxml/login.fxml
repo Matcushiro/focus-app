@@ -1,191 +1,145 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
 
-<!-- Корневой контейнер — тёмный фон, центрирование -->
-<StackPane
-        xmlns:fx="http://javafx.com/fxml"
-        fx:controller="com.focus.controller.LoginController"
-        styleClass="login-root"
-        style="-fx-background-color: #0d0d0d;">
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.focus.controller.LoginController"
+           styleClass="login-root">
 
-    <VBox
-            maxWidth="460"
-            maxHeight="680"
-            alignment="TOP_CENTER"
-            style="-fx-background-color: #111111;
-             -fx-background-radius: 14;
-             -fx-border-color: #2a2a2a;
-             -fx-border-width: 1;
-             -fx-border-radius: 14;
-             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 32, 0, 0, 8);">
+    <!-- Фоновый градиент -->
+    <VBox styleClass="login-bg" alignment="CENTER">
 
-        <padding><Insets top="36" right="40" bottom="36" left="40" /></padding>
+        <!-- Карточка -->
+        <VBox styleClass="login-card" alignment="TOP_CENTER" maxWidth="420">
 
-        <!-- Логотип -->
-        <Label
-                text="FOCUS"
-                style="-fx-text-fill: #E65C00;
-               -fx-font-size: 30px;
-               -fx-font-weight: bold;
-               -fx-font-family: 'Arial Black';" />
-
-        <Label
-                text="Войдите или создайте аккаунт"
-                style="-fx-text-fill: #666666; -fx-font-size: 13px;" />
-
-        <VBox.margin><Insets bottom="24" /></VBox.margin>
-
-        <!-- ── Вкладки: Войти / Регистрация ─────────────────── -->
-        <HBox
-                spacing="0"
-                style="-fx-background-color: #1a1a1a;
-               -fx-background-radius: 8;
-               -fx-border-color: #2a2a2a;
-               -fx-border-radius: 8;">
-
-            <Button
-                    fx:id="loginTabBtn"
-                    text="Войти"
-                    maxWidth="Infinity"
-                    HBox.hgrow="ALWAYS"
-                    styleClass="tab-btn-active"
-                    onAction="#showLogin" />
-
-            <Button
-                    fx:id="regTabBtn"
-                    text="Регистрация"
-                    maxWidth="Infinity"
-                    HBox.hgrow="ALWAYS"
-                    styleClass="tab-btn"
-                    onAction="#showRegister" />
-        </HBox>
-
-        <!-- Отступ под вкладками -->
-        <Region prefHeight="20" />
-
-        <!-- ══════════════════════════════════════════════════
-             ФОРМА ВХОДА
-             ══════════════════════════════════════════════════ -->
-        <VBox
-                fx:id="loginForm"
-                spacing="14"
-                visible="true"
-                managed="true">
-
-            <!-- Поле: логин / email / телефон -->
-            <VBox spacing="6">
-                <Label
-                        text="Логин, e-mail или телефон"
-                        style="-fx-text-fill: #aaaaaa; -fx-font-size: 12px; -fx-font-weight: bold;" />
-                <TextField
-                        fx:id="loginIdentifier"
-                        promptText="Введите логин, e-mail или +7..."
-                        styleClass="focus-input" />
+            <!-- Логотип -->
+            <VBox alignment="CENTER" spacing="4" styleClass="login-logo-section">
+                <Label text="▶ FOCUS" styleClass="login-logo"/>
+                <Label text="Ваш персональный кинотеатр" styleClass="login-tagline"/>
             </VBox>
 
-            <!-- Поле: пароль -->
-            <VBox spacing="6">
-                <Label
-                        text="Пароль"
-                        style="-fx-text-fill: #aaaaaa; -fx-font-size: 12px; -fx-font-weight: bold;" />
-                <PasswordField
-                        fx:id="loginPassword"
-                        promptText="••••••••"
-                        styleClass="focus-input" />
+            <!-- Разделитель -->
+            <Separator styleClass="login-separator"/>
+
+            <!-- Вкладки -->
+            <HBox styleClass="login-tabs" alignment="CENTER" spacing="0">
+                <Button fx:id="loginTabBtn" text="Войти"
+                        onAction="#showLogin"
+                        styleClass="login-tab-active"
+                        maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                <Button fx:id="regTabBtn" text="Регистрация"
+                        onAction="#showRegister"
+                        styleClass="login-tab"
+                        maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+            </HBox>
+
+            <!-- ===== ФОРМА ВХОДА ===== -->
+            <VBox fx:id="loginForm" styleClass="login-form" spacing="14" visible="true" managed="true">
+
+                <Label text="Добро пожаловать!" styleClass="login-form-title"/>
+                <Label text="Войдите в свой аккаунт" styleClass="login-form-subtitle"/>
+
+                <VBox spacing="6">
+                    <Label text="Логин / E-mail / Телефон" styleClass="login-field-label"/>
+                    <HBox styleClass="login-input-wrap" alignment="CENTER_LEFT" spacing="8">
+                        <Label text="👤" styleClass="login-input-icon"/>
+                        <TextField fx:id="loginIdentifier"
+                                   promptText="Введите логин, e-mail или телефон"
+                                   styleClass="login-input"
+                                   HBox.hgrow="ALWAYS"/>
+                    </HBox>
+                </VBox>
+
+                <VBox spacing="6">
+                    <Label text="Пароль" styleClass="login-field-label"/>
+                    <HBox styleClass="login-input-wrap" alignment="CENTER_LEFT" spacing="8">
+                        <Label text="🔒" styleClass="login-input-icon"/>
+                        <PasswordField fx:id="loginPassword"
+                                       promptText="Введите пароль"
+                                       styleClass="login-input"
+                                       HBox.hgrow="ALWAYS"/>
+                    </HBox>
+                </VBox>
+
+                <Label fx:id="loginError" styleClass="login-error" wrapText="true"/>
+
+                <Button text="▶  Войти"
+                        onAction="#login"
+                        styleClass="login-btn-primary"
+                        maxWidth="Infinity"/>
+
             </VBox>
 
-            <!-- Метка ошибки -->
-            <Label
-                    fx:id="loginError"
-                    text=""
-                    style="-fx-text-fill: #ff5555; -fx-font-size: 12px;"
-                    wrapText="true" />
+            <!-- ===== ФОРМА РЕГИСТРАЦИИ ===== -->
+            <VBox fx:id="registerForm" styleClass="login-form" spacing="14"
+                  visible="false" managed="false">
 
-            <!-- Кнопка входа -->
-            <Button
-                    text="▶  Войти"
-                    maxWidth="Infinity"
-                    styleClass="btn-orange"
-                    onAction="#login" />
+                <Label text="Создать аккаунт" styleClass="login-form-title"/>
+                <Label text="Заполните данные для регистрации" styleClass="login-form-subtitle"/>
+
+                <VBox spacing="6">
+                    <Label text="Имя пользователя" styleClass="login-field-label"/>
+                    <HBox styleClass="login-input-wrap" alignment="CENTER_LEFT" spacing="8">
+                        <Label text="👤" styleClass="login-input-icon"/>
+                        <TextField fx:id="regUsername"
+                                   promptText="Придумайте логин"
+                                   styleClass="login-input"
+                                   HBox.hgrow="ALWAYS"/>
+                    </HBox>
+                </VBox>
+
+                <VBox spacing="4">
+                    <Label text="E-mail или номер телефона" styleClass="login-field-label"/>
+                    <HBox styleClass="login-input-wrap" alignment="CENTER_LEFT" spacing="8">
+                        <Label text="📧" styleClass="login-input-icon"/>
+                        <TextField fx:id="regEmailOrPhone"
+                                   promptText="user@mail.ru или +79001234567"
+                                   styleClass="login-input"
+                                   HBox.hgrow="ALWAYS"/>
+                    </HBox>
+                    <Label fx:id="regHint"
+                           text="Введите e-mail или номер телефона"
+                           styleClass="login-hint"/>
+                </VBox>
+
+                <VBox spacing="6">
+                    <Label text="Пароль" styleClass="login-field-label"/>
+                    <HBox styleClass="login-input-wrap" alignment="CENTER_LEFT" spacing="8">
+                        <Label text="🔒" styleClass="login-input-icon"/>
+                        <PasswordField fx:id="regPassword"
+                                       promptText="Минимум 6 символов"
+                                       styleClass="login-input"
+                                       HBox.hgrow="ALWAYS"/>
+                    </HBox>
+                </VBox>
+
+                <VBox spacing="6">
+                    <Label text="Повторите пароль" styleClass="login-field-label"/>
+                    <HBox styleClass="login-input-wrap" alignment="CENTER_LEFT" spacing="8">
+                        <Label text="🔒" styleClass="login-input-icon"/>
+                        <PasswordField fx:id="regPasswordConfirm"
+                                       promptText="Повторите пароль"
+                                       styleClass="login-input"
+                                       HBox.hgrow="ALWAYS"/>
+                    </HBox>
+                </VBox>
+
+                <Label fx:id="regError" styleClass="login-error" wrapText="true"/>
+
+                <Button text="✅  Зарегистрироваться"
+                        onAction="#register"
+                        styleClass="login-btn-primary"
+                        maxWidth="Infinity"/>
+
+            </VBox>
+
+            <!-- Подвал карточки -->
+            <Label text="© 2025 Focus — Все права защищены"
+                   styleClass="login-footer"/>
 
         </VBox>
-
-        <!-- ══════════════════════════════════════════════════
-             ФОРМА РЕГИСТРАЦИИ
-             ══════════════════════════════════════════════════ -->
-        <VBox
-                fx:id="registerForm"
-                spacing="12"
-                visible="false"
-                managed="false">
-
-            <!-- Имя пользователя -->
-            <VBox spacing="5">
-                <Label
-                        text="Имя пользователя"
-                        style="-fx-text-fill: #aaaaaa; -fx-font-size: 12px; -fx-font-weight: bold;" />
-                <TextField
-                        fx:id="regUsername"
-                        promptText="Латинские буквы и цифры"
-                        styleClass="focus-input" />
-            </VBox>
-
-            <!-- E-mail или телефон -->
-            <VBox spacing="5">
-                <Label
-                        text="E-mail или номер телефона"
-                        style="-fx-text-fill: #aaaaaa; -fx-font-size: 12px; -fx-font-weight: bold;" />
-                <TextField
-                        fx:id="regEmailOrPhone"
-                        promptText="user@mail.ru или +79001234567"
-                        styleClass="focus-input" />
-                <Label
-                        fx:id="regHint"
-                        text="Введите e-mail или номер телефона"
-                        style="-fx-text-fill: #555555; -fx-font-size: 11px;"
-                        wrapText="true" />
-            </VBox>
-
-            <!-- Пароль -->
-            <VBox spacing="5">
-                <Label
-                        text="Пароль (мин. 6 символов)"
-                        style="-fx-text-fill: #aaaaaa; -fx-font-size: 12px; -fx-font-weight: bold;" />
-                <PasswordField
-                        fx:id="regPassword"
-                        promptText="••••••••"
-                        styleClass="focus-input" />
-            </VBox>
-
-            <!-- Подтвердить пароль -->
-            <VBox spacing="5">
-                <Label
-                        text="Подтвердите пароль"
-                        style="-fx-text-fill: #aaaaaa; -fx-font-size: 12px; -fx-font-weight: bold;" />
-                <PasswordField
-                        fx:id="regPasswordConfirm"
-                        promptText="Повторите пароль"
-                        styleClass="focus-input" />
-            </VBox>
-
-            <!-- Метка ошибки -->
-            <Label
-                    fx:id="regError"
-                    text=""
-                    style="-fx-text-fill: #ff5555; -fx-font-size: 12px;"
-                    wrapText="true" />
-
-            <!-- Кнопка регистрации -->
-            <Button
-                    text="✚  Создать аккаунт"
-                    maxWidth="Infinity"
-                    styleClass="btn-orange"
-                    onAction="#register" />
-
-        </VBox>
-
     </VBox>
 </StackPane>

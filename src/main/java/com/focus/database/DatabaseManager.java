@@ -20,10 +20,14 @@ public class DatabaseManager {
     private static volatile DatabaseManager instance;
     private Connection connection;
 
-    // Пул потоков для асинхронных операций с БД
-    private final ExecutorService dbExecutor = Executors.newFixedThreadPool(4);
+    // Однопоточный исполнитель — ВСЕ операции с БД через один поток,
+    // что полностью исключает SQLITE_BUSY от конкурентных запросов
+    private final ExecutorService dbExecutor = Executors.newSingleThreadExecutor(r -> {
+        Thread t = new Thread(r, "focus-db-thread");
+        t.setDaemon(true);
+        return t;
+    });
 
-    // Путь к файлу базы данных
     private static final String DB_PATH = "focus.db";
     private static final String DB_URL  = "jdbc:sqlite:" + DB_PATH;
 
@@ -50,27 +54,17 @@ public class DatabaseManager {
     }
 
     // ===== Инициализация =====
-
-    /**
-     * Гарантирует существование файла БД и всех родительских директорий.
-     * Если файла нет — SQLite сам его создаст при подключении,
-     * но директория должна существовать.
-     */
     private void ensureDbFileExists() {
         File dbFile = new File(DB_PATH);
         File parentDir = dbFile.getParentFile();
-
-        // Если путь содержит подпапки — создаём их
         if (parentDir != null && !parentDir.exists()) {
             boolean created = parentDir.mkdirs();
             if (created) {
                 System.out.println("📁 Создана директория для БД: " + parentDir.getAbsolutePath());
             }
         }
-
         if (!dbFile.exists()) {
-            System.out.println("📄 Файл БД не найден, будет создан автоматически: "
-                    + dbFile.getAbsolutePath());
+            System.out.println("📄 Файл БД не найден, будет создан автоматически: " + dbFile.getAbsolutePath());
         } else {
             System.out.println("✅ Файл БД найден: " + dbFile.getAbsolutePath());
         }
@@ -78,20 +72,21 @@ public class DatabaseManager {
 
     public void initialize() {
         try {
-            // ШАГ 1: Убеждаемся что директория существует (файл создаст SQLite сам)
             ensureDbFileExists();
 
-            // ШАГ 2: Подключаемся (SQLite создаёт файл если его нет)
             connection = DriverManager.getConnection(DB_URL);
 
-            // WAL-режим: улучшает параллельный доступ к SQLite
+            // WAL — параллельный доступ на чтение
             connection.createStatement().execute("PRAGMA journal_mode=WAL");
+            // Ждать до 5 секунд вместо немедленного SQLITE_BUSY
+            connection.createStatement().execute("PRAGMA busy_timeout=5000");
             connection.createStatement().execute("PRAGMA foreign_keys=ON");
+            // Увеличиваем кеш для производительности
+            connection.createStatement().execute("PRAGMA cache_size=-8000");
 
-            // ШАГ 3: Создаём таблицы если нужно
             createTables();
-
             System.out.println("✅ База данных готова!");
+
         } catch (SQLException e) {
             System.out.println("❌ Ошибка инициализации БД: " + e.getMessage());
             e.printStackTrace();
@@ -99,44 +94,44 @@ public class DatabaseManager {
     }
 
     private void createTables() throws SQLException {
-        // Таблица фильмов/сериалов
         connection.createStatement().execute("""
             CREATE TABLE IF NOT EXISTS movies (
-                id          INTEGER PRIMARY KEY AUTOINCREMENT,
-                title       TEXT NOT NULL,
-                description TEXT,
-                poster_path TEXT,
-                banner_path TEXT,
-                video_path  TEXT,
-                trailer_path TEXT,
-                rating      REAL DEFAULT 0,
-                year        INTEGER,
-                duration    INTEGER,
-                director    TEXT,
-                country     TEXT,
-                category    TEXT,
-                genres      TEXT,
-                is_now_playing      INTEGER DEFAULT 0,
-                is_latest           INTEGER DEFAULT 0,
-                is_top_rated        INTEGER DEFAULT 0,
-                is_popular          INTEGER DEFAULT 0,
-                is_kids             INTEGER DEFAULT 0,
-                is_evening          INTEGER DEFAULT 0,
-                is_turkish          INTEGER DEFAULT 0,
-                is_top10            INTEGER DEFAULT 0,
-                is_featured         INTEGER DEFAULT 0,
-                is_kids_featured    INTEGER DEFAULT 0,
-                is_kids_popular     INTEGER DEFAULT 0,
-                is_kids_latest      INTEGER DEFAULT 0
+                id               INTEGER PRIMARY KEY AUTOINCREMENT,
+                title            TEXT NOT NULL,
+                description      TEXT,
+                poster_path      TEXT,
+                banner_path      TEXT,
+                video_path       TEXT,
+                trailer_path     TEXT,
+                rating           REAL DEFAULT 0,
+                year             INTEGER,
+                duration         INTEGER,
+                director         TEXT,
+                country          TEXT,
+                category         TEXT,
+                genres           TEXT,
+                is_now_playing   INTEGER DEFAULT 0,
+                is_latest        INTEGER DEFAULT 0,
+                is_top_rated     INTEGER DEFAULT 0,
+                is_popular       INTEGER DEFAULT 0,
+                is_kids          INTEGER DEFAULT 0,
+                is_evening       INTEGER DEFAULT 0,
+                is_turkish       INTEGER DEFAULT 0,
+                is_top10         INTEGER DEFAULT 0,
+                is_featured      INTEGER DEFAULT 0,
+                is_kids_featured     INTEGER DEFAULT 0,
+                is_kids_popular      INTEGER DEFAULT 0,
+                is_kids_latest       INTEGER DEFAULT 0,
+                is_kids_recommended  INTEGER DEFAULT 0
             )
         """);
 
-        // Безопасная миграция новых колонок (если таблица уже существует без них)
-        migrateColumn("is_kids_featured", "INTEGER DEFAULT 0");
-        migrateColumn("is_kids_popular",  "INTEGER DEFAULT 0");
-        migrateColumn("is_kids_latest",   "INTEGER DEFAULT 0");
+        // Миграция всех новых колонок (если таблица уже существует)
+        migrateColumn("is_kids_featured",     "INTEGER DEFAULT 0");
+        migrateColumn("is_kids_popular",      "INTEGER DEFAULT 0");
+        migrateColumn("is_kids_latest",       "INTEGER DEFAULT 0");
+        migrateColumn("is_kids_recommended",  "INTEGER DEFAULT 0");
 
-        // Таблица пользователей
         connection.createStatement().execute("""
             CREATE TABLE IF NOT EXISTS users (
                 id         INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -149,8 +144,6 @@ public class DatabaseManager {
                 is_banned  INTEGER DEFAULT 0
             )
         """);
-
-        // Безопасная миграция поля phone
         migrateUserColumn("phone", "TEXT");
 
         connection.createStatement().execute("""
@@ -184,7 +177,6 @@ public class DatabaseManager {
         createDefaultAdmin();
     }
 
-    /** Безопасное добавление колонки в таблицу movies (если уже есть — игнорируем) */
     private void migrateColumn(String columnName, String definition) {
         try {
             connection.createStatement().execute(
@@ -193,7 +185,6 @@ public class DatabaseManager {
         } catch (SQLException ignored) {}
     }
 
-    /** Безопасное добавление колонки в таблицу users */
     private void migrateUserColumn(String columnName, String definition) {
         try {
             connection.createStatement().execute(
@@ -211,24 +202,20 @@ public class DatabaseManager {
                 VALUES ('admin', 'admin123', 'admin@focus.com', 'ADMIN')
             """);
             System.out.println("✅ Администратор создан!");
-            System.out.println("   Логин:  admin");
-            System.out.println("   Пароль: admin123");
         }
     }
 
     // ===== Фильмы (синхронные) =====
-
     public void addMovie(Movie movie) {
         try {
             PreparedStatement stmt = connection.prepareStatement("""
                 INSERT INTO movies (
-                    title, description, poster_path, banner_path,
-                    video_path, trailer_path, rating, year, duration,
-                    director, country, category, genres,
+                    title, description, poster_path, banner_path, video_path, trailer_path,
+                    rating, year, duration, director, country, category, genres,
                     is_now_playing, is_latest, is_top_rated, is_popular,
                     is_kids, is_evening, is_turkish, is_top10, is_featured,
-                    is_kids_featured, is_kids_popular, is_kids_latest
-                ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                    is_kids_featured, is_kids_popular, is_kids_latest, is_kids_recommended
+                ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
             """);
             fillMovieStatement(stmt, movie);
             stmt.executeUpdate();
@@ -242,16 +229,16 @@ public class DatabaseManager {
         try {
             PreparedStatement stmt = connection.prepareStatement("""
                 UPDATE movies SET
-                    title=?, description=?, poster_path=?, banner_path=?,
-                    video_path=?, trailer_path=?, rating=?, year=?, duration=?,
-                    director=?, country=?, category=?, genres=?,
-                    is_now_playing=?, is_latest=?, is_top_rated=?, is_popular=?,
-                    is_kids=?, is_evening=?, is_turkish=?, is_top10=?, is_featured=?,
-                    is_kids_featured=?, is_kids_popular=?, is_kids_latest=?
+                    title=?, description=?, poster_path=?, banner_path=?, video_path=?,
+                    trailer_path=?, rating=?, year=?, duration=?, director=?, country=?,
+                    category=?, genres=?, is_now_playing=?, is_latest=?, is_top_rated=?,
+                    is_popular=?, is_kids=?, is_evening=?, is_turkish=?, is_top10=?,
+                    is_featured=?, is_kids_featured=?, is_kids_popular=?, is_kids_latest=?,
+                    is_kids_recommended=?
                 WHERE id=?
             """);
             fillMovieStatement(stmt, movie);
-            stmt.setInt(26, movie.getId());
+            stmt.setInt(27, movie.getId());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -272,18 +259,19 @@ public class DatabaseManager {
         stmt.setString(11, m.getCountry());
         stmt.setString(12, m.getCategory());
         stmt.setString(13, m.getGenres());
-        stmt.setInt(14, m.isNowPlaying()  ? 1 : 0);
-        stmt.setInt(15, m.isLatest()      ? 1 : 0);
-        stmt.setInt(16, m.isTopRated()    ? 1 : 0);
-        stmt.setInt(17, m.isPopular()     ? 1 : 0);
-        stmt.setInt(18, m.isKids()        ? 1 : 0);
-        stmt.setInt(19, m.isEvening()     ? 1 : 0);
-        stmt.setInt(20, m.isTurkish()     ? 1 : 0);
-        stmt.setInt(21, m.isTop10()       ? 1 : 0);
-        stmt.setInt(22, m.isFeatured()    ? 1 : 0);
-        stmt.setInt(23, m.isKidsFeatured()? 1 : 0);
-        stmt.setInt(24, m.isKidsPopular() ? 1 : 0);
-        stmt.setInt(25, m.isKidsLatest()  ? 1 : 0);
+        stmt.setInt(14, m.isNowPlaying()        ? 1 : 0);
+        stmt.setInt(15, m.isLatest()            ? 1 : 0);
+        stmt.setInt(16, m.isTopRated()          ? 1 : 0);
+        stmt.setInt(17, m.isPopular()           ? 1 : 0);
+        stmt.setInt(18, m.isKids()              ? 1 : 0);
+        stmt.setInt(19, m.isEvening()           ? 1 : 0);
+        stmt.setInt(20, m.isTurkish()           ? 1 : 0);
+        stmt.setInt(21, m.isTop10()             ? 1 : 0);
+        stmt.setInt(22, m.isFeatured()          ? 1 : 0);
+        stmt.setInt(23, m.isKidsFeatured()      ? 1 : 0);
+        stmt.setInt(24, m.isKidsPopular()       ? 1 : 0);
+        stmt.setInt(25, m.isKidsLatest()        ? 1 : 0);
+        stmt.setInt(26, m.isKidsRecommended()   ? 1 : 0);
     }
 
     public void deleteMovie(int id) {
@@ -308,13 +296,9 @@ public class DatabaseManager {
     }
 
     // ===== Получение контента =====
-
     public List<Movie> getAllMovies()  { return getByQuery("SELECT * FROM movies WHERE category='FILM'"); }
     public List<Movie> getAllSeries()  { return getByQuery("SELECT * FROM movies WHERE category='SERIES'"); }
-
-    public List<Movie> getKidsMovies() {
-        return getByQuery("SELECT * FROM movies WHERE category='KIDS' OR is_kids=1");
-    }
+    public List<Movie> getKidsMovies(){ return getByQuery("SELECT * FROM movies WHERE category='KIDS' OR is_kids=1"); }
 
     public List<Movie> getKidsFilms() {
         return getByQuery(
@@ -340,6 +324,13 @@ public class DatabaseManager {
         );
     }
 
+    // НОВЫЙ МЕТОД — рекомендации для детского раздела
+    public List<Movie> getKidsRecommended() {
+        return getByQuery(
+                "SELECT * FROM movies WHERE (category='KIDS' OR is_kids=1) AND is_kids_recommended=1"
+        );
+    }
+
     public Movie getKidsFeatured() {
         List<Movie> list = getByQuery("""
             SELECT * FROM movies
@@ -353,7 +344,8 @@ public class DatabaseManager {
 
     public Movie getFeaturedMovie() {
         List<Movie> list = getByQuery("""
-            SELECT * FROM movies WHERE is_featured=1 ORDER BY RANDOM() LIMIT 1
+            SELECT * FROM movies WHERE is_featured=1
+            ORDER BY RANDOM() LIMIT 1
         """);
         return list.isEmpty() ? null : list.get(0);
     }
@@ -364,7 +356,8 @@ public class DatabaseManager {
     public List<Movie> getPopular()    { return getByFlag("is_popular"); }
     public List<Movie> getEvening()    { return getByFlag("is_evening"); }
     public List<Movie> getTurkish()    { return getByFlag("is_turkish"); }
-    public List<Movie> getTop10()      {
+
+    public List<Movie> getTop10() {
         return getByQuery("SELECT * FROM movies WHERE is_top10=1 ORDER BY rating DESC LIMIT 10");
     }
 
@@ -401,31 +394,29 @@ public class DatabaseManager {
     }
 
     // ===== Асинхронные версии =====
-
-    public CompletableFuture<List<Movie>> getAllMoviesAsync()    { return async(this::getAllMovies); }
-    public CompletableFuture<List<Movie>> getAllSeriesAsync()    { return async(this::getAllSeries); }
-    public CompletableFuture<List<Movie>> getKidsMoviesAsync()  { return async(this::getKidsMovies); }
-    public CompletableFuture<List<Movie>> getKidsFilmsAsync()   { return async(this::getKidsFilms); }
-    public CompletableFuture<List<Movie>> getKidsSeriesAsync()  { return async(this::getKidsSeries); }
-    public CompletableFuture<List<Movie>> getKidsPopularAsync() { return async(this::getKidsPopular); }
-    public CompletableFuture<List<Movie>> getKidsLatestAsync()  { return async(this::getKidsLatest); }
-    public CompletableFuture<Movie>       getKidsFeaturedAsync(){ return async(this::getKidsFeatured); }
-    public CompletableFuture<Movie>       getFeaturedMovieAsync(){ return async(this::getFeaturedMovie); }
-    public CompletableFuture<List<Movie>> getNowPlayingAsync()  { return async(this::getNowPlaying); }
-    public CompletableFuture<List<Movie>> getLatestAsync()      { return async(this::getLatest); }
-    public CompletableFuture<List<Movie>> getTopRatedAsync()    { return async(this::getTopRated); }
-    public CompletableFuture<List<Movie>> getPopularAsync()     { return async(this::getPopular); }
-    public CompletableFuture<List<Movie>> getEveningAsync()     { return async(this::getEvening); }
-    public CompletableFuture<List<Movie>> getTurkishAsync()     { return async(this::getTurkish); }
-    public CompletableFuture<List<Movie>> getTop10Async()       { return async(this::getTop10); }
-    public CompletableFuture<List<Movie>> searchAsync(String q) { return async(() -> search(q)); }
-
-    public CompletableFuture<Void> addMovieAsync(Movie movie)    { return asyncRun(() -> addMovie(movie)); }
-    public CompletableFuture<Void> updateMovieAsync(Movie movie) { return asyncRun(() -> updateMovie(movie)); }
-    public CompletableFuture<Void> deleteMovieAsync(int id)      { return asyncRun(() -> deleteMovie(id)); }
+    public CompletableFuture<List<Movie>> getAllMoviesAsync()       { return async(this::getAllMovies); }
+    public CompletableFuture<List<Movie>> getAllSeriesAsync()       { return async(this::getAllSeries); }
+    public CompletableFuture<List<Movie>> getKidsMoviesAsync()     { return async(this::getKidsMovies); }
+    public CompletableFuture<List<Movie>> getKidsFilmsAsync()      { return async(this::getKidsFilms); }
+    public CompletableFuture<List<Movie>> getKidsSeriesAsync()     { return async(this::getKidsSeries); }
+    public CompletableFuture<List<Movie>> getKidsPopularAsync()    { return async(this::getKidsPopular); }
+    public CompletableFuture<List<Movie>> getKidsLatestAsync()     { return async(this::getKidsLatest); }
+    public CompletableFuture<List<Movie>> getKidsRecommendedAsync(){ return async(this::getKidsRecommended); }
+    public CompletableFuture<Movie>       getKidsFeaturedAsync()   { return async(this::getKidsFeatured); }
+    public CompletableFuture<Movie>       getFeaturedMovieAsync()  { return async(this::getFeaturedMovie); }
+    public CompletableFuture<List<Movie>> getNowPlayingAsync()     { return async(this::getNowPlaying); }
+    public CompletableFuture<List<Movie>> getLatestAsync()         { return async(this::getLatest); }
+    public CompletableFuture<List<Movie>> getTopRatedAsync()       { return async(this::getTopRated); }
+    public CompletableFuture<List<Movie>> getPopularAsync()        { return async(this::getPopular); }
+    public CompletableFuture<List<Movie>> getEveningAsync()        { return async(this::getEvening); }
+    public CompletableFuture<List<Movie>> getTurkishAsync()        { return async(this::getTurkish); }
+    public CompletableFuture<List<Movie>> getTop10Async()          { return async(this::getTop10); }
+    public CompletableFuture<List<Movie>> searchAsync(String q)    { return async(() -> search(q)); }
+    public CompletableFuture<Void>        addMovieAsync(Movie m)   { return asyncRun(() -> addMovie(m)); }
+    public CompletableFuture<Void>        updateMovieAsync(Movie m){ return asyncRun(() -> updateMovie(m)); }
+    public CompletableFuture<Void>        deleteMovieAsync(int id) { return asyncRun(() -> deleteMovie(id)); }
 
     // ===== Пользователи =====
-
     public boolean registerUser(String username, String password, String email, String phone) {
         try {
             PreparedStatement stmt = connection.prepareStatement("""
@@ -464,7 +455,6 @@ public class DatabaseManager {
         return null;
     }
 
-    /** Алиас для обратной совместимости */
     public User loginUser(String username, String password) {
         return loginUserByIdentifier(username, password);
     }
@@ -485,7 +475,6 @@ public class DatabaseManager {
         return false;
     }
 
-    /** Алиас для обратной совместимости */
     public boolean isUserBanned(String username) {
         return isUserBannedByIdentifier(username);
     }
@@ -565,7 +554,6 @@ public class DatabaseManager {
     }
 
     // ===== Избранное =====
-
     public void addToFavorites(int userId, int movieId) {
         try {
             PreparedStatement stmt = connection.prepareStatement("""
@@ -624,7 +612,6 @@ public class DatabaseManager {
     }
 
     // ===== История =====
-
     public void addToHistory(int userId, int movieId) {
         try {
             PreparedStatement stmt = connection.prepareStatement("""
@@ -656,11 +643,11 @@ public class DatabaseManager {
     }
 
     // ===== Логи =====
-
     public void logAction(int userId, String username, String action, String details) {
         try {
             PreparedStatement stmt = connection.prepareStatement("""
-                INSERT INTO action_logs (user_id, username, action, details) VALUES (?,?,?,?)
+                INSERT INTO action_logs (user_id, username, action, details)
+                VALUES (?,?,?,?)
             """);
             stmt.setInt(1, userId);
             stmt.setString(2, username);
@@ -695,7 +682,6 @@ public class DatabaseManager {
     }
 
     // ===== Вспомогательные =====
-
     private List<Movie> getByFlag(String flag) {
         return getByQuery("SELECT * FROM movies WHERE " + flag + "=1");
     }
@@ -737,10 +723,10 @@ public class DatabaseManager {
             m.setTurkish(rs.getInt("is_turkish") == 1);
             m.setTop10(rs.getInt("is_top10") == 1);
             m.setFeatured(rs.getInt("is_featured") == 1);
-            // Новые поля — с защитой от старых БД без этих колонок
-            try { m.setKidsFeatured(rs.getInt("is_kids_featured") == 1); } catch (Exception ignored) {}
-            try { m.setKidsPopular(rs.getInt("is_kids_popular")   == 1); } catch (Exception ignored) {}
-            try { m.setKidsLatest(rs.getInt("is_kids_latest")     == 1); } catch (Exception ignored) {}
+            try { m.setKidsFeatured(rs.getInt("is_kids_featured") == 1); }     catch (Exception ignored) {}
+            try { m.setKidsPopular(rs.getInt("is_kids_popular") == 1); }       catch (Exception ignored) {}
+            try { m.setKidsLatest(rs.getInt("is_kids_latest") == 1); }         catch (Exception ignored) {}
+            try { m.setKidsRecommended(rs.getInt("is_kids_recommended") == 1);} catch (Exception ignored) {}
             movies.add(m);
         }
         return movies;

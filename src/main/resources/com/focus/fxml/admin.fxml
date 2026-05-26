@@ -117,7 +117,7 @@
 
                 <Separator styleClass="admin-sep"/>
 
-                <!-- ===== Флаги секций ===== -->
+                <!-- ===== Флаги секций — Главная ===== -->
                 <Label text="📌 Флаги — Главная страница" styleClass="admin-field-label"/>
                 <GridPane hgap="12" vgap="8">
                     <CheckBox fx:id="nowPlayingCheck" text="В эфире"
@@ -148,23 +148,32 @@
 
                 <Separator styleClass="admin-sep"/>
 
-                <!-- ===== Детский контент ===== -->
+                <!-- ===== Флаги — Детская вкладка ===== -->
                 <Label text="👶 Флаги — Детская вкладка" styleClass="admin-field-label"/>
                 <GridPane hgap="12" vgap="8">
+
                     <CheckBox fx:id="kidsCheck" text="Пометить как детское"
                               styleClass="admin-check"
                               GridPane.columnIndex="0" GridPane.rowIndex="0"
                               GridPane.columnSpan="2"/>
+
                     <CheckBox fx:id="kidsFeaturedCheck" text="🌟 Баннер детской вкладки"
                               styleClass="admin-check"
                               GridPane.columnIndex="0" GridPane.rowIndex="1"
                               GridPane.columnSpan="2"/>
+
+                    <CheckBox fx:id="kidsRecommendedCheck" text="⭐ Рекомендации (детское)"
+                              styleClass="admin-check"
+                              GridPane.columnIndex="0" GridPane.rowIndex="2"
+                              GridPane.columnSpan="2"/>
+
                     <CheckBox fx:id="kidsPopularCheck" text="🔥 Популярное (детское)"
                               styleClass="admin-check"
-                              GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                              GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+
                     <CheckBox fx:id="kidsLatestCheck" text="🆕 Новинка (детское)"
                               styleClass="admin-check"
-                              GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                              GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                 </GridPane>
 
                 <Separator styleClass="admin-sep"/>
