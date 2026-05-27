@@ -16,30 +16,17 @@ import java.util.function.Supplier;
 
 /**
  * DatabaseManager — потокобезопасный менеджер SQLite.
- *
- * АРХИТЕКТУРА ИСПРАВЛЕНИЯ:
- * ---------------------------------------------------------
- * Исходная проблема: connection создавался в dbExecutor-потоке,
- * но не был volatile, из-за чего другие потоки могли видеть null.
- * Кроме того, initialize() могло гонять с логином при старте.
- *
- * Решение: один единственный private Connection, защищённый
- * synchronized-блоками. Все операции с БД идут через
- * getConnection() который гарантирует инициализацию.
- * Асинхронные *Async() методы используют отдельный executor
- * только для того, чтобы не блокировать FX-поток.
- * ---------------------------------------------------------
  */
 public class DatabaseManager {
 
-    // ── Singleton ──────────────────────────────────────────────────────────
+    // Singleton
     private static volatile DatabaseManager instance;
 
-    // ── Соединение с БД (доступ только через getConnection()) ─────────────
+    // Соединение с БД (доступ только через getConnection())
     private volatile Connection connection;
     private volatile boolean    initialized = false;
 
-    // ── Executor только для async-обёрток (не хранит connection!) ─────────
+    // Executor только для async-обёрток (не хранит connection!)
     private final ExecutorService asyncExecutor = Executors.newFixedThreadPool(
             2,
             r -> {
@@ -65,7 +52,7 @@ public class DatabaseManager {
         return instance;
     }
 
-    // ── Получение соединения (потокобезопасно) ─────────────────────────────
+    //Получение соединения (потокобезопасно)
     private synchronized Connection getConnection() throws SQLException {
         if (!initialized || connection == null || connection.isClosed()) {
             initializeInternal();
@@ -73,14 +60,6 @@ public class DatabaseManager {
         return connection;
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // ИНИЦИАЛИЗАЦИЯ
-    // ═══════════════════════════════════════════════════════════════════════
-
-    /**
-     * Публичный метод инициализации — вызывается из Main.start().
-     * Синхронизирован, безопасен для любого потока.
-     */
     public synchronized void initialize() {
         if (initialized) return;
         initializeInternal();
@@ -134,7 +113,7 @@ public class DatabaseManager {
     private void createTables() throws SQLException {
         try (Statement st = connection.createStatement()) {
 
-            // ── movies ────────────────────────────────────────────────────
+            // movies
             st.execute("""
                 CREATE TABLE IF NOT EXISTS movies (
                     id               INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -167,7 +146,7 @@ public class DatabaseManager {
                 )
             """);
 
-            // ── users ─────────────────────────────────────────────────────
+            // users
             st.execute("""
                 CREATE TABLE IF NOT EXISTS users (
                     id         INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -181,7 +160,7 @@ public class DatabaseManager {
                 )
             """);
 
-            // ── favorites ─────────────────────────────────────────────────
+            // favorites
             st.execute("""
                 CREATE TABLE IF NOT EXISTS favorites (
                     user_id  INTEGER,
@@ -190,7 +169,7 @@ public class DatabaseManager {
                 )
             """);
 
-            // ── watch_history ─────────────────────────────────────────────
+            // watch_history
             st.execute("""
                 CREATE TABLE IF NOT EXISTS watch_history (
                     user_id    INTEGER,
@@ -200,7 +179,7 @@ public class DatabaseManager {
                 )
             """);
 
-            // ── action_logs ───────────────────────────────────────────────
+            // action_logs
             st.execute("""
                 CREATE TABLE IF NOT EXISTS action_logs (
                     id         INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -247,10 +226,6 @@ public class DatabaseManager {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // ASYNC HELPERS
-    // ═══════════════════════════════════════════════════════════════════════
-
     /** Запускает задачу в фоновом потоке, не блокируя FX-поток. */
     public <T> CompletableFuture<T> async(Supplier<T> supplier) {
         return CompletableFuture.supplyAsync(supplier, asyncExecutor);
@@ -259,10 +234,6 @@ public class DatabaseManager {
     public CompletableFuture<Void> asyncRun(Runnable runnable) {
         return CompletableFuture.runAsync(runnable, asyncExecutor);
     }
-
-    // ═══════════════════════════════════════════════════════════════════════
-    // ФИЛЬМЫ
-    // ═══════════════════════════════════════════════════════════════════════
 
     public synchronized void addMovie(Movie movie) {
         try {
@@ -347,7 +318,7 @@ public class DatabaseManager {
         s.setInt(26, m.isKidsRecommended() ? 1 : 0);
     }
 
-    // ── Геттеры фильмов ────────────────────────────────────────────────────
+    // Геттеры фильмов
 
     public synchronized List<Movie> getAllMovies()        { return query("SELECT * FROM movies WHERE category='FILM'"); }
     public synchronized List<Movie> getAllSeries()        { return query("SELECT * FROM movies WHERE category='SERIES'"); }
@@ -399,7 +370,7 @@ public class DatabaseManager {
         } catch (SQLException e) { e.printStackTrace(); return new ArrayList<>(); }
     }
 
-    // ── Async версии ────────────────────────────────────────────────────────
+    // Async версии
 
     public CompletableFuture<List<Movie>> getAllMoviesAsync()       { return async(this::getAllMovies); }
     public CompletableFuture<List<Movie>> getAllSeriesAsync()       { return async(this::getAllSeries); }
@@ -423,10 +394,6 @@ public class DatabaseManager {
     public CompletableFuture<Void>        updateMovieAsync(Movie m){ return asyncRun(() -> updateMovie(m)); }
     public CompletableFuture<Void>        deleteMovieAsync(int id) { return asyncRun(() -> deleteMovie(id)); }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // ПОЛЬЗОВАТЕЛИ
-    // ═══════════════════════════════════════════════════════════════════════
-
     public synchronized boolean registerUser(String username, String password, String email, String phone) {
         try {
             PreparedStatement s = getConnection().prepareStatement("""
@@ -447,12 +414,6 @@ public class DatabaseManager {
         return registerUser(username, password, email, null);
     }
 
-    /**
-     * ГЛАВНОЕ ИСПРАВЛЕНИЕ:
-     * Метод синхронизирован и использует getConnection(), который
-     * гарантирует, что БД инициализирована и таблица users существует
-     * вне зависимости от того, из какого потока вызывается метод.
-     */
     public synchronized User loginUserByIdentifier(String identifier, String password) {
         try {
             PreparedStatement s = getConnection().prepareStatement("""
@@ -565,10 +526,6 @@ public class DatabaseManager {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // ИЗБРАННОЕ
-    // ═══════════════════════════════════════════════════════════════════════
-
     public synchronized void addToFavorites(int userId, int movieId) {
         try {
             PreparedStatement s = getConnection().prepareStatement(
@@ -610,10 +567,6 @@ public class DatabaseManager {
         } catch (SQLException e) { e.printStackTrace(); return false; }
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // ИСТОРИЯ ПРОСМОТРОВ
-    // ═══════════════════════════════════════════════════════════════════════
-
     public synchronized void addToHistory(int userId, int movieId) {
         try {
             PreparedStatement s = getConnection().prepareStatement("""
@@ -637,10 +590,6 @@ public class DatabaseManager {
             return mapResultSet(s.executeQuery());
         } catch (SQLException e) { e.printStackTrace(); return new ArrayList<>(); }
     }
-
-    // ═══════════════════════════════════════════════════════════════════════
-    // ЛОГИ ДЕЙСТВИЙ
-    // ═══════════════════════════════════════════════════════════════════════
 
     public synchronized void logAction(int userId, String username, String action, String details) {
         try {
@@ -675,11 +624,6 @@ public class DatabaseManager {
         return logs;
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // ВСПОМОГАТЕЛЬНЫЕ
-    // ═══════════════════════════════════════════════════════════════════════
-
-    /** Выполняет SELECT-запрос. Вызывать только из synchronized-методов! */
     private List<Movie> query(String sql) {
         try {
             return mapResultSet(getConnection().createStatement().executeQuery(sql));

@@ -21,12 +21,6 @@ import java.util.ResourceBundle;
 
 /**
  * ProfileController — профиль пользователя.
- *
- * ИСПРАВЛЕНИЯ:
- * - Дописан метод saveProfile() (в оригинале был обрезан)
- * - После сохранения профиля — обновляется имя в навбаре через MainController
- * - Добавлен метод logout()
- * - Null-checks для всех FXML-полей
  */
 public class ProfileController implements Initializable {
 
@@ -147,7 +141,7 @@ public class ProfileController implements Initializable {
         title.setWrapText(true);
         title.setMaxWidth(150);
 
-        Label rating = new Label("⭐ " + String.format("%.1f", movie.getRating()));
+        Label rating = new Label(String.format("%.1f", movie.getRating()));
         rating.getStyleClass().add("card-rating");
 
         card.getChildren().addAll(poster, title, rating);
@@ -170,7 +164,7 @@ public class ProfileController implements Initializable {
         }
     }
 
-    // ===== Редактирование профиля =====
+    // Редактирование профиля
 
     @FXML
     private void editProfile() {
@@ -193,9 +187,6 @@ public class ProfileController implements Initializable {
         if (editError != null) editError.setText("");
     }
 
-    /**
-     * ИСПРАВЛЕНИЕ: метод был обрезан в оригинале — дописан полностью.
-     */
     @FXML
     private void saveProfile() {
         String username = editUsername != null ? editUsername.getText().trim() : "";
@@ -211,7 +202,7 @@ public class ProfileController implements Initializable {
             return;
         }
 
-        if (editError != null) editError.setText("⏳ Сохранение...");
+        if (editError != null) editError.setText("Сохранение...");
 
         final String finalUsername = username;
         final String finalEmail    = email;
@@ -238,20 +229,20 @@ public class ProfileController implements Initializable {
                 loadProfile();
                 cancelEdit();
 
-                if (editError != null) editError.setText("✅ Сохранено!");
+                if (editError != null) editError.setText("Сохранено!");
             } else {
-                if (editError != null) editError.setText("❌ Ошибка: имя уже занято!");
+                if (editError != null) editError.setText("Ошибка: имя уже занято!");
             }
         })).exceptionally(e -> {
             e.printStackTrace();
             Platform.runLater(() -> {
-                if (editError != null) editError.setText("❌ Ошибка сохранения");
+                if (editError != null) editError.setText("Ошибка сохранения");
             });
             return null;
         });
     }
 
-    // ===== Выход =====
+    // Выход
 
     @FXML
     private void logout() {
@@ -281,7 +272,6 @@ public class ProfileController implements Initializable {
         }
     }
 
-    /** Безопасно получает корневой BorderPane */
     private BorderPane getRootPane() {
         try {
             javafx.scene.Node ref = usernameLabel != null ? usernameLabel : avatarLabel;

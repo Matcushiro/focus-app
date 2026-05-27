@@ -17,7 +17,7 @@ public class Movie {
     private String  category;
     private String  genres;
 
-    // ===== Флаги =====
+    // Флаги
     private boolean nowPlaying;
     private boolean latest;
     private boolean topRated;
@@ -34,7 +34,7 @@ public class Movie {
     private boolean kidsLatest;
     private boolean kidsRecommended; // НОВЫЙ
 
-    // ===== Геттеры / Сеттеры =====
+    // Геттеры / Сеттеры
     public int    getId()          { return id; }
     public void   setId(int id)    { this.id = id; }
 
@@ -113,7 +113,7 @@ public class Movie {
     public boolean isKidsLatest()           { return kidsLatest; }
     public void    setKidsLatest(boolean v) { this.kidsLatest = v; }
 
-    // НОВЫЙ — рекомендации детского раздела
+    // Рекомендации детского раздела
     public boolean isKidsRecommended()           { return kidsRecommended; }
     public void    setKidsRecommended(boolean v) { this.kidsRecommended = v; }
 

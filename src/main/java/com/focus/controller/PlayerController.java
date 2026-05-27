@@ -54,7 +54,7 @@ public class PlayerController implements Initializable {
             File file = new File(videoPath);
             if (!file.exists()) {
                 System.out.println(
-                        "❌ Файл не найден: " + videoPath
+                        "Файл не найден: " + videoPath
                 );
                 return;
             }

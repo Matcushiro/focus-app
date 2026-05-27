@@ -9,7 +9,6 @@
             fx:controller="com.focus.controller.AdminController"
             styleClass="admin-page">
 
-    <!-- ===== ЛЕВАЯ ПАНЕЛЬ: форма добавления ===== -->
     <left>
         <ScrollPane fitToWidth="true" styleClass="admin-scroll"
                     prefWidth="440" minWidth="400">
@@ -17,11 +16,9 @@
 
                 <Label text="📽 Управление контентом" styleClass="admin-section-title"/>
 
-                <!-- Статус операции -->
                 <Label fx:id="statusLabel" text="Готово к работе"
                        styleClass="admin-status-label"/>
 
-                <!-- Тип контента -->
                 <VBox spacing="5">
                     <Label text="Тип контента" styleClass="admin-field-label"/>
                     <HBox spacing="10" alignment="CENTER_LEFT">
@@ -37,21 +34,18 @@
 
                 <Separator styleClass="admin-sep"/>
 
-                <!-- Название -->
                 <VBox spacing="5">
                     <Label text="Название *" styleClass="admin-field-label"/>
                     <TextField fx:id="titleField" promptText="Введите название"
                                styleClass="admin-field"/>
                 </VBox>
 
-                <!-- Описание -->
                 <VBox spacing="5">
                     <Label text="Описание" styleClass="admin-field-label"/>
                     <TextArea fx:id="descField" promptText="Краткое описание..."
                               styleClass="admin-textarea" prefRowCount="3" wrapText="true"/>
                 </VBox>
 
-                <!-- Жанры — мультивыбор тегами -->
                 <VBox spacing="8">
                     <Label text="Жанры * (можно выбрать несколько)" styleClass="admin-field-label"/>
                     <FlowPane fx:id="genresPane" hgap="6" vgap="6"
@@ -62,7 +56,6 @@
 
                 <Separator styleClass="admin-sep"/>
 
-                <!-- Числовые поля -->
                 <GridPane hgap="10" vgap="8">
                     <VBox GridPane.columnIndex="0" GridPane.rowIndex="0" spacing="5">
                         <Label text="Рейтинг (0-10)" styleClass="admin-field-label"/>
@@ -96,7 +89,6 @@
 
                 <Separator styleClass="admin-sep"/>
 
-                <!-- Медиафайлы -->
                 <Label text="Медиафайлы" styleClass="admin-field-label"/>
 
                 <HBox spacing="6" alignment="CENTER_LEFT">
@@ -117,7 +109,6 @@
 
                 <Separator styleClass="admin-sep"/>
 
-                <!-- ===== Флаги секций — Главная ===== -->
                 <Label text="📌 Флаги — Главная страница" styleClass="admin-field-label"/>
                 <GridPane hgap="12" vgap="8">
                     <CheckBox fx:id="nowPlayingCheck" text="В эфире"
@@ -148,7 +139,6 @@
 
                 <Separator styleClass="admin-sep"/>
 
-                <!-- ===== Флаги — Детская вкладка ===== -->
                 <Label text="👶 Флаги — Детская вкладка" styleClass="admin-field-label"/>
                 <GridPane hgap="12" vgap="8">
 
@@ -178,7 +168,6 @@
 
                 <Separator styleClass="admin-sep"/>
 
-                <!-- Кнопки действий -->
                 <HBox spacing="8">
                     <Button text="💾 Сохранить" styleClass="admin-btn-primary"
                             onAction="#saveMovie" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
@@ -190,7 +179,6 @@
         </ScrollPane>
     </left>
 
-    <!-- ===== ПРАВАЯ ПАНЕЛЬ: список контента ===== -->
     <center>
         <VBox styleClass="admin-list-panel" spacing="12">
 

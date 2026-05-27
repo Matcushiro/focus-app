@@ -3,7 +3,7 @@ package com.focus.model;
 public class User {
     private int     id;
     private String  username;
-    private String  password;   // ИСПРАВЛЕНИЕ: добавлено поле password
+    private String  password;
     private String  email;
     private String  phone;
     private String  role;
@@ -26,7 +26,7 @@ public class User {
     public String getUsername()         { return username; }
     public void   setUsername(String u) { this.username = u; }
 
-    // ИСПРАВЛЕНИЕ: геттер/сеттер для password
+    // геттер/сеттер для password
     public String getPassword()         { return password; }
     public void   setPassword(String p) { this.password = p; }
 
@@ -49,9 +49,6 @@ public class User {
         return "ADMIN".equals(role);
     }
 
-    /**
-     * Возвращает отображаемый идентификатор (email или телефон).
-     */
     public String getContactInfo() {
         if (email != null && !email.isBlank()) return email;
         if (phone != null && !phone.isBlank()) return phone;

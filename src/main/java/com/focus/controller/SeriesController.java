@@ -21,19 +21,16 @@ import java.util.stream.Collectors;
 
 /**
  * SeriesController — вкладка «Сериалы».
- * Секции: Новинки, Популярные, Топ по рейтингу, Турецкие.
- * Поиск + фильтры.
- * Всё загружается асинхронно.
  */
 public class SeriesController implements Initializable {
 
-    // ===== Секции =====
+    // Секции
     @FXML private HBox seriesLatestRow;
     @FXML private HBox seriesPopularRow;
     @FXML private HBox seriesTopRatedRow;
     @FXML private HBox seriesTurkishRow;
 
-    // ===== Поиск и фильтр =====
+    // Поиск и фильтр
     @FXML private FlowPane moviesGrid;
     @FXML private TextField searchField;
     @FXML private Button filterBtn;
@@ -60,7 +57,7 @@ public class SeriesController implements Initializable {
         loadAllAsync();
     }
 
-    // ===== Асинхронная загрузка =====
+    // Асинхронная загрузка
     private void loadAllAsync() {
         // Все сериалы — для поиска
         db.getAllSeriesAsync()
@@ -172,7 +169,7 @@ public class SeriesController implements Initializable {
         return movie.getRating() >= min;
     }
 
-    // ===== Попап фильтров =====
+    // Попап фильтров
     private void buildFilterPopup() {
         filterPopup = new Popup();
         filterPopup.setAutoHide(true);
@@ -268,15 +265,15 @@ public class SeriesController implements Initializable {
         boolean hasFilters = !selectedGenres.isEmpty()
                 || (selectedRating != null && !selectedRating.equals("Любой"));
         if (hasFilters) {
-            filterBtn.setText("🎛 Фильтры ●");
+            filterBtn.setText("Фильтры");
             filterBtn.setStyle("-fx-background-color: #E65C00; -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-border-radius: 6; -fx-padding: 8 16; -fx-cursor: hand;");
         } else {
-            filterBtn.setText("🎛 Фильтры");
+            filterBtn.setText("Фильтры");
             filterBtn.setStyle("-fx-background-color: #2a2a2a; -fx-text-fill: #cccccc; -fx-border-color: #444; -fx-border-radius: 6; -fx-padding: 8 16; -fx-cursor: hand;");
         }
     }
 
-    // ===== Карточки =====
+    // Карточки
     private void fillRow(HBox row, List<Movie> movies) {
         if (row == null) return;
         row.getChildren().clear();
@@ -308,7 +305,7 @@ public class SeriesController implements Initializable {
         titleLbl.setWrapText(true);
         titleLbl.setMaxWidth(150);
 
-        Label ratingLbl = new Label("⭐ " + String.format("%.1f", movie.getRating()));
+        Label ratingLbl = new Label(String.format("%.1f", movie.getRating()));
         ratingLbl.getStyleClass().add("card-rating");
 
         card.getChildren().addAll(poster, titleLbl, ratingLbl);

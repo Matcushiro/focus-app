@@ -123,7 +123,7 @@ public class SearchController implements Initializable {
         title.setMaxWidth(150);
 
         Label rating = new Label(
-                "⭐ " + String.format(
+                String.format(
                         "%.1f", movie.getRating()
                 )
         );

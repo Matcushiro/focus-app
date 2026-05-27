@@ -19,12 +19,11 @@ import java.net.URL;
 import java.util.*;
 
 /**
- * AdminController — управление контентом (добавление/редактирование/удаление фильмов и сериалов).
- * Все операции с БД выполняются асинхронно.
+ * AdminController — добавление/редактирование/удаление фильмов и сериалов.
  */
 public class AdminController implements Initializable {
 
-    // ===== Поля формы =====
+    // Поля формы
     @FXML private TextField   titleField;
     @FXML private TextArea    descField;
     @FXML private TextField   posterField;
@@ -41,7 +40,7 @@ public class AdminController implements Initializable {
     private final Set<String>           selectedGenres  = new LinkedHashSet<>();
     private final Map<String, ToggleButton> genreToggleMap = new LinkedHashMap<>();
 
-    // ===== Флаги секций (главные) =====
+    // Флаги секций (главные)
     @FXML private CheckBox nowPlayingCheck;
     @FXML private CheckBox latestCheck;
     @FXML private CheckBox topRatedCheck;
@@ -51,7 +50,7 @@ public class AdminController implements Initializable {
     @FXML private CheckBox top10Check;
     @FXML private CheckBox featuredCheck;
 
-    // ===== Детский контент =====
+    // Детский контент
     @FXML private CheckBox kidsCheck;
     @FXML private CheckBox isKidsContentCheck;
     @FXML private CheckBox kidsFeaturedCheck;
@@ -59,7 +58,7 @@ public class AdminController implements Initializable {
     @FXML private CheckBox kidsLatestCheck;
     @FXML private CheckBox kidsRecommendedCheck; // НОВЫЙ
 
-    // ===== Список =====
+    // Список
     @FXML private ListView<String> moviesList;
     @FXML private Label            statusLabel;
 
@@ -87,7 +86,7 @@ public class AdminController implements Initializable {
         loadMoviesListAsync();
     }
 
-    // ===== Панель жанров =====
+    // Панель жанров
     private void buildGenresPanel() {
         if (genresPane == null) return;
         genresPane.getChildren().clear();
@@ -127,7 +126,7 @@ public class AdminController implements Initializable {
         if (kidsRecommendedCheck != null) kidsRecommendedCheck.setVisible(isKids || isChecked(kidsCheck));
     }
 
-    // ===== Загрузка списка =====
+    // Загрузка списка
     private void loadMoviesListAsync() {
         db.async(() -> {
             List<Movie> films  = db.getAllMovies();
@@ -160,7 +159,7 @@ public class AdminController implements Initializable {
         })).exceptionally(e -> { e.printStackTrace(); return null; });
     }
 
-    // ===== Выбор файлов =====
+    // Выбор файлов
     @FXML private void selectPoster() {
         File f = openFileChooser("Выберите постер",
                 new FileChooser.ExtensionFilter("Изображения", "*.jpg", "*.png", "*.jpeg", "*.webp"));
@@ -189,7 +188,7 @@ public class AdminController implements Initializable {
         return chooser.showOpenDialog(stage);
     }
 
-    // ===== Сохранение =====
+    // Сохранение
     @FXML private void saveMovie() {
         if (titleField == null || titleField.getText().isBlank()) {
             showAlert("Введите название!"); return;
@@ -207,20 +206,20 @@ public class AdminController implements Initializable {
         } catch (NumberFormatException ignored) {}
 
         Movie movie = buildMovieFromForm();
-        setStatus("⏳ Сохранение...");
+        setStatus("Сохранение...");
 
         if (editingMovie == null) {
             db.addMovieAsync(movie)
                     .thenRun(() -> Platform.runLater(() -> {
                         logAction("ADD_" + movie.getCategory(), "Добавлено: " + movie.getTitle());
-                        showAlert("✅ Сохранено: " + movie.getTitle());
+                        showAlert("Сохранено: " + movie.getTitle());
                         clearForm();
                         loadMoviesListAsync();
-                        setStatus("✅ Готово");
+                        setStatus("Готово");
                     }))
                     .exceptionally(e -> {
                         e.printStackTrace();
-                        Platform.runLater(() -> { showAlert("❌ Ошибка: " + e.getMessage()); setStatus("❌ Ошибка"); });
+                        Platform.runLater(() -> { showAlert("Ошибка: " + e.getMessage()); setStatus("Ошибка"); });
                         return null;
                     });
         } else {
@@ -228,15 +227,15 @@ public class AdminController implements Initializable {
             db.updateMovieAsync(movie)
                     .thenRun(() -> Platform.runLater(() -> {
                         logAction("UPDATE_" + movie.getCategory(), "Обновлено: " + movie.getTitle());
-                        showAlert("✅ Обновлено: " + movie.getTitle());
+                        showAlert("Обновлено: " + movie.getTitle());
                         clearEditingState();
                         clearForm();
                         loadMoviesListAsync();
-                        setStatus("✅ Готово");
+                        setStatus("Готово");
                     }))
                     .exceptionally(e -> {
                         e.printStackTrace();
-                        Platform.runLater(() -> { showAlert("❌ Ошибка: " + e.getMessage()); setStatus("❌ Ошибка"); });
+                        Platform.runLater(() -> { showAlert("Ошибка: " + e.getMessage()); setStatus("Ошибка"); });
                         return null;
                     });
         }
@@ -284,7 +283,7 @@ public class AdminController implements Initializable {
 
     private boolean isChecked(CheckBox cb) { return cb != null && cb.isSelected(); }
 
-    // ===== Редактирование =====
+    // Редактирование
     @FXML private void editMovie() {
         if (moviesList == null) return;
         int idx = moviesList.getSelectionModel().getSelectedIndex();
@@ -293,10 +292,10 @@ public class AdminController implements Initializable {
         }
         editingMovie = allMovies.get(idx);
         fillForm(editingMovie);
-        setStatus("✏️ Редактирование: " + editingMovie.getTitle());
+        setStatus("Редактирование: " + editingMovie.getTitle());
     }
 
-    // ===== Удаление =====
+    // Удаление
     @FXML private void deleteMovie() {
         if (moviesList == null) return;
         int idx = moviesList.getSelectionModel().getSelectedIndex();
@@ -310,12 +309,12 @@ public class AdminController implements Initializable {
         confirm.setContentText("Удалить «" + movie.getTitle() + "»?");
         confirm.showAndWait().ifPresent(r -> {
             if (r == ButtonType.OK) {
-                setStatus("⏳ Удаление...");
+                setStatus("Удаление...");
                 db.deleteMovieAsync(movie.getId())
                         .thenRun(() -> Platform.runLater(() -> {
                             logAction("DELETE_MOVIE", "Удалено: " + movie.getTitle());
                             loadMoviesListAsync();
-                            setStatus("🗑️ Удалено: " + movie.getTitle());
+                            setStatus("Удалено: " + movie.getTitle());
                             if (editingMovie != null && editingMovie.getId() == movie.getId()) {
                                 clearEditingState();
                                 clearForm();
@@ -323,14 +322,14 @@ public class AdminController implements Initializable {
                         }))
                         .exceptionally(e -> {
                             e.printStackTrace();
-                            Platform.runLater(() -> setStatus("❌ Ошибка удаления"));
+                            Platform.runLater(() -> setStatus("Ошибка удаления"));
                             return null;
                         });
             }
         });
     }
 
-    // ===== Очистка формы =====
+    // Очистка формы
     @FXML private void clearForm() {
         clearEditingState();
         safeSet(titleField, "");
@@ -365,7 +364,7 @@ public class AdminController implements Initializable {
 
     private void clearEditingState() { editingMovie = null; }
 
-    // ===== Заполнение формы при редактировании =====
+    // Заполнение формы при редактировании
     private void fillForm(Movie m) {
         safeSet(titleField,    m.getTitle());
         if (descField != null) descField.setText(m.getDescription());
@@ -409,7 +408,7 @@ public class AdminController implements Initializable {
         setChecked(kidsRecommendedCheck, m.isKidsRecommended()); // НОВЫЙ
     }
 
-    // ===== Вспомогательные =====
+    // Вспомогательные
     private void safeSet(TextField field, String value) {
         if (field != null) field.setText(value != null ? value : "");
     }

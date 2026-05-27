@@ -10,20 +10,16 @@
 
     <VBox styleClass="home-content" spacing="0">
 
-        <!-- БАННЕР -->
         <StackPane fx:id="bannerPane"
                    styleClass="banner-pane">
 
-            <!-- Фоновое изображение -->
             <ImageView fx:id="bannerImage"
                        styleClass="banner-bg"
                        preserveRatio="false"
                        fitHeight="400"/>
 
-            <!-- Затемнение -->
             <Pane styleClass="banner-overlay"/>
 
-            <!-- Контент баннера -->
             <HBox styleClass="banner-content"
                   alignment="BOTTOM_LEFT">
 
@@ -31,23 +27,19 @@
                       spacing="10"
                       alignment="BOTTOM_LEFT">
 
-                    <!-- Название -->
                     <Label fx:id="bannerTitle"
                            styleClass="banner-title"
                            wrapText="true"
                            maxWidth="350"/>
 
-                    <!-- Описание -->
                     <Label fx:id="bannerDesc"
                            styleClass="banner-desc"
                            wrapText="true"
                            maxWidth="350"/>
 
-                    <!-- Рейтинг -->
                     <Label fx:id="bannerRating"
                            styleClass="banner-rating"/>
 
-                    <!-- Кнопки -->
                     <HBox spacing="12"
                           alignment="CENTER_LEFT">
                         <Button text="СМОТРЕТЬ"
@@ -64,27 +56,22 @@
 
         </StackPane>
 
-        <!-- СЕКЦИИ -->
         <VBox styleClass="sections-wrapper" spacing="40">
 
-            <!-- Смотрите сейчас -->
             <VBox styleClass="section" spacing="15">
                 <Label text="СМОТРИТЕ СЕЙЧАС"
                        styleClass="section-title"/>
 
-                <!-- Ряд 1 -->
                 <HBox fx:id="nowPlayingRow"
                       spacing="12"
                       styleClass="movie-row-nowrap"/>
 
-                <!-- Ряд 2 (продолжение) -->
                 <HBox fx:id="nowPlayingRow2"
                       spacing="12"
                       styleClass="movie-row-nowrap"/>
 
             </VBox>
 
-            <!-- Новинки -->
             <VBox styleClass="section" spacing="15">
                 <Label text="НОВИНКИ"
                        styleClass="section-title"/>
@@ -96,7 +83,6 @@
                 </ScrollPane>
             </VBox>
 
-            <!-- Высокий рейтинг -->
             <VBox styleClass="section" spacing="15">
                 <Label text="ВЫСОКИЙ РЕЙТИНГ"
                        styleClass="section-title"/>
@@ -108,7 +94,6 @@
                 </ScrollPane>
             </VBox>
 
-            <!-- Невозможно оторваться -->
             <VBox styleClass="section" spacing="15">
                 <Label text="НЕВОЗМОЖНО ОТОРВАТЬСЯ"
                        styleClass="section-title"/>
@@ -120,7 +105,6 @@
                 </ScrollPane>
             </VBox>
 
-            <!-- Детский топ -->
             <VBox styleClass="section" spacing="15">
                 <Label text="ДЕТСКИЙ ТОП"
                        styleClass="section-title"/>
@@ -132,7 +116,6 @@
                 </ScrollPane>
             </VBox>
 
-            <!-- Фильм на вечер -->
             <VBox styleClass="section" spacing="15">
                 <Label text="ФИЛЬМ НА ВЕЧЕР"
                        styleClass="section-title"/>
@@ -144,7 +127,6 @@
                 </ScrollPane>
             </VBox>
 
-            <!-- Турецкий топ -->
             <VBox styleClass="section" spacing="15">
                 <Label text="ТУРЕЦКИЙ ТОП"
                        styleClass="section-title"/>
@@ -156,7 +138,6 @@
                 </ScrollPane>
             </VBox>
 
-            <!-- Топ 10 -->
             <VBox styleClass="section" spacing="15">
                 <Label text="ТОП 10 ДЛЯ ВАС"
                        styleClass="section-title"/>

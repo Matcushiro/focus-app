@@ -12,7 +12,6 @@
             <VBox spacing="30"
                   styleClass="profile-wrapper">
 
-                <!-- ===== ШАПКА ПРОФИЛЯ ===== -->
                 <HBox spacing="25"
                       alignment="CENTER_LEFT"
                       styleClass="profile-header">
@@ -37,7 +36,6 @@
                     </VBox>
                 </HBox>
 
-                <!-- ===== СТАТИСТИКА ===== -->
                 <HBox spacing="20"
                       styleClass="stats-box"
                       alignment="CENTER">
@@ -61,7 +59,6 @@
                     </VBox>
                 </HBox>
 
-                <!-- ===== ФОРМА РЕДАКТИРОВАНИЯ (скрыта по умолчанию) ===== -->
                 <VBox fx:id="editForm"
                       spacing="15"
                       styleClass="edit-form"
@@ -109,7 +106,6 @@
                     </HBox>
                 </VBox>
 
-                <!-- ===== ИЗБРАННОЕ ===== -->
                 <VBox spacing="12" styleClass="section">
                     <Label text="❤️ Моё избранное"
                            styleClass="section-title"/>

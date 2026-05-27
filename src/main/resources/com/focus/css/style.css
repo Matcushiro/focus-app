@@ -1,9 +1,4 @@
-/* ============================================================
-   FOCUS — Главный стиль приложения
-   Палитра: #000000 | #1a1a1a | #2a2a2a | #E65C00 | #ffffff
-   ============================================================ */
-
-/* ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===== */
+/* Основные переменные */
 .root {
     -focus-orange:    #E65C00;
     -focus-orange-h:  #FF6A00;
@@ -15,12 +10,12 @@
     -focus-muted:     #999999;
 }
 
-/* ===== КОРНЕВОЙ КОНТЕЙНЕР ===== */
+/* Корневой контейнер */
 .root-pane {
     -fx-background-color: #141414;
 }
 
-/* ===== СКРОЛЛ (общий) ===== */
+/* Общий скролл */
 .main-scroll {
     -fx-background-color: #141414;
     -fx-background: #141414;
@@ -30,7 +25,7 @@
     -fx-background-color: #141414;
 }
 
-/* ===== ШАПКА / НАВИГАЦИЯ ===== */
+/* Шапка и навигация */
 .navbar {
     -fx-background-color: #000000;
     -fx-padding: 0 32px;
@@ -74,7 +69,7 @@
     -fx-border-width: 0 0 2px 0;
 }
 
-/* ===== КНОПКА ПОИСКА В ШАПКЕ ===== */
+/* Поиск в шапке */
 .search-icon-btn {
     -fx-background-color: transparent;
     -fx-text-fill: #cccccc;
@@ -89,7 +84,7 @@
     -fx-text-fill: #E65C00;
 }
 
-/* ===== КНОПКА ПРОФИЛЯ ===== */
+/* Профиль */
 .profile-btn {
     -fx-background-color: #E65C00;
     -fx-text-fill: white;
@@ -105,7 +100,7 @@
     -fx-effect: dropshadow(gaussian, rgba(230,92,0,0.4), 10, 0, 0, 2);
 }
 
-/* ===== БАННЕР ===== */
+/* Баннер */
 .banner-pane {
     -fx-pref-height: 420px;
     -fx-min-height: 420px;
@@ -156,7 +151,7 @@
     -fx-font-size: 13px;
 }
 
-/* ===== КНОПКИ БАННЕРА ===== */
+/* Кнопки баннера */
 .watch-btn {
     -fx-background-color: #E65C00;
     -fx-text-fill: white;
@@ -190,7 +185,7 @@
     -fx-background-color: rgba(255,255,255,0.2);
 }
 
-/* ===== ГЛАВНЫЙ КОНТЕНТ ===== */
+/* Главный контент */
 .home-content {
     -fx-background-color: #141414;
 }
@@ -216,7 +211,7 @@
     -fx-font-weight: bold;
 }
 
-/* ===== ГОРИЗОНТАЛЬНЫЙ СКРОЛЛ ===== */
+/* Горизонтальный скролл */
 .h-scroll {
     -fx-background-color: transparent;
     -fx-background: transparent;
@@ -242,7 +237,7 @@
     -fx-wrap-length: 0;
 }
 
-/* ===== КАРТОЧКА (общая) ===== */
+/* Карточка общая */
 .movie-card {
     -fx-background-color: #1e1e1e;
     -fx-background-radius: 8px;
@@ -283,7 +278,7 @@
     -fx-padding: 1px 8px;
 }
 
-/* ===== now-playing карточки ===== */
+/* now-playing карточки */
 .now-playing-card {
     -fx-background-color: #1e1e1e;
     -fx-background-radius: 7px;
@@ -312,7 +307,7 @@
     -fx-padding: 2px 8px;
 }
 
-/* ===== СТРАНИЦА ФИЛЬМОВ / СЕРИАЛОВ / ДЕТСКАЯ ===== */
+/* СТРАНИЦА ФИЛЬМОВ / СЕРИАЛОВ / ДЕТСКАЯ */
 .content-page {
     -fx-background-color: #141414;
     -fx-padding: 0;
@@ -336,7 +331,7 @@
     -fx-font-size: 13px;
 }
 
-/* ===== HERO-БЛОК (поиск на всех страницах) ===== */
+/* HERO-БЛОК (поиск на всех страницах) */
 .search-hero-block {
     -fx-background-color: linear-gradient(
             from 0% 0% to 0% 100%,
@@ -359,7 +354,7 @@
     -fx-font-size: 14px;
 }
 
-/* ===== СТРОКА ПОИСКА (в hero-блоке) ===== */
+/* СТРОКА ПОИСКА (в hero-блоке) */
 .search-bar-hero {
     -fx-spacing: 12px;
     -fx-alignment: center-left;
@@ -422,7 +417,7 @@
     -fx-font-size: 13px;
 }
 
-/* ===== СЕКЦИИ КОНТЕНТА ===== */
+/* СЕКЦИИ КОНТЕНТА */
 .section-header-row {
     -fx-padding: 0 32px 8px 32px;
     -fx-spacing: 8px;
@@ -433,7 +428,7 @@
     -fx-font-size: 18px;
 }
 
-/* ===== СЕТКА ПОИСКА ===== */
+/* СЕТКА ПОИСКА */
 .movies-grid {
     -fx-padding: 24px 32px;
     -fx-hgap: 12px;
@@ -441,7 +436,7 @@
     -fx-background-color: #141414;
 }
 
-/* ===== СТРАНИЦА ДЕТАЛИ ===== */
+/* СТРАНИЦА ДЕТАЛИ */
 .detail-scroll {
     -fx-background-color: #141414;
     -fx-background: #141414;
@@ -557,7 +552,7 @@
     -fx-text-fill: #ffffff;
 }
 
-/* ===== ПЛЕЕР ===== */
+/* ПЛЕЕР */
 .player-pane {
     -fx-background-color: #000000;
 }
@@ -598,7 +593,7 @@
     -fx-font-size: 12px;
 }
 
-/* ===== СТРАНИЦА ЛОГИНА ===== */
+/* СТРАНИЦА ЛОГИНА */
 .login-root {
     -fx-background-color: #000000;
 }
@@ -616,7 +611,7 @@
     -fx-spacing: 0;
 }
 
-/* ===== КАРТОЧКА ФОРМЫ ===== */
+/* КАРТОЧКА ФОРМЫ */
 .login-card {
     -fx-background-color: #141414;
     -fx-background-radius: 14px;
@@ -630,7 +625,7 @@
     -fx-min-width: 380px;
 }
 
-/* ===== ЛОГОТИП В ФОРМЕ ===== */
+/* ЛОГОТИП В ФОРМЕ */
 .login-logo-section {
     -fx-alignment: center;
     -fx-spacing: 6px;
@@ -650,7 +645,7 @@
     -fx-font-style: italic;
 }
 
-/* ===== РАЗДЕЛИТЕЛЬ В ФОРМЕ ===== */
+/* РАЗДЕЛИТЕЛЬ В ФОРМЕ */
 .login-separator {
     -fx-background-color: #2a2a2a;
     -fx-pref-height: 1px;
@@ -658,7 +653,7 @@
     -fx-min-height: 1px;
 }
 
-/* ===== ВКЛАДКИ: ВОЙТИ / РЕГИСТРАЦИЯ ===== */
+/* ВКЛАДКИ: ВОЙТИ / РЕГИСТРАЦИЯ */
 .login-tabs {
     -fx-spacing: 0;
     -fx-background-color: #0f0f0f;
@@ -699,12 +694,12 @@
     -fx-effect: dropshadow(gaussian, rgba(230,92,0,0.35), 8, 0, 0, 0);
 }
 
-/* ===== ФОРМА (общий контейнер) ===== */
+/* ФОРМА (общий контейнер) */
 .login-form {
     -fx-spacing: 14px;
 }
 
-/* ===== ЗАГОЛОВКИ ФОРМЫ ===== */
+/* ЗАГОЛОВКИ ФОРМЫ */
 .login-form-title {
     -fx-text-fill: #ffffff;
     -fx-font-size: 20px;
@@ -716,14 +711,14 @@
     -fx-font-size: 13px;
 }
 
-/* ===== МЕТКА ПОЛЯ ===== */
+/* Метка поля ввода */
 .login-field-label {
     -fx-text-fill: #aaaaaa;
     -fx-font-size: 12px;
     -fx-font-weight: bold;
 }
 
-/* ===== ОБЁРТКА ПОЛЯ ВВОДА (иконка + TextField) ===== */
+/* Обертка в поле ввода */
 .login-input-wrap {
     -fx-background-color: #1e1e1e;
     -fx-background-radius: 8px;
@@ -747,7 +742,7 @@
     -fx-effect: dropshadow(gaussian, rgba(230,92,0,0.2), 8, 0, 0, 0);
 }
 
-/* ===== ИКОНКА ВНУТРИ ПОЛЯ ===== */
+/* Иконки внутри поля */
 .login-input-icon {
     -fx-text-fill: #555555;
     -fx-font-size: 15px;
@@ -758,7 +753,7 @@
     -fx-text-fill: #E65C00;
 }
 
-/* ===== ПОЛЕ ВВОДА TextField / PasswordField ===== */
+/* Поле ввода TextField / PasswordField */
 .login-input {
     -fx-background-color: transparent;
     -fx-text-fill: #e5e5e5;
@@ -775,7 +770,7 @@
     -fx-border-color: transparent;
 }
 
-/* ===== ПОДСКАЗКА (hint) ===== */
+/* Подсказки */
 .login-hint {
     -fx-text-fill: #555555;
     -fx-font-size: 11px;
@@ -783,7 +778,7 @@
     -fx-padding: 2px 0 0 0;
 }
 
-/* ===== ОШИБКА ===== */
+/* Ошибка */
 .login-error {
     -fx-text-fill: #e05555;
     -fx-font-size: 12px;
@@ -796,7 +791,7 @@
     -fx-wrap-text: true;
 }
 
-/* ===== КНОПКА ВОЙТИ / ЗАРЕГИСТРИРОВАТЬСЯ (PRIMARY) ===== */
+/* Кнопки войти и регистрация */
 .login-btn-primary {
     -fx-background-color: #E65C00;
     -fx-text-fill: #ffffff;
@@ -824,7 +819,7 @@
     -fx-effect: none;
 }
 
-/* ===== КНОПКА ВТОРИЧНАЯ (SECONDARY) ===== */
+/* Кнопка вторичная */
 .login-btn-secondary {
     -fx-background-color: transparent;
     -fx-text-fill: #888888;
@@ -843,7 +838,7 @@
     -fx-background-color: rgba(255,255,255,0.04);
 }
 
-/* ===== ССЫЛКА (текстовая кнопка) ===== */
+/* Тест кнопка */
 .login-link {
     -fx-background-color: transparent;
     -fx-text-fill: #E65C00;
@@ -861,7 +856,7 @@
     -fx-underline: true;
 }
 
-/* ===== ПОДВАЛ ФОРМЫ ===== */
+/* Подвал формы */
 .login-footer {
     -fx-alignment: center;
     -fx-spacing: 6px;
@@ -873,7 +868,7 @@
     -fx-font-size: 12px;
 }
 
-/* ===== CHECKBOX (запомнить меня) ===== */
+/* Запомнить меня чекбокс */
 .login-checkbox {
     -fx-text-fill: #888888;
     -fx-font-size: 13px;
@@ -901,13 +896,13 @@
     -fx-border-color: #E65C00;
 }
 
-/* ===== СТРОКА "ЗАПОМНИТЬ + ЗАБЫЛИ ПАРОЛЬ" ===== */
+/* Запомнить и забыли пароль */
 .login-remember-row {
     -fx-alignment: center-left;
     -fx-spacing: 0;
 }
 
-/* ===== DECORATIVE ACCENT LINE (оранжевая полоска) ===== */
+/* Декоративная полоска */
 .login-accent-bar {
     -fx-background-color: linear-gradient(
             from 0% 0% to 100% 0%,
@@ -921,14 +916,14 @@
     -fx-background-radius: 2px;
 }
 
-/* ===== SPINNER / ИНДИКАТОР ЗАГРУЗКИ ===== */
+/* Загрузка */
 .login-progress {
     -fx-progress-color: #E65C00;
     -fx-pref-width: 24px;
     -fx-pref-height: 24px;
 }
 
-/* ===== COMBO BOX (роль/пол при регистрации) ===== */
+/* Роль и пол регистрация */
 .login-combo {
     -fx-background-color: #1e1e1e;
     -fx-text-fill: #e5e5e5;
@@ -984,7 +979,7 @@
     -fx-background-color: #777777;
 }
 
-/* ===== DATE PICKER (дата рождения при регистрации) ===== */
+/* ДР регистрация */
 .login-date-picker {
     -fx-background-color: #1e1e1e;
     -fx-border-color: #2f2f2f;
@@ -1022,7 +1017,7 @@
 }
 
 
-/* ===== СТРАНИЦА ПРОФИЛЯ ===== */
+/* Профиль */
 .profile-page {
     -fx-background-color: #141414;
 }
@@ -1142,12 +1137,12 @@
     -fx-background-color: rgba(255,68,68,0.06);
 }
 
-/* ===== ADMIN ПАНЕЛЬ ===== */
+/* Панель admin */
 .admin-page {
     -fx-background-color: #0d0d0d;
 }
 
-/* ===== ШАПКА ADMIN (navbar переиспользуется) ===== */
+/* Шапка admin   */
 .admin-page .navbar {
     -fx-background-color: #050505;
     -fx-border-color: transparent transparent #1a1a1a transparent;
@@ -1158,14 +1153,14 @@
     -fx-font-size: 20px;
 }
 
-/* ===== ЗАГОЛОВКИ СЕКЦИЙ ADMIN ===== */
+/* Заголовки секций в admin */
 .admin-section-title {
     -fx-text-fill: #ffffff;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
 }
 
-/* ===== ПОЛОСКА СТАТУСА ===== */
+/* Полоска статуса */
 .admin-status-label {
     -fx-background-color: #1a1a1a;
     -fx-text-fill: #aaaaaa;
@@ -1178,7 +1173,7 @@
     -fx-min-width: 200px;
 }
 
-/* ===== КАРТОЧКИ СТАТИСТИКИ ===== */
+/* Карточки статистики */
 .stat-card {
     -fx-background-color: #161616;
     -fx-background-radius: 10px;
@@ -1212,7 +1207,7 @@
     -fx-text-transform: uppercase;
 }
 
-/* ===== СКРОЛЛ ПАНЕЛИ ФОРМЫ ===== */
+/* Скролл панели формы */
 .admin-scroll {
     -fx-background-color: #0d0d0d;
     -fx-background: #0d0d0d;
@@ -1242,14 +1237,14 @@
     -fx-pref-height: 0;
 }
 
-/* ===== ПАНЕЛЬ ФОРМЫ ДОБАВЛЕНИЯ/РЕДАКТИРОВАНИЯ ===== */
+/* Панель формы добавления и редактирования */
 .admin-form-panel {
     -fx-background-color: #0d0d0d;
     -fx-padding: 24px 28px 32px 28px;
     -fx-spacing: 14px;
 }
 
-/* ===== РАЗДЕЛИТЕЛЬ В ФОРМЕ ===== */
+/* Разделитель в форме */
 .admin-sep {
     -fx-background-color: #1e1e1e;
     -fx-pref-height: 1px;
@@ -1257,7 +1252,7 @@
     -fx-padding: 0;
 }
 
-/* ===== ПОЛЯ ВВОДА ===== */
+/* Поля ввода */
 .admin-field-label {
     -fx-text-fill: #aaaaaa;
     -fx-font-size: 12px;
@@ -1302,7 +1297,7 @@
     -fx-background-color: #1d1d1d;
 }
 
-/* ===== ТЕКСТОВАЯ ОБЛАСТЬ ===== */
+/* Область текста */
 .admin-textarea {
     -fx-background-color: #181818;
     -fx-text-fill: #e5e5e5;
@@ -1330,7 +1325,7 @@
     -fx-background-color: transparent;
 }
 
-/* ===== ВЫПАДАЮЩИЙ СПИСОК ===== */
+/* Выпадающий список */
 .admin-combo {
     -fx-background-color: #181818;
     -fx-text-fill: #e5e5e5;
@@ -1381,7 +1376,7 @@
     -fx-background-color: #666666;
 }
 
-/* ===== ЧЕКБОКСЫ ===== */
+/* Чекбоксы */
 .admin-check {
     -fx-text-fill: #cccccc;
     -fx-font-size: 13px;
@@ -1411,7 +1406,7 @@
     -fx-border-color: #E65C00;
 }
 
-/* ===== ПАНЕЛЬ ЖАНРОВ ===== */
+/* Жанры */
 .admin-genres-pane {
     -fx-background-color: #111111;
     -fx-padding: 10px;
@@ -1421,14 +1416,14 @@
     -fx-border-width: 1px;
 }
 
-/* ===== ПОДСКАЗКИ ===== */
+/* Подсказки */
 .admin-hint {
     -fx-text-fill: #444444;
     -fx-font-size: 11px;
     -fx-font-style: italic;
 }
 
-/* ===== КНОПКА ВЫБОРА ФАЙЛА ===== */
+/* Кнопка выбора файла */
 .admin-file-btn {
     -fx-background-color: #1e1e1e;
     -fx-text-fill: #cccccc;
@@ -1449,7 +1444,7 @@
     -fx-text-fill: #E65C00;
 }
 
-/* ===== КНОПКА ПРЕДПРОСМОТРА ПОСТЕРА ===== */
+/* Кнопка предпросмотра постера */
 .admin-poster-preview {
     -fx-background-color: #111111;
     -fx-background-radius: 8px;
@@ -1460,7 +1455,7 @@
     -fx-alignment: center;
 }
 
-/* ===== ОСНОВНЫЕ КНОПКИ ДЕЙСТВИЙ ===== */
+/* Основные кнопки */
 .admin-btn-primary {
     -fx-background-color: #E65C00;
     -fx-text-fill: #ffffff;
@@ -1485,7 +1480,7 @@
     -fx-scale-y: 0.98;
 }
 
-/* ===== ВТОРИЧНАЯ КНОПКА ===== */
+/* Вторичная кнопка */
 .admin-btn-secondary {
     -fx-background-color: #1e1e1e;
     -fx-text-fill: #cccccc;
@@ -1509,7 +1504,7 @@
     -fx-background-color: #191919;
 }
 
-/* ===== КНОПКА РЕДАКТИРОВАНИЯ ===== */
+/* Редактирование */
 .admin-btn-edit {
     -fx-background-color: #1a2a1a;
     -fx-text-fill: #55cc77;
@@ -1530,7 +1525,7 @@
     -fx-effect: dropshadow(gaussian, rgba(85,204,119,0.2), 8, 0, 0, 0);
 }
 
-/* ===== КНОПКА ОПАСНОГО ДЕЙСТВИЯ (удаление/бан) ===== */
+/* Кнопки удалений, банов */
 .admin-btn-danger {
     -fx-background-color: #2a1010;
     -fx-text-fill: #ee4444;
@@ -1551,7 +1546,7 @@
     -fx-effect: dropshadow(gaussian, rgba(238,68,68,0.25), 8, 0, 0, 0);
 }
 
-/* ===== ТАБЛИЦА ПОЛЬЗОВАТЕЛЕЙ / ЛОГОВ ===== */
+/* Таблица пользователей */
 .admin-table {
     -fx-background-color: #0d0d0d;
     -fx-border-color: #1a1a1a;
@@ -1652,7 +1647,7 @@
     -fx-background-radius: 4px;
 }
 
-/* ===== СПИСОК ФИЛЬМОВ В ПРАВОЙ ПАНЕЛИ ADMIN ===== */
+/* Список фильмов в правой панели admin */
 .admin-list {
     -fx-background-color: #0d0d0d;
     -fx-border-color: #1a1a1a;
@@ -1700,7 +1695,7 @@
     -fx-pref-height: 0;
 }
 
-/* ===== РАЗДЕЛИТЕЛЬ SPLIT PANE ===== */
+/* Разделитель */
 .split-pane {
     -fx-background-color: #0d0d0d;
     -fx-padding: 0;
@@ -1722,7 +1717,7 @@
     -fx-pref-height: 3px;
 }
 
-/* ===== СТРОКА ПОИСКА В ADMIN ===== */
+/* Строка поиска в admin */
 .admin-search-bar {
     -fx-background-color: #181818;
     -fx-border-color: #2a2a2a;
@@ -1747,7 +1742,7 @@
     -fx-background-color: transparent;
 }
 
-/* ===== БЛОК УПРАВЛЕНИЯ КОНТЕНТОМ ===== */
+/* Блок управления контентом */
 .admin-action-bar {
     -fx-background-color: #0d0d0d;
     -fx-padding: 12px 24px;
@@ -1757,7 +1752,7 @@
     -fx-border-width: 0 0 1px 0;
 }
 
-/* ===== БЛОК СТАТИСТИКИ ===== */
+/* Блок статистикик */
 .admin-stats-bar {
     -fx-background-color: #0a0a0a;
     -fx-padding: 16px 24px;
@@ -1767,7 +1762,7 @@
     -fx-border-width: 0 0 1px 0;
 }
 
-/* ===== ТАБЫ В ADMIN (если используются) ===== */
+/* admin табы */
 .admin-tab-pane {
     -fx-background-color: #0d0d0d;
     -fx-tab-min-height: 40px;
@@ -1817,7 +1812,7 @@
     -fx-border-color: transparent;
 }
 
-/* ===== POPUP / ФИЛЬТР ===== */
+/* ФИЛЬТР */
 .filter-popup {
     -fx-background-color: #1e1e1e;
     -fx-background-radius: 12px;
@@ -1912,7 +1907,7 @@
     -fx-font-size: 13px;
 }
 
-/* ===== СКРОЛЛБАРЫ (общие) ===== */
+/* Общие скроллбары */
 .scroll-bar {
     -fx-background-color: transparent;
 }
@@ -1943,7 +1938,7 @@
     -fx-border-width: 1px;
 }
 
-/* ===== TOOLTIP ===== */
+/* Tooltip */
 .tooltip {
     -fx-background-color: #1e1e1e;
     -fx-text-fill: #e5e5e5;

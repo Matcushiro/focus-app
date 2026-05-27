@@ -60,7 +60,7 @@ public class AdminPanelController implements Initializable {
         if (!SessionManager.getInstance().isAdmin()) return;
 
         String username = SessionManager.getInstance().getCurrentUser().getUsername();
-        adminNameLabel.setText("👑 " + username);
+        adminNameLabel.setText(username);
 
         setupUsersTable();
         setupLogsTable();
@@ -78,7 +78,7 @@ public class AdminPanelController implements Initializable {
         )).exceptionally(e -> { e.printStackTrace(); return null; });
     }
 
-    // ===== Настройка таблицы пользователей =====
+    // Настройка таблицы пользователей
     private void setupUsersTable() {
         idCol.setCellValueFactory(data ->
                 new SimpleStringProperty(String.valueOf(data.getValue().getId())));
@@ -103,7 +103,7 @@ public class AdminPanelController implements Initializable {
                 ));
         statusCol.setCellValueFactory(data ->
                 new SimpleStringProperty(
-                        data.getValue().isBanned() ? "🚫 Забанен" : "✅ Активен"
+                        data.getValue().isBanned() ? "Забанен" : "Активен"
                 ));
 
         // Подсветка забаненных строк
@@ -120,7 +120,7 @@ public class AdminPanelController implements Initializable {
         });
     }
 
-    // ===== Настройка таблицы логов =====
+    // Настройка таблицы логов
     private void setupLogsTable() {
         logIdCol.setCellValueFactory(data ->
                 new SimpleStringProperty(String.valueOf(data.getValue().getId())));
@@ -136,7 +136,7 @@ public class AdminPanelController implements Initializable {
                 ));
     }
 
-    // ===== Асинхронная загрузка данных =====
+    // Асинхронная загрузка данных
     private void loadUsersAsync() {
         db.async(db::getAllUsers)
                 .thenAccept(users -> Platform.runLater(() -> {
@@ -170,7 +170,7 @@ public class AdminPanelController implements Initializable {
         })).exceptionally(e -> { e.printStackTrace(); return null; });
     }
 
-    // ===== Действия с пользователями =====
+    // Действия с пользователями
     @FXML
     private void banUser() {
         User selected = usersTable.getSelectionModel().getSelectedItem();
@@ -186,7 +186,7 @@ public class AdminPanelController implements Initializable {
                     "Забанен: " + selected.getUsername()
             );
         }).thenRun(() -> Platform.runLater(() -> {
-            showAlert("✅ Пользователь забанен: " + selected.getUsername());
+            showAlert("Пользователь забанен: " + selected.getUsername());
             loadUsersAsync();
             loadLogsAsync();
         })).exceptionally(e -> { e.printStackTrace(); return null; });
@@ -206,7 +206,7 @@ public class AdminPanelController implements Initializable {
                     "Разбанен: " + selected.getUsername()
             );
         }).thenRun(() -> Platform.runLater(() -> {
-            showAlert("✅ Пользователь разбанен: " + selected.getUsername());
+            showAlert("Пользователь разбанен: " + selected.getUsername());
             loadUsersAsync();
             loadLogsAsync();
         })).exceptionally(e -> { e.printStackTrace(); return null; });
@@ -226,7 +226,7 @@ public class AdminPanelController implements Initializable {
                     selected.getUsername() + " → ADMIN"
             );
         }).thenRun(() -> Platform.runLater(() -> {
-            showAlert("✅ " + selected.getUsername() + " теперь администратор!");
+            showAlert(selected.getUsername() + " теперь администратор!");
             loadUsersAsync();
             loadLogsAsync();
         })).exceptionally(e -> { e.printStackTrace(); return null; });
@@ -246,7 +246,7 @@ public class AdminPanelController implements Initializable {
                     selected.getUsername() + " → USER"
             );
         }).thenRun(() -> Platform.runLater(() -> {
-            showAlert("✅ Роль изменена на USER");
+            showAlert("Роль изменена на USER");
             loadUsersAsync();
             loadLogsAsync();
         })).exceptionally(e -> { e.printStackTrace(); return null; });
@@ -302,11 +302,11 @@ public class AdminPanelController implements Initializable {
             root.setCenter(page);
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("❌ Не удалось открыть управление контентом: " + e.getMessage());
+            showAlert("Не удалось открыть управление контентом: " + e.getMessage());
         }
     }
 
-    // ===== Экспорт логов =====
+    // Экспорт логов
     @FXML
     private void exportLogs() {
         FileChooser chooser = new FileChooser();
@@ -328,22 +328,22 @@ public class AdminPanelController implements Initializable {
                             writer.println();
                             writer.println("Всего записей: " + logs.size());
                             Platform.runLater(() ->
-                                    showAlert("✅ Логи сохранены в: " + file.getAbsolutePath())
+                                    showAlert("Логи сохранены в: " + file.getAbsolutePath())
                             );
                         } catch (Exception ex) {
                             ex.printStackTrace();
-                            Platform.runLater(() -> showAlert("❌ Ошибка сохранения файла!"));
+                            Platform.runLater(() -> showAlert("Ошибка сохранения файла!"));
                         }
                     })
                     .exceptionally(e -> {
                         e.printStackTrace();
-                        Platform.runLater(() -> showAlert("❌ Ошибка загрузки логов!"));
+                        Platform.runLater(() -> showAlert("Ошибка загрузки логов!"));
                         return null;
                     });
         }
     }
 
-    // ===== Вспомогательные =====
+    // Вспомогательные
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Focus Admin");

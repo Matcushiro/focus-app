@@ -11,7 +11,6 @@
 
     <VBox styleClass="home-content" spacing="0">
 
-        <!-- ===== ПОИСК (hero-блок, единый стиль) ===== -->
         <VBox styleClass="search-hero-block" spacing="14">
             <Label text="👶 Детям" styleClass="page-hero-title"/>
             <Label text="Безопасный контент для маленьких зрителей" styleClass="page-hero-sub"/>
@@ -31,7 +30,6 @@
             </HBox>
         </VBox>
 
-        <!-- ===== РЕЗУЛЬТАТЫ ПОИСКА (скрыты по умолчанию) ===== -->
         <VBox fx:id="kidsSearchSection" styleClass="sections-wrapper"
               visible="false" managed="false" spacing="15">
             <HBox alignment="CENTER_LEFT" spacing="12" styleClass="search-results-header">
@@ -41,10 +39,8 @@
                       styleClass="movies-grid"/>
         </VBox>
 
-        <!-- ===== СЕКЦИИ КОНТЕНТА ===== -->
         <VBox fx:id="kidsSectionsBox" styleClass="sections-wrapper" spacing="40">
 
-            <!-- ======= ВСЕ ДЕТСКОЕ ======= -->
             <VBox styleClass="section" spacing="15">
                 <HBox alignment="CENTER_LEFT" spacing="8" styleClass="section-header-row">
                     <Label text="🎬" styleClass="section-icon"/>
@@ -56,7 +52,6 @@
                 </ScrollPane>
             </VBox>
 
-            <!-- ======= РЕКОМЕНДУЕМ ======= -->
             <VBox styleClass="section" spacing="15">
                 <HBox alignment="CENTER_LEFT" spacing="8" styleClass="section-header-row">
                     <Label text="⭐" styleClass="section-icon"/>
@@ -68,7 +63,6 @@
                 </ScrollPane>
             </VBox>
 
-            <!-- ======= НОВИНКИ ======= -->
             <VBox styleClass="section" spacing="15">
                 <HBox alignment="CENTER_LEFT" spacing="8" styleClass="section-header-row">
                     <Label text="🆕" styleClass="section-icon"/>
@@ -80,7 +74,6 @@
                 </ScrollPane>
             </VBox>
 
-            <!-- ======= ФИЛЬМЫ ======= -->
             <VBox styleClass="section" spacing="15">
                 <HBox alignment="CENTER_LEFT" spacing="8" styleClass="section-header-row">
                     <Label text="🎞" styleClass="section-icon"/>
@@ -92,7 +85,6 @@
                 </ScrollPane>
             </VBox>
 
-            <!-- ======= СЕРИАЛЫ ======= -->
             <VBox styleClass="section" spacing="15">
                 <HBox alignment="CENTER_LEFT" spacing="8" styleClass="section-header-row">
                     <Label text="📺" styleClass="section-icon"/>
@@ -104,7 +96,6 @@
                 </ScrollPane>
             </VBox>
 
-            <!-- ======= ПОПУЛЯРНОЕ ======= -->
             <VBox styleClass="section" spacing="15">
                 <HBox alignment="CENTER_LEFT" spacing="8" styleClass="section-header-row">
                     <Label text="🔥" styleClass="section-icon"/>

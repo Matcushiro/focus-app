@@ -21,20 +21,17 @@ import java.util.stream.Collectors;
 
 /**
  * MoviesController — вкладка «Фильмы».
- * Секции: Новинки, Популярные, Топ по рейтингу, Вечерние, Топ-10.
- * Поиск + фильтры по жанру/рейтингу/году.
- * Всё загружается асинхронно.
  */
 public class MoviesController implements Initializable {
 
-    // ===== Секции =====
+    // Секции
     @FXML private HBox moviesLatestRow;
     @FXML private HBox moviesPopularRow;
     @FXML private HBox moviesTopRatedRow;
     @FXML private HBox moviesEveningRow;
     @FXML private HBox moviesTop10Row;
 
-    // ===== Поиск и фильтр =====
+    // Поиск и фильтр
     @FXML private FlowPane moviesGrid;
     @FXML private TextField searchField;
     @FXML private Button filterBtn;
@@ -63,7 +60,7 @@ public class MoviesController implements Initializable {
         loadAllAsync();
     }
 
-    // ===== Асинхронная загрузка =====
+    // Асинхронная загрузка
     private void loadAllAsync() {
         // Все фильмы — для поиска
         db.getAllMoviesAsync()
@@ -112,7 +109,7 @@ public class MoviesController implements Initializable {
                 .collect(Collectors.toList());
     }
 
-    // ===== Поиск =====
+    // Поиск
     private void setupSearch() {
         if (searchField != null) {
             searchField.textProperty().addListener((obs, o, n) -> applyFilters());
@@ -193,7 +190,7 @@ public class MoviesController implements Initializable {
         return movie.getYear() == Integer.parseInt(selectedYear);
     }
 
-    // ===== Попап фильтров =====
+    // Попап фильтров
     private void buildFilterPopup() {
         filterPopup = new Popup();
         filterPopup.setAutoHide(true);
@@ -312,7 +309,7 @@ public class MoviesController implements Initializable {
         }
     }
 
-    // ===== Карточки =====
+    // Карточки
     private void fillRow(HBox row, List<Movie> movies) {
         if (row == null) return;
         row.getChildren().clear();
@@ -344,7 +341,7 @@ public class MoviesController implements Initializable {
         titleLbl.setWrapText(true);
         titleLbl.setMaxWidth(150);
 
-        Label ratingLbl = new Label("⭐ " + String.format("%.1f", movie.getRating()));
+        Label ratingLbl = new Label(String.format("%.1f", movie.getRating()));
         ratingLbl.getStyleClass().add("card-rating");
 
         card.getChildren().addAll(poster, titleLbl, ratingLbl);

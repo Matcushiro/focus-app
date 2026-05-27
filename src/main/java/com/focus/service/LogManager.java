@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 
 public class LogManager {
 
-    // ИСПРАВЛЕНИЕ: thread-safe singleton
+    // thread-safe singleton
     private static volatile LogManager instance;
     private static final String LOG_FILE = "focus_logs.txt";
     private static final DateTimeFormatter FORMATTER =
@@ -26,10 +26,6 @@ public class LogManager {
         return instance;
     }
 
-    /**
-     * Записывает произвольное сообщение в лог-файл.
-     * Синхронизирован для корректной записи из разных потоков.
-     */
     public synchronized void log(String message) {
         try (PrintWriter writer = new PrintWriter(
                 new FileWriter(LOG_FILE, true))) {

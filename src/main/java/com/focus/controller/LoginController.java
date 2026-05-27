@@ -79,10 +79,10 @@ public class LoginController implements Initializable {
             regHint.setText("Введите e-mail (user@mail.ru) или номер телефона (+79001234567)");
             regHint.setStyle("-fx-text-fill: #444444; -fx-font-size: 11px; -fx-padding: 0 0 0 4;");
         } else if (EMAIL_PATTERN.matcher(value.trim()).matches()) {
-            regHint.setText("✅ Корректный e-mail");
+            regHint.setText("Корректный e-mail");
             regHint.setStyle("-fx-text-fill: #4caf50; -fx-font-size: 11px; -fx-padding: 0 0 0 4;");
         } else if (PHONE_PATTERN.matcher(value.trim().replaceAll("[\\s\\-()]", "")).matches()) {
-            regHint.setText("✅ Корректный номер телефона");
+            regHint.setText("Корректный номер телефона");
             regHint.setStyle("-fx-text-fill: #4caf50; -fx-font-size: 11px; -fx-padding: 0 0 0 4;");
         } else {
             regHint.setText("⚠ Введите корректный e-mail или телефон");
@@ -90,7 +90,7 @@ public class LoginController implements Initializable {
         }
     }
 
-    // ===== Переключение вкладок =====
+    // Переключение вкладок
 
     @FXML
     private void showLogin() {
@@ -152,7 +152,7 @@ public class LoginController implements Initializable {
         hideRegError();
     }
 
-    // ===== Вход =====
+    // Вход
 
     @FXML
     private void login() {
@@ -165,7 +165,7 @@ public class LoginController implements Initializable {
         }
 
         if (db.isUserBannedByIdentifier(identifier)) {
-            showLoginError("❌ Ваш аккаунт заблокирован!");
+            showLoginError("Ваш аккаунт заблокирован!");
             LogManager.getInstance().log(
                     "LOGIN_BLOCKED", identifier,
                     "Попытка входа заблокированным пользователем"
@@ -186,7 +186,7 @@ public class LoginController implements Initializable {
         }
     }
 
-    // ===== Регистрация =====
+    // Регистрация
 
     @FXML
     private void register() {
@@ -243,7 +243,7 @@ public class LoginController implements Initializable {
         }
     }
 
-    // ===== Вспомогательные =====
+    // Вспомогательные
 
     /** Показывает ошибку в блоке входа */
     private void showLoginError(String message) {

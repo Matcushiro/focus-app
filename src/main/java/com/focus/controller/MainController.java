@@ -17,12 +17,6 @@ import java.util.ResourceBundle;
 
 /**
  * MainController — оболочка приложения (навбар + центральный контент).
- *
- * ИСПРАВЛЕНИЯ:
- * - Удалён мёртвый код: метод loadSearchPage(String) никогда не вызывался
- *   (в навбаре goSearch() просто открывает search.fxml без передачи запроса)
- * - Активная кнопка навбара теперь подсвечивается при переключении страниц
- * - Добавлен метод goBack() для возврата на предыдущую страницу (используется в других контроллерах)
  */
 public class MainController implements Initializable {
 
@@ -69,7 +63,7 @@ public class MainController implements Initializable {
         }
     }
 
-    // ===== Навигация =====
+    // Навигация
 
     @FXML private void goHome()   { loadPage("home.fxml");   setActiveBtn(homeBtn); }
     @FXML private void goMovies() { loadPage("movies.fxml"); setActiveBtn(moviesBtn); }
@@ -99,11 +93,11 @@ public class MainController implements Initializable {
         loadPage("search.fxml");
     }
 
-    // ===== Состояние пользователя =====
+    // Состояние пользователя
 
     public void setLoggedIn(String username) {
         isLoggedIn = true;
-        if (profileBtn != null) profileBtn.setText("👤 " + username);
+        if (profileBtn != null) profileBtn.setText(username);
         if (SessionManager.getInstance().isAdmin()) {
             if (adminBtn != null) {
                 adminBtn.setVisible(true);
@@ -123,7 +117,7 @@ public class MainController implements Initializable {
         goHome();
     }
 
-    // ===== Загрузка страниц =====
+    // Загрузка страниц
 
     public void loadPage(String fxmlFile) {
         try {
@@ -144,7 +138,7 @@ public class MainController implements Initializable {
         return lastPage;
     }
 
-    // ===== Подсветка активной кнопки =====
+    // Подсветка активной кнопки
 
     private void setActiveBtn(Button active) {
         Button[] navButtons = {homeBtn, moviesBtn, seriesBtn, kidsBtn};

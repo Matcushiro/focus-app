@@ -4,7 +4,7 @@ import com.focus.model.User;
 
 public class SessionManager {
 
-    // ИСПРАВЛЕНИЕ: thread-safe singleton
+    // thread-safe singleton
     private static volatile SessionManager instance;
     private User currentUser;
 

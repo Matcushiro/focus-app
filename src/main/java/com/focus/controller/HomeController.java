@@ -20,7 +20,6 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * HomeController — главная вкладка.
- * Все секции загружаются асинхронно, UI-поток не блокируется.
  */
 public class HomeController implements Initializable {
 
@@ -50,7 +49,7 @@ public class HomeController implements Initializable {
         loadAllContentAsync();
     }
 
-    // ===== Асинхронная загрузка всего контента =====
+    // Асинхронная загрузка всего контента
 
     private void loadAllContentAsync() {
         // Баннер
@@ -108,11 +107,11 @@ public class HomeController implements Initializable {
                 .exceptionally(e -> { e.printStackTrace(); return null; });
     }
 
-    // ===== Баннер =====
+    // Баннер
 
     private void showBanner(Movie movie) {
         bannerTitle.setText(movie.getTitle());
-        bannerRating.setText("⭐ " + String.format("%.1f", movie.getRating()));
+        bannerRating.setText(String.format("%.1f", movie.getRating()));
 
         String desc = movie.getDescription();
         if (desc != null && !desc.isEmpty()) {
@@ -137,7 +136,7 @@ public class HomeController implements Initializable {
         }
     }
 
-    // ===== Заполнение рядов =====
+    // Заполнение рядов
 
     private void fillRow(HBox row, List<Movie> movies) {
         if (row == null) return;
@@ -155,7 +154,7 @@ public class HomeController implements Initializable {
         }
     }
 
-    // ===== Карточки =====
+    // Карточки
 
     private VBox createNowPlayingCard(Movie movie) {
         VBox card = new VBox(6);
@@ -186,7 +185,7 @@ public class HomeController implements Initializable {
         title.setWrapText(true);
         title.setMaxWidth(155);
 
-        Label rating = new Label("⭐ " + String.format("%.1f", movie.getRating()));
+        Label rating = new Label(String.format("%.1f", movie.getRating()));
         rating.getStyleClass().add("now-playing-rating");
 
         card.getChildren().addAll(posterBox, title, rating);
@@ -218,7 +217,7 @@ public class HomeController implements Initializable {
         title.setWrapText(true);
         title.setMaxWidth(width - 10);
 
-        Label rating = new Label("⭐ " + String.format("%.1f", movie.getRating()));
+        Label rating = new Label(String.format("%.1f", movie.getRating()));
         rating.getStyleClass().add("card-rating");
 
         card.getChildren().addAll(poster, title, rating);
@@ -226,7 +225,7 @@ public class HomeController implements Initializable {
         return card;
     }
 
-    // ===== Действия =====
+    // Действия
 
     @FXML
     private void watchFeatured() {

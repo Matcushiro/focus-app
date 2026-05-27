@@ -9,22 +9,17 @@
            fx:controller="com.focus.controller.LoginController"
            styleClass="login-root">
 
-    <!-- Фоновый градиент -->
     <VBox styleClass="login-bg" alignment="CENTER">
 
-        <!-- Карточка -->
         <VBox styleClass="login-card" alignment="TOP_CENTER" maxWidth="420">
 
-            <!-- Логотип -->
             <VBox alignment="CENTER" spacing="4" styleClass="login-logo-section">
                 <Label text="▶ FOCUS" styleClass="login-logo"/>
                 <Label text="Ваш персональный кинотеатр" styleClass="login-tagline"/>
             </VBox>
 
-            <!-- Разделитель -->
             <Separator styleClass="login-separator"/>
 
-            <!-- Вкладки -->
             <HBox styleClass="login-tabs" alignment="CENTER" spacing="0">
                 <Button fx:id="loginTabBtn" text="Войти"
                         onAction="#showLogin"
@@ -36,7 +31,6 @@
                         maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
             </HBox>
 
-            <!-- ===== ФОРМА ВХОДА ===== -->
             <VBox fx:id="loginForm" styleClass="login-form" spacing="14" visible="true" managed="true">
 
                 <Label text="Добро пожаловать!" styleClass="login-form-title"/>
@@ -73,7 +67,6 @@
 
             </VBox>
 
-            <!-- ===== ФОРМА РЕГИСТРАЦИИ ===== -->
             <VBox fx:id="registerForm" styleClass="login-form" spacing="14"
                   visible="false" managed="false">
 
@@ -136,7 +129,6 @@
 
             </VBox>
 
-            <!-- Подвал карточки -->
             <Label text="© 2025 Focus — Все права защищены"
                    styleClass="login-footer"/>
 

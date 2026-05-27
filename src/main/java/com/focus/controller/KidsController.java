@@ -299,7 +299,7 @@ public class KidsController implements Initializable {
                   "-fx-padding: 4 10; -fx-cursor: hand; -fx-font-size: 11px;";
     }
 
-    // ===== Карточки =====
+    // Карточки
     private void fillRow(HBox row, List<Movie> movies) {
         if (row == null) return;
         row.getChildren().clear();
@@ -346,7 +346,7 @@ public class KidsController implements Initializable {
         titleLbl.setWrapText(true);
         titleLbl.setMaxWidth(145);
 
-        Label ratingLbl = new Label("⭐ " + String.format("%.1f", movie.getRating()));
+        Label ratingLbl = new Label(String.format("%.1f", movie.getRating()));
         ratingLbl.getStyleClass().addAll("card-rating", "kids-card-rating");
 
         card.getChildren().addAll(posterBox, typeLbl, titleLbl, ratingLbl);
@@ -354,7 +354,7 @@ public class KidsController implements Initializable {
         return card;
     }
 
-    // ===== Навигация =====
+    // Навигация
     private void openDetail(Movie movie) {
         try {
             FXMLLoader loader = new FXMLLoader(

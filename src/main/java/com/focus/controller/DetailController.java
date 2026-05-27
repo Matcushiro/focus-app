@@ -23,13 +23,6 @@ import java.util.ResourceBundle;
 
 /**
  * DetailController — страница детали фильма/сериала.
- *
- * ИСПРАВЛЕНИЯ:
- * - goBack() теперь возвращает на предыдущую страницу через MainController,
- *   а не всегда только на home.fxml
- * - Добавлен null-check для всех FXML-полей в fillData()
- * - isFavorite проверяется асинхронно, чтобы не блокировать UI
- * - Кнопка "В список" меняет текст в зависимости от состояния
  */
 public class DetailController implements Initializable {
 
@@ -46,7 +39,7 @@ public class DetailController implements Initializable {
     @FXML private Label     genresLabel;
     @FXML private HBox      genresBox;
 
-    // ИСПРАВЛЕНИЕ: кнопка "В список" для обновления текста
+    // Кнопка "В список" для обновления текста
     @FXML private javafx.scene.control.Button favoriteBtn;
 
     private Movie  currentMovie;
@@ -64,7 +57,7 @@ public class DetailController implements Initializable {
 
     private void fillData(Movie movie) {
         if (titleLabel    != null) titleLabel.setText(movie.getTitle());
-        if (ratingLabel   != null) ratingLabel.setText("⭐ " + String.format("%.1f", movie.getRating()));
+        if (ratingLabel   != null) ratingLabel.setText(String.format("%.1f", movie.getRating()));
         if (yearLabel     != null) yearLabel.setText(String.valueOf(movie.getYear()));
 
         if (durationLabel != null) {
@@ -123,10 +116,7 @@ public class DetailController implements Initializable {
         }
     }
 
-    /**
-     * ИСПРАВЛЕНИЕ: асинхронная проверка избранного,
-     * чтобы не вызывать БД из UI-потока.
-     */
+    // Асинхронная проверка избранного
     private void checkFavoriteAsync(Movie movie) {
         if (!SessionManager.getInstance().isLoggedIn()) return;
         int userId = SessionManager.getInstance().getCurrentUser().getId();
@@ -140,11 +130,11 @@ public class DetailController implements Initializable {
 
     private void updateFavoriteBtn() {
         if (favoriteBtn != null) {
-            favoriteBtn.setText(isFav ? "✅ В избранном" : "+ В список");
+            favoriteBtn.setText(isFav ? "В избранном" : "+ В список");
         }
     }
 
-    // ===== Действия =====
+    // Действия
 
     @FXML
     private void watchMovie() {
@@ -192,7 +182,6 @@ public class DetailController implements Initializable {
         int    userId   = SessionManager.getInstance().getCurrentUser().getId();
         String username = SessionManager.getInstance().getCurrentUser().getUsername();
 
-        // ИСПРАВЛЕНИЕ: операция асинхронная
         db.asyncRun(() -> {
             if (isFav) {
                 db.removeFromFavorites(userId, currentMovie.getId());
@@ -203,15 +192,10 @@ public class DetailController implements Initializable {
         }).thenRun(() -> Platform.runLater(() -> {
             isFav = !isFav;
             updateFavoriteBtn();
-            showAlert(isFav ? "✅ Добавлено в избранное!" : "Удалено из избранного");
+            showAlert(isFav ? "Добавлено в избранное!" : "Удалено из избранного");
         })).exceptionally(e -> { e.printStackTrace(); return null; });
     }
 
-    /**
-     * ИСПРАВЛЕНИЕ: goBack() возвращает на предыдущую страницу,
-     * определяя её через MainController.
-     * Если нет доступа к MainController — возвращает на home.fxml.
-     */
     @FXML
     private void goBack() {
         try {

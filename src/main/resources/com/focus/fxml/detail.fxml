@@ -3,13 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 
-<!--
-    detail.fxml — страница детали фильма/сериала
-
-    ИСПРАВЛЕНИЯ:
-    - Добавлен fx:id="favoriteBtn" для динамического обновления текста (В список / ✅ В избранном)
-    - Кнопка "Назад" теперь корректно работает через goBack()
--->
+<!-- detail.fxml — страница детали фильма/сериала -->
 <ScrollPane fitToWidth="true"
             styleClass="main-scroll"
             xmlns:fx="http://javafx.com/fxml"
@@ -17,7 +11,6 @@
 
     <VBox styleClass="detail-wrapper" spacing="0">
 
-        <!-- Баннер / фон -->
         <StackPane styleClass="detail-banner">
             <ImageView fx:id="backdropImage"
                        preserveRatio="false"
@@ -31,10 +24,7 @@
             </VBox>
         </StackPane>
 
-        <!-- Основной контент -->
         <HBox styleClass="detail-content" spacing="30">
-
-            <!-- Левая колонка: постер + кнопки -->
             <VBox spacing="12" alignment="TOP_CENTER">
                 <ImageView fx:id="posterImage"
                            fitWidth="220"
@@ -45,7 +35,6 @@
                         styleClass="watch-btn"
                         prefWidth="220"
                         onAction="#watchMovie"/>
-                <!-- ИСПРАВЛЕНИЕ: добавлен fx:id для смены текста -->
                 <Button fx:id="favoriteBtn"
                         text="+ В список"
                         styleClass="list-btn"
@@ -53,15 +42,12 @@
                         onAction="#addToFavorites"/>
             </VBox>
 
-            <!-- Правая колонка: информация -->
             <VBox spacing="12" HBox.hgrow="ALWAYS">
 
-                <!-- Название -->
                 <Label fx:id="titleLabel"
                        styleClass="detail-title"
                        wrapText="true"/>
 
-                <!-- Рейтинг, год, длительность, категория -->
                 <HBox spacing="20" alignment="CENTER_LEFT">
                     <Label fx:id="ratingLabel"   styleClass="detail-rating"/>
                     <Label fx:id="yearLabel"      styleClass="detail-info-label"/>
@@ -69,19 +55,18 @@
                     <Label fx:id="categoryLabel"  styleClass="detail-category"/>
                 </HBox>
 
-                <!-- Жанры (динамически, через genresBox) -->
                 <HBox fx:id="genresBox"
                       spacing="8"
                       alignment="CENTER_LEFT"/>
 
-                <!-- Описание -->
+
                 <Label text="Описание"
                        styleClass="detail-section-title"/>
                 <Label fx:id="descLabel"
                        styleClass="detail-desc"
                        wrapText="true"/>
 
-                <!-- Доп. информация -->
+
                 <VBox styleClass="detail-info-box" spacing="8">
                     <HBox spacing="10">
                         <Label text="Режиссёр:" styleClass="info-key"/>

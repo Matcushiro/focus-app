@@ -10,7 +10,6 @@
 
     <VBox styleClass="home-content" spacing="0">
 
-        <!-- ===== ПОИСК (красивый, без баннера) ===== -->
         <VBox styleClass="search-hero-block" spacing="14">
             <Label text="📺 Сериалы" styleClass="page-hero-title"/>
             <Label text="Лучшие сериалы со всего мира" styleClass="page-hero-sub"/>
@@ -30,10 +29,8 @@
             </HBox>
         </VBox>
 
-        <!-- ===== СЕКЦИИ ===== -->
         <VBox fx:id="seriesSectionsBox" styleClass="sections-wrapper" spacing="40">
 
-            <!-- Новинки -->
             <VBox styleClass="section" spacing="15">
                 <Label text="🆕 НОВЫЕ СЕРИАЛЫ" styleClass="section-title"/>
                 <ScrollPane styleClass="h-scroll" fitToHeight="true">
@@ -41,7 +38,6 @@
                 </ScrollPane>
             </VBox>
 
-            <!-- Популярные -->
             <VBox styleClass="section" spacing="15">
                 <Label text="🔥 ПОПУЛЯРНЫЕ СЕРИАЛЫ" styleClass="section-title"/>
                 <ScrollPane styleClass="h-scroll" fitToHeight="true">
@@ -49,7 +45,6 @@
                 </ScrollPane>
             </VBox>
 
-            <!-- Топ по рейтингу -->
             <VBox styleClass="section" spacing="15">
                 <Label text="⭐ ТОП ПО РЕЙТИНГУ" styleClass="section-title"/>
                 <ScrollPane styleClass="h-scroll" fitToHeight="true">
@@ -57,7 +52,6 @@
                 </ScrollPane>
             </VBox>
 
-            <!-- Турецкие -->
             <VBox styleClass="section" spacing="15">
                 <Label text="🌙 ТУРЕЦКИЕ СЕРИАЛЫ" styleClass="section-title"/>
                 <ScrollPane styleClass="h-scroll" fitToHeight="true">
@@ -67,7 +61,6 @@
 
         </VBox>
 
-        <!-- ===== ГРИД ДЛЯ ПОИСКА ===== -->
         <VBox fx:id="seriesSearchSection" visible="false" managed="false"
               styleClass="sections-wrapper" spacing="15">
             <FlowPane fx:id="moviesGrid"
