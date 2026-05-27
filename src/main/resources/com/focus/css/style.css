@@ -1144,195 +1144,677 @@
 
 /* ===== ADMIN ПАНЕЛЬ ===== */
 .admin-page {
-    -fx-background-color: #141414;
+    -fx-background-color: #0d0d0d;
 }
 
-.admin-sidebar {
-    -fx-background-color: #0a0a0a;
-    -fx-pref-width: 240px;
-    -fx-min-width: 220px;
-    -fx-padding: 24px 0;
-    -fx-border-color: transparent #1e1e1e transparent transparent;
-    -fx-border-width: 0 1px 0 0;
+/* ===== ШАПКА ADMIN (navbar переиспользуется) ===== */
+.admin-page .navbar {
+    -fx-background-color: #050505;
+    -fx-border-color: transparent transparent #1a1a1a transparent;
+    -fx-border-width: 0 0 1px 0;
 }
 
-.admin-sidebar-logo {
-    -fx-text-fill: #E65C00;
+.admin-page .nav-logo {
     -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-font-family: "Arial Black";
-    -fx-padding: 0 0 24px 20px;
 }
 
-.admin-sidebar-btn {
-    -fx-background-color: transparent;
+/* ===== ЗАГОЛОВКИ СЕКЦИЙ ADMIN ===== */
+.admin-section-title {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+/* ===== ПОЛОСКА СТАТУСА ===== */
+.admin-status-label {
+    -fx-background-color: #1a1a1a;
     -fx-text-fill: #aaaaaa;
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-    -fx-padding: 12px 20px;
-    -fx-cursor: hand;
-    -fx-alignment: center-left;
-    -fx-pref-width: 240px;
-}
-
-.admin-sidebar-btn:hover {
-    -fx-text-fill: #ffffff;
-    -fx-background-color: rgba(255,255,255,0.05);
-}
-
-.admin-sidebar-btn-active {
-    -fx-background-color: rgba(230,92,0,0.12);
-    -fx-text-fill: #E65C00;
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-    -fx-padding: 12px 20px;
-    -fx-cursor: hand;
-    -fx-alignment: center-left;
-    -fx-pref-width: 240px;
-    -fx-border-color: transparent transparent transparent #E65C00;
-    -fx-border-width: 0 0 0 3px;
-}
-
-.admin-main {
-    -fx-background-color: #141414;
-    -fx-padding: 32px 40px;
-    -fx-spacing: 24px;
-}
-
-.admin-page-title {
-    -fx-text-fill: #ffffff;
-    -fx-font-size: 22px;
-    -fx-font-weight: bold;
-}
-
-.admin-table {
-    -fx-background-color: #1e1e1e;
+    -fx-font-size: 12px;
+    -fx-padding: 7px 14px;
+    -fx-background-radius: 6px;
     -fx-border-color: #2a2a2a;
-    -fx-border-radius: 8px;
-    -fx-background-radius: 8px;
+    -fx-border-radius: 6px;
+    -fx-border-width: 1px;
+    -fx-min-width: 200px;
 }
 
-.admin-table .column-header {
-    -fx-background-color: #0a0a0a;
+/* ===== КАРТОЧКИ СТАТИСТИКИ ===== */
+.stat-card {
+    -fx-background-color: #161616;
+    -fx-background-radius: 10px;
+    -fx-border-color: #222222;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
+    -fx-padding: 16px 20px;
+    -fx-pref-width: 150px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 8, 0, 0, 2);
+}
+
+.stat-card:hover {
+    -fx-border-color: #E65C00;
+    -fx-effect: dropshadow(gaussian, rgba(230,92,0,0.2), 12, 0, 0, 0);
+}
+
+.stat-card-icon {
+    -fx-font-size: 26px;
+}
+
+.stat-card-value {
     -fx-text-fill: #E65C00;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.stat-card-label {
+    -fx-text-fill: #666666;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-transform: uppercase;
+}
+
+/* ===== СКРОЛЛ ПАНЕЛИ ФОРМЫ ===== */
+.admin-scroll {
+    -fx-background-color: #0d0d0d;
+    -fx-background: #0d0d0d;
+}
+
+.admin-scroll > .viewport {
+    -fx-background-color: #0d0d0d;
+}
+
+.admin-scroll .scroll-bar:vertical {
+    -fx-background-color: #0d0d0d;
+    -fx-pref-width: 8px;
+}
+
+.admin-scroll .scroll-bar:vertical .thumb {
+    -fx-background-color: #2a2a2a;
+    -fx-background-radius: 4px;
+}
+
+.admin-scroll .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #E65C00;
+}
+
+.admin-scroll .scroll-bar:vertical .increment-button,
+.admin-scroll .scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+    -fx-pref-height: 0;
+}
+
+/* ===== ПАНЕЛЬ ФОРМЫ ДОБАВЛЕНИЯ/РЕДАКТИРОВАНИЯ ===== */
+.admin-form-panel {
+    -fx-background-color: #0d0d0d;
+    -fx-padding: 24px 28px 32px 28px;
+    -fx-spacing: 14px;
+}
+
+/* ===== РАЗДЕЛИТЕЛЬ В ФОРМЕ ===== */
+.admin-sep {
+    -fx-background-color: #1e1e1e;
+    -fx-pref-height: 1px;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+/* ===== ПОЛЯ ВВОДА ===== */
+.admin-field-label {
+    -fx-text-fill: #aaaaaa;
     -fx-font-size: 12px;
     -fx-font-weight: bold;
 }
 
-.admin-table .column-header-background {
-    -fx-background-color: #0a0a0a;
-}
-
-.admin-table .table-row-cell {
-    -fx-background-color: #1e1e1e;
-    -fx-border-color: transparent transparent #2a2a2a transparent;
-    -fx-border-width: 0 0 1px 0;
-    -fx-text-fill: #cccccc;
-}
-
-.admin-table .table-row-cell:selected {
-    -fx-background-color: rgba(230,92,0,0.15);
-}
-
-.admin-table .table-row-cell:hover {
-    -fx-background-color: #252525;
-}
-
-.admin-input {
-    -fx-background-color: #1e1e1e;
+.admin-field {
+    -fx-background-color: #181818;
     -fx-text-fill: #e5e5e5;
-    -fx-prompt-text-fill: #555555;
     -fx-font-size: 13px;
-    -fx-padding: 10px 12px;
+    -fx-pref-height: 38px;
     -fx-background-radius: 7px;
-    -fx-border-color: #2f2f2f;
+    -fx-border-color: #2a2a2a;
     -fx-border-radius: 7px;
     -fx-border-width: 1px;
-    -fx-pref-height: 38px;
+    -fx-padding: 6px 12px;
+    -fx-prompt-text-fill: #444444;
 }
 
-.admin-input:focused {
+.admin-field:focused {
     -fx-border-color: #E65C00;
-    -fx-effect: dropshadow(gaussian, rgba(230,92,0,0.18), 6, 0, 0, 0);
+    -fx-background-color: #1d1d1d;
+    -fx-effect: dropshadow(gaussian, rgba(230,92,0,0.15), 8, 0, 0, 0);
 }
 
-.admin-combo {
-    -fx-background-color: #1e1e1e;
+.admin-field-sm {
+    -fx-background-color: #181818;
+    -fx-text-fill: #e5e5e5;
+    -fx-font-size: 13px;
+    -fx-pref-height: 38px;
+    -fx-pref-width: 100px;
+    -fx-background-radius: 7px;
+    -fx-border-color: #2a2a2a;
+    -fx-border-radius: 7px;
+    -fx-border-width: 1px;
+    -fx-padding: 6px 10px;
+    -fx-prompt-text-fill: #444444;
+}
+
+.admin-field-sm:focused {
+    -fx-border-color: #E65C00;
+    -fx-background-color: #1d1d1d;
+}
+
+/* ===== ТЕКСТОВАЯ ОБЛАСТЬ ===== */
+.admin-textarea {
+    -fx-background-color: #181818;
     -fx-text-fill: #e5e5e5;
     -fx-font-size: 13px;
     -fx-background-radius: 7px;
-    -fx-border-color: #2f2f2f;
+    -fx-border-color: #2a2a2a;
     -fx-border-radius: 7px;
     -fx-border-width: 1px;
+    -fx-padding: 8px 12px;
+    -fx-prompt-text-fill: #444444;
+    -fx-control-inner-background: #181818;
+    -fx-wrap-text: true;
+}
+
+.admin-textarea:focused {
+    -fx-border-color: #E65C00;
+    -fx-background-color: #1d1d1d;
+}
+
+.admin-textarea .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.admin-textarea .content {
+    -fx-background-color: transparent;
+}
+
+/* ===== ВЫПАДАЮЩИЙ СПИСОК ===== */
+.admin-combo {
+    -fx-background-color: #181818;
+    -fx-text-fill: #e5e5e5;
+    -fx-font-size: 13px;
     -fx-pref-height: 38px;
+    -fx-background-radius: 7px;
+    -fx-border-color: #2a2a2a;
+    -fx-border-radius: 7px;
+    -fx-border-width: 1px;
     -fx-cursor: hand;
 }
 
+.admin-combo:focused,
+.admin-combo:hover {
+    -fx-border-color: #E65C00;
+}
+
 .admin-combo .list-cell {
-    -fx-background-color: #1e1e1e;
     -fx-text-fill: #e5e5e5;
+    -fx-background-color: #181818;
+    -fx-font-size: 13px;
+    -fx-padding: 5px 10px;
 }
 
-.admin-combo .list-view {
-    -fx-background-color: #1e1e1e;
-    -fx-border-color: #2f2f2f;
+.admin-combo-popup .list-view {
+    -fx-background-color: #181818;
+    -fx-border-color: #2a2a2a;
+    -fx-border-width: 1px;
+    -fx-border-radius: 7px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 12, 0, 0, 4);
 }
 
-.admin-add-btn {
+.admin-combo-popup .list-cell:hover {
+    -fx-background-color: #242424;
+    -fx-text-fill: #ffffff;
+}
+
+.admin-combo-popup .list-cell:selected {
+    -fx-background-color: rgba(230,92,0,0.2);
+    -fx-text-fill: #E65C00;
+}
+
+.admin-combo .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.admin-combo .arrow {
+    -fx-background-color: #666666;
+}
+
+/* ===== ЧЕКБОКСЫ ===== */
+.admin-check {
+    -fx-text-fill: #cccccc;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+
+.admin-check .box {
+    -fx-background-color: #181818;
+    -fx-border-color: #3a3a3a;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-border-width: 1px;
+    -fx-pref-width: 16px;
+    -fx-pref-height: 16px;
+}
+
+.admin-check:selected .box {
     -fx-background-color: #E65C00;
-    -fx-text-fill: white;
+    -fx-border-color: #E65C00;
+}
+
+.admin-check:selected .mark {
+    -fx-background-color: white;
+}
+
+.admin-check:hover .box {
+    -fx-border-color: #E65C00;
+}
+
+/* ===== ПАНЕЛЬ ЖАНРОВ ===== */
+.admin-genres-pane {
+    -fx-background-color: #111111;
+    -fx-padding: 10px;
+    -fx-background-radius: 8px;
+    -fx-border-color: #1e1e1e;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+}
+
+/* ===== ПОДСКАЗКИ ===== */
+.admin-hint {
+    -fx-text-fill: #444444;
+    -fx-font-size: 11px;
+    -fx-font-style: italic;
+}
+
+/* ===== КНОПКА ВЫБОРА ФАЙЛА ===== */
+.admin-file-btn {
+    -fx-background-color: #1e1e1e;
+    -fx-text-fill: #cccccc;
+    -fx-font-size: 16px;
+    -fx-pref-height: 38px;
+    -fx-pref-width: 42px;
+    -fx-background-radius: 7px;
+    -fx-border-color: #2a2a2a;
+    -fx-border-radius: 7px;
+    -fx-border-width: 1px;
+    -fx-cursor: hand;
+    -fx-alignment: center;
+}
+
+.admin-file-btn:hover {
+    -fx-background-color: #262626;
+    -fx-border-color: #E65C00;
+    -fx-text-fill: #E65C00;
+}
+
+/* ===== КНОПКА ПРЕДПРОСМОТРА ПОСТЕРА ===== */
+.admin-poster-preview {
+    -fx-background-color: #111111;
+    -fx-background-radius: 8px;
+    -fx-border-color: #1e1e1e;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-pref-height: 180px;
+    -fx-alignment: center;
+}
+
+/* ===== ОСНОВНЫЕ КНОПКИ ДЕЙСТВИЙ ===== */
+.admin-btn-primary {
+    -fx-background-color: #E65C00;
+    -fx-text-fill: #ffffff;
     -fx-font-size: 13px;
     -fx-font-weight: bold;
     -fx-padding: 10px 22px;
     -fx-background-radius: 7px;
     -fx-cursor: hand;
-    -fx-pref-height: 38px;
+    -fx-border-color: transparent;
 }
 
-.admin-add-btn:hover {
+.admin-btn-primary:hover {
     -fx-background-color: #FF6A00;
-    -fx-effect: dropshadow(gaussian, rgba(230,92,0,0.35), 10, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(230,92,0,0.45), 12, 0, 0, 2);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
 }
 
-.admin-delete-btn {
-    -fx-background-color: transparent;
-    -fx-text-fill: #888888;
+.admin-btn-primary:pressed {
+    -fx-background-color: #cc5200;
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+/* ===== ВТОРИЧНАЯ КНОПКА ===== */
+.admin-btn-secondary {
+    -fx-background-color: #1e1e1e;
+    -fx-text-fill: #cccccc;
     -fx-font-size: 13px;
     -fx-font-weight: bold;
-    -fx-padding: 10px 18px;
+    -fx-padding: 10px 20px;
     -fx-background-radius: 7px;
     -fx-cursor: hand;
-    -fx-border-color: #2a2a2a;
+    -fx-border-color: #2f2f2f;
     -fx-border-radius: 7px;
     -fx-border-width: 1px;
-    -fx-pref-height: 38px;
 }
 
-.admin-delete-btn:hover {
-    -fx-text-fill: #ff4444;
-    -fx-border-color: #ff4444;
-    -fx-background-color: rgba(255,68,68,0.07);
+.admin-btn-secondary:hover {
+    -fx-background-color: #262626;
+    -fx-border-color: #444444;
+    -fx-text-fill: #ffffff;
 }
 
-.admin-stat-card {
-    -fx-background-color: #1e1e1e;
-    -fx-background-radius: 10px;
-    -fx-padding: 20px 24px;
-    -fx-border-color: #2a2a2a;
-    -fx-border-radius: 10px;
+.admin-btn-secondary:pressed {
+    -fx-background-color: #191919;
+}
+
+/* ===== КНОПКА РЕДАКТИРОВАНИЯ ===== */
+.admin-btn-edit {
+    -fx-background-color: #1a2a1a;
+    -fx-text-fill: #55cc77;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 16px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+    -fx-border-color: #255525;
+    -fx-border-radius: 6px;
     -fx-border-width: 1px;
-    -fx-pref-width: 180px;
 }
 
-.admin-stat-value {
-    -fx-text-fill: #E65C00;
-    -fx-font-size: 30px;
+.admin-btn-edit:hover {
+    -fx-background-color: #1f3a1f;
+    -fx-border-color: #55cc77;
+    -fx-text-fill: #77ee99;
+    -fx-effect: dropshadow(gaussian, rgba(85,204,119,0.2), 8, 0, 0, 0);
+}
+
+/* ===== КНОПКА ОПАСНОГО ДЕЙСТВИЯ (удаление/бан) ===== */
+.admin-btn-danger {
+    -fx-background-color: #2a1010;
+    -fx-text-fill: #ee4444;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 16px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+    -fx-border-color: #551515;
+    -fx-border-radius: 6px;
+    -fx-border-width: 1px;
+}
+
+.admin-btn-danger:hover {
+    -fx-background-color: #3a1515;
+    -fx-border-color: #ee4444;
+    -fx-text-fill: #ff6666;
+    -fx-effect: dropshadow(gaussian, rgba(238,68,68,0.25), 8, 0, 0, 0);
+}
+
+/* ===== ТАБЛИЦА ПОЛЬЗОВАТЕЛЕЙ / ЛОГОВ ===== */
+.admin-table {
+    -fx-background-color: #0d0d0d;
+    -fx-border-color: #1a1a1a;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-table-cell-border-color: transparent;
+}
+
+.admin-table .column-header-background {
+    -fx-background-color: #111111;
+    -fx-border-color: transparent transparent #1e1e1e transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.admin-table .column-header {
+    -fx-background-color: transparent;
+    -fx-padding: 0 10px;
+    -fx-pref-height: 40px;
+}
+
+.admin-table .column-header .label {
+    -fx-text-fill: #888888;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-alignment: center-left;
+}
+
+.admin-table .column-header:hover {
+    -fx-background-color: rgba(255,255,255,0.03);
+}
+
+.admin-table .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #161616 transparent;
+    -fx-border-width: 0 0 1px 0;
+    -fx-pref-height: 44px;
+    -fx-cell-size: 44px;
+}
+
+.admin-table .table-row-cell:hover {
+    -fx-background-color: #151515;
+}
+
+.admin-table .table-row-cell:selected {
+    -fx-background-color: rgba(230,92,0,0.12);
+}
+
+.admin-table .table-row-cell:selected:hover {
+    -fx-background-color: rgba(230,92,0,0.18);
+}
+
+.admin-table .table-cell {
+    -fx-text-fill: #cccccc;
+    -fx-font-size: 13px;
+    -fx-padding: 0 10px;
+    -fx-alignment: center-left;
+    -fx-border-color: transparent;
+}
+
+.admin-table .table-row-cell:selected .table-cell {
+    -fx-text-fill: #e5e5e5;
+}
+
+/* Цвет заголовков колонок при сортировке */
+.admin-table .column-header.table-column:pressed {
+    -fx-background-color: rgba(230,92,0,0.08);
+}
+
+/* Полоса прокрутки таблицы */
+.admin-table .scroll-bar:vertical {
+    -fx-background-color: #0d0d0d;
+    -fx-pref-width: 8px;
+}
+
+.admin-table .scroll-bar:vertical .thumb {
+    -fx-background-color: #2a2a2a;
+    -fx-background-radius: 4px;
+}
+
+.admin-table .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #E65C00;
+}
+
+.admin-table .scroll-bar:vertical .increment-button,
+.admin-table .scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+    -fx-pref-height: 0;
+}
+
+.admin-table .scroll-bar:horizontal {
+    -fx-background-color: #0d0d0d;
+    -fx-pref-height: 8px;
+}
+
+.admin-table .scroll-bar:horizontal .thumb {
+    -fx-background-color: #2a2a2a;
+    -fx-background-radius: 4px;
+}
+
+/* ===== СПИСОК ФИЛЬМОВ В ПРАВОЙ ПАНЕЛИ ADMIN ===== */
+.admin-list {
+    -fx-background-color: #0d0d0d;
+    -fx-border-color: #1a1a1a;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-border-width: 1px;
+}
+
+.admin-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #cccccc;
+    -fx-font-size: 13px;
+    -fx-padding: 8px 14px;
+    -fx-border-color: transparent transparent #161616 transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.admin-list .list-cell:hover {
+    -fx-background-color: #151515;
+    -fx-text-fill: #ffffff;
+}
+
+.admin-list .list-cell:selected {
+    -fx-background-color: rgba(230,92,0,0.15);
+    -fx-text-fill: #FF7722;
+}
+
+.admin-list .scroll-bar:vertical {
+    -fx-background-color: #0d0d0d;
+    -fx-pref-width: 8px;
+}
+
+.admin-list .scroll-bar:vertical .thumb {
+    -fx-background-color: #2a2a2a;
+    -fx-background-radius: 4px;
+}
+
+.admin-list .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #E65C00;
+}
+
+.admin-list .scroll-bar:vertical .increment-button,
+.admin-list .scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+    -fx-pref-height: 0;
+}
+
+/* ===== РАЗДЕЛИТЕЛЬ SPLIT PANE ===== */
+.split-pane {
+    -fx-background-color: #0d0d0d;
+    -fx-padding: 0;
+}
+
+.split-pane > .split-pane-divider {
+    -fx-background-color: #1a1a1a;
+    -fx-pref-width: 3px;
+    -fx-pref-height: 3px;
+}
+
+.split-pane:horizontal > .split-pane-divider {
+    -fx-background-color: #1a1a1a;
+    -fx-pref-width: 3px;
+}
+
+.split-pane:vertical > .split-pane-divider {
+    -fx-background-color: #1a1a1a;
+    -fx-pref-height: 3px;
+}
+
+/* ===== СТРОКА ПОИСКА В ADMIN ===== */
+.admin-search-bar {
+    -fx-background-color: #181818;
+    -fx-border-color: #2a2a2a;
+    -fx-border-radius: 7px;
+    -fx-background-radius: 7px;
+    -fx-border-width: 1px;
+    -fx-padding: 0 12px;
+    -fx-alignment: center-left;
+    -fx-spacing: 8px;
+    -fx-pref-height: 36px;
+}
+
+.admin-search-field {
+    -fx-background-color: transparent;
+    -fx-text-fill: #e5e5e5;
+    -fx-font-size: 13px;
+    -fx-pref-height: 36px;
+    -fx-prompt-text-fill: #444444;
+}
+
+.admin-search-field:focused {
+    -fx-background-color: transparent;
+}
+
+/* ===== БЛОК УПРАВЛЕНИЯ КОНТЕНТОМ ===== */
+.admin-action-bar {
+    -fx-background-color: #0d0d0d;
+    -fx-padding: 12px 24px;
+    -fx-spacing: 12px;
+    -fx-alignment: center-left;
+    -fx-border-color: transparent transparent #1a1a1a transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+/* ===== БЛОК СТАТИСТИКИ ===== */
+.admin-stats-bar {
+    -fx-background-color: #0a0a0a;
+    -fx-padding: 16px 24px;
+    -fx-spacing: 16px;
+    -fx-alignment: center-left;
+    -fx-border-color: transparent transparent #1a1a1a transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+/* ===== ТАБЫ В ADMIN (если используются) ===== */
+.admin-tab-pane {
+    -fx-background-color: #0d0d0d;
+    -fx-tab-min-height: 40px;
+    -fx-tab-max-height: 40px;
+}
+
+.admin-tab-pane .tab-header-area {
+    -fx-background-color: #080808;
+    -fx-padding: 0 24px;
+    -fx-border-color: transparent transparent #1a1a1a transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.admin-tab-pane .tab {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 8px 18px;
+    -fx-cursor: hand;
+}
+
+.admin-tab-pane .tab .tab-label {
+    -fx-text-fill: #777777;
+    -fx-font-size: 13px;
     -fx-font-weight: bold;
 }
 
-.admin-stat-label {
-    -fx-text-fill: #888888;
-    -fx-font-size: 13px;
+.admin-tab-pane .tab:selected {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #E65C00 transparent;
+    -fx-border-width: 0 0 2px 0;
+}
+
+.admin-tab-pane .tab:selected .tab-label {
+    -fx-text-fill: #E65C00;
+}
+
+.admin-tab-pane .tab:hover .tab-label {
+    -fx-text-fill: #cccccc;
+}
+
+.admin-tab-pane .tab-header-background {
+    -fx-background-color: transparent;
+}
+
+.admin-tab-pane .tab-content-area {
+    -fx-background-color: #0d0d0d;
+    -fx-border-color: transparent;
 }
 
 /* ===== POPUP / ФИЛЬТР ===== */
